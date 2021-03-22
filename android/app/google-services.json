@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1043544508072",
+    "project_id": "pazada-52ae2",
+    "storage_bucket": "pazada-52ae2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043544508072:android:d71ee279ce2306428c249d",
+        "android_client_info": {
+          "package_name": "com.pojectampers4nd.pazada"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043544508072-uali4ka5kur0eebca1pdmpjfh79gp5kn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCi2plScLf7yEWftiuD_kmApMNbHUFkbsA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1043544508072-uali4ka5kur0eebca1pdmpjfh79gp5kn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
