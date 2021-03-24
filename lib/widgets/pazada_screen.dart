@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/shared/divider.dart';
@@ -18,6 +19,17 @@ class _PazadaScreenState extends State<PazadaScreen> {
   Completer<GoogleMapController> _controllerGoogleMap = Completer();
   GoogleMapController newGoogleMapController;
 
+  Position currentPosition;
+  var geoLocator = Geolocator();
+  double bottomPaddingofMap = 0;
+  void locatePosition()async{
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    currentPosition = position;
+    LatLng latLngPosition = LatLng(position.latitude, position.longitude);
+    CameraPosition cameraPosition = new CameraPosition(target: latLngPosition, zoom: 14);
+    newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+  }
+
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
@@ -31,15 +43,84 @@ class _PazadaScreenState extends State<PazadaScreen> {
         title: Text("Pazada", style: TextStyle( color: Colors.white),),
       ),
       backgroundColor: Colors.white,
+      drawer: Container(
+
+        color: Colors.white,
+        width: 255,
+        child: Drawer(
+
+
+          child: ListView(
+            children: [
+              Container(
+                height: 165,
+                child: DrawerHeader(
+
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: Column(
+
+                    children: [
+                      Image.asset("images/pazada-logo.png", height: 65,width: 65,),
+                      SizedBox(width: 116,),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 16,),
+                      Text("Profile Name", style: TextStyle(fontFamily: "bolt-bold", fontSize: 15),),
+                      SizedBox(height: 12,),
+                      Text("Visit Profile", style: TextStyle(fontFamily: "bolt", fontSize: 12),),
+
+                         ],
+
+                      ),
+
+                    ],
+
+                  ),
+                ),
+              ),
+
+              DividerWidget(),
+              SizedBox(height: 12,),
+              ListTile(
+                leading: Icon(Icons.history),
+                title: Text("History", style: TextStyle(fontSize: 15, fontFamily: "bolt"),),
+              ),
+              ListTile(
+                leading: Icon(Icons.person),
+                title: Text("Visit Profile", style: TextStyle(fontSize: 15, fontFamily: "bolt"),),
+              ),
+              ListTile(
+                leading: Icon(Icons.info),
+                title: Text("About", style: TextStyle(fontSize: 15, fontFamily: "bolt"),),
+              ),
+              ListTile(
+                leading: Icon(Icons.bug_report),
+                title: Text("Report Bugs", style: TextStyle(fontSize: 15, fontFamily: "bolt"),),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           GoogleMap(
+            padding: EdgeInsets.only(bottom: bottomPaddingofMap),
             mapType: MapType.normal,
               myLocationButtonEnabled: true,
               initialCameraPosition: _kGooglePlex,
+              myLocationEnabled: true,
+              zoomGesturesEnabled: true,
+               zoomControlsEnabled: true,
             onMapCreated: (GoogleMapController controller){
               _controllerGoogleMap.complete(controller);
               newGoogleMapController = controller;
+              locatePosition();
+              setState(() {
+                bottomPaddingofMap = 300;
+              });
             },
           ),
           Positioned(
@@ -47,7 +128,7 @@ class _PazadaScreenState extends State<PazadaScreen> {
             right: 0.0,
             bottom: 0.0,
             child: Container(
-              height: 320.0,
+              height: 300.0,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(18), topRight: Radius.circular(18)),
