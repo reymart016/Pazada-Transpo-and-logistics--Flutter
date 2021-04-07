@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pazada/assistants/assistantMethod.dart';
+import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/shared/divider.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
 class PazadaScreen extends StatefulWidget {
   static const String idScreen = "pazadaScreen";
@@ -28,6 +31,10 @@ class _PazadaScreenState extends State<PazadaScreen> {
     LatLng latLngPosition = LatLng(position.latitude, position.longitude);
     CameraPosition cameraPosition = new CameraPosition(target: latLngPosition, zoom: 14);
     newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+
+    String address = await AssistantMethod.searchCoordinatesAddress(position, context);
+    print("this is your Address::" + address);
   }
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -178,14 +185,17 @@ class _PazadaScreenState extends State<PazadaScreen> {
                     SizedBox(height:24),
                     Row(
                       children: [
-                        Icon(Icons.home, color: Colors.grey,),
+                        Icon(Icons.location_on_sharp, color: Colors.red,),
                         SizedBox(width: 12,),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Add Home"),
+                            Text(Provider.of<AppData>(context).pickUpLocation!= null
+                            ? Provider.of<AppData>(context).pickUpLocation.placename
+                                : "Add Home", style: TextStyle(fontSize: 10,),maxLines: 2,
+                            ),
                             SizedBox(height: 4,),
-                            Text("Your Living Home Address", style: TextStyle(color: Colors.grey, fontSize: 12),)
+                            Text("Current Location", style: TextStyle(color: Colors.amber, fontSize: 12),)
                           ],
                         )
                       ],
@@ -195,14 +205,14 @@ class _PazadaScreenState extends State<PazadaScreen> {
                     SizedBox(height: 16.0,),
                     Row(
                       children: [
-                        Icon(Icons.work, color: Colors.grey,),
+                        Icon(Icons.work, color: Colors.blue,),
                         SizedBox(width: 12,),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("Add Office"),
                             SizedBox(height: 4,),
-                            Text("Your Office Address", style: TextStyle(color: Colors.grey, fontSize: 12),)
+                            Text("Your Office Address", style: TextStyle(color: Colors.amber, fontSize: 12),)
                           ],
                         )
                       ],

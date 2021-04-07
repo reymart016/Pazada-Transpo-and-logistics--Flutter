@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
+import 'package:provider/provider.dart';
+
+import 'dataHandler/appData.dart';
 
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,21 +19,24 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Pazada',
-      theme: ThemeData(
+    return ChangeNotifierProvider(
+      create: (context)=> AppData(),
+      child: MaterialApp(
+        title: 'Pazada',
+        theme: ThemeData(
 
-        primarySwatch: Colors.amber,
+          primarySwatch: Colors.amber,
 
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        initialRoute: LoginScreen.idScreen,
+        routes: {
+          SignupScreen.idScreen: (context) => SignupScreen(),
+          LoginScreen.idScreen: (context) => LoginScreen(),
+          PazadaScreen.idScreen: (context) => PazadaScreen()
+        },
+        debugShowCheckedModeBanner: false,
       ),
-      initialRoute: LoginScreen.idScreen,
-      routes: {
-        SignupScreen.idScreen: (context) => SignupScreen(),
-        LoginScreen.idScreen: (context) => LoginScreen(),
-        PazadaScreen.idScreen: (context) => PazadaScreen()
-      },
-      debugShowCheckedModeBanner: false,
     );
   }
 }
