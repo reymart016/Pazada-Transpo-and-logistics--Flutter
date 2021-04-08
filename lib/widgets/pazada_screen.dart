@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/widgets/dropOff_screen/dropOff_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/shared/divider.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
@@ -157,28 +158,33 @@ class _PazadaScreenState extends State<PazadaScreen> {
                     Text("Hi, there", style: TextStyle(fontSize: 12),),
                     Text("Where to", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),),
                     SizedBox(height: 20,),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black54,
-                            blurRadius: 6,
-                            spreadRadius: .5,
-                            offset: Offset(.7, .7),
-                          )
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> DropOff()));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black54,
+                              blurRadius: 6,
+                              spreadRadius: .5,
+                              offset: Offset(.7, .7),
+                            )
 
-                        ]
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.search, color: Colors.amberAccent,),
-                            SizedBox(width: 10,),
-                            Text("Search Drop Off")
-                          ],
+                          ]
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search, color: Colors.amberAccent,),
+                              SizedBox(width: 10,),
+                              Text("Search Drop Off")
+                            ],
+                          ),
                         ),
                       ),
                     ),
