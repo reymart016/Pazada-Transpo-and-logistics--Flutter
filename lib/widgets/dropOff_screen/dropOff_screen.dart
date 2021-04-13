@@ -37,7 +37,7 @@ class _DropOffState extends State<DropOff> {
               padding: EdgeInsets.only(left: 25,top: 20,right: 25,bottom: 20),
               child: Column(
                 children: [
-                  SizedBox(height: 15,),
+                  SizedBox(height: 5,),
                   Stack(
                     children: [
                       GestureDetector(

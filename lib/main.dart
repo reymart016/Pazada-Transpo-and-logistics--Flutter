@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
+import 'package:pazada/widgets/shared/screenState.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
         routes: {
           SignupScreen.idScreen: (context) => SignupScreen(),
           LoginScreen.idScreen: (context) => LoginScreen(),
-          PazadaScreen.idScreen: (context) => PazadaScreen()
+          PazadaScreen.idScreen: (context) => PazadaScreen(),
+          ScreenStatus.idScreen: (context) => ScreenStatus()
         },
         debugShowCheckedModeBanner: false,
       ),

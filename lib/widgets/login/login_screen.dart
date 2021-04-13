@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/shared/loading.dart';
+import 'package:pazada/widgets/shared/screenState.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -166,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
       usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap){
         if(snap.value != null){
           print('done');
-          Navigator.pushNamedAndRemoveUntil(context, PazadaScreen.idScreen, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(context, ScreenStatus.idScreen, (route) => false);
           displayToastMessage("Mabuhay, your now part of Pazada", context);
         }
         else{

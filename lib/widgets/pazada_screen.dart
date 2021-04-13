@@ -8,12 +8,14 @@ import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/widgets/dropOff_screen/dropOff_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/shared/divider.dart';
+import 'package:pazada/widgets/shared/navbar.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 class PazadaScreen extends StatefulWidget {
   static const String idScreen = "pazadaScreen";
+
 
   @override
   _PazadaScreenState createState() => _PazadaScreenState();
@@ -45,78 +47,15 @@ class _PazadaScreenState extends State<PazadaScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.amber,
-        title: Text("Pazada", style: TextStyle( color: Colors.white),),
-      ),
-      backgroundColor: Colors.white,
-      drawer: Container(
 
-        color: Colors.white,
-        width: 255,
-        child: Drawer(
-
-
-          child: ListView(
-            children: [
-              Container(
-                height: 165,
-                child: DrawerHeader(
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: Column(
-
-                    children: [
-                      Image.asset("images/pazada-logo.png", height: 65,width: 65,),
-                      SizedBox(width: 116,),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(height: 16,),
-                      Text("Profile Name", style: TextStyle(fontFamily: "bolt-bold", fontSize: 15),),
-                      SizedBox(height: 12,),
-                      Text("Visit Profile", style: TextStyle(fontFamily: "bolt", fontSize: 12),),
-
-                         ],
-
-                      ),
-
-                    ],
-
-                  ),
-                ),
-              ),
-
-              DividerWidget(),
-              SizedBox(height: 12,),
-              ListTile(
-                leading: Icon(Icons.history),
-                title: Text("History", style: TextStyle(fontSize: 15, fontFamily: "bolt"),),
-              ),
-              ListTile(
-                leading: Icon(Icons.person),
-                title: Text("Visit Profile", style: TextStyle(fontSize: 15, fontFamily: "bolt"),),
-              ),
-              ListTile(
-                leading: Icon(Icons.info),
-                title: Text("About", style: TextStyle(fontSize: 15, fontFamily: "bolt"),),
-              ),
-              ListTile(
-                leading: Icon(Icons.bug_report),
-                title: Text("Report Bugs", style: TextStyle(fontSize: 15, fontFamily: "bolt"),),
-              ),
-            ],
-          ),
-        ),
-      ),
       body: Stack(
         children: [
+
           GoogleMap(
             padding: EdgeInsets.only(bottom: bottomPaddingofMap),
-            mapType: MapType.normal,
+            mapType: MapType.hybrid,
               myLocationButtonEnabled: true,
               initialCameraPosition: _kGooglePlex,
               myLocationEnabled: true,
@@ -130,6 +69,43 @@ class _PazadaScreenState extends State<PazadaScreen> {
                 bottomPaddingofMap = 300;
               });
             },
+          ),
+          Positioned(
+            top: 20,
+            left: 22,
+            child: Container(
+              width: 85,
+              height: 25,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+
+
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(22),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 6,
+                    spreadRadius: .5,
+                    offset: Offset(
+                      .7,.7
+                    )
+                  )
+                ]
+              ),
+              child: Row(
+                children: [
+                  SizedBox(width: 4,),
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: Image.asset("images/PAZINGA.png", height: 20,width: 20,),
+                    radius: 10,
+                  ),
+                  SizedBox(width: 10,),
+                  Text("365.00")
+                ],
+              ),
+            ),
           ),
           Positioned(
             left: 0.0,
@@ -228,8 +204,11 @@ class _PazadaScreenState extends State<PazadaScreen> {
               ),
             ),
           )
+
         ],
-      )
+
+      ),
+
     );
   }
 }
