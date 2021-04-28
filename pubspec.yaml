@@ -40,6 +40,11 @@ dependencies:
   marquee: ^1.6.0
   auto_size_text: ^2.1.0
   spincircle_bottom_bar: ^1.0.0
+  permission_handler: ^5.0.0
+  location: ^3.0.2
+  geocoder: ^0.2.1
+
+
 
 dev_dependencies:
   flutter_test:
