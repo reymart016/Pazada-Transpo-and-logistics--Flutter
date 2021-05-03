@@ -105,6 +105,7 @@ class _ScreenStatusState extends State<ScreenStatus> {
       ),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 12,
         onTap: onTappedBar,
         currentIndex: _currentIndex,
         backgroundColor: Colors.amber,

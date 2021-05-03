@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
@@ -8,12 +10,15 @@ import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/widgets/dropOff_screen/dropOff_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/shared/divider.dart';
+import 'package:pazada/widgets/shared/loading.dart';
 import 'package:pazada/widgets/shared/navbar.dart';
+import 'package:pazada/widgets/shared/progressDialog.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:location/location.dart' as lct;
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 class PazadaScreen extends StatefulWidget {
@@ -35,8 +40,15 @@ class _PazadaScreenState extends State<PazadaScreen> {
   bool searching = false;
   lct.Location location;
   String coordinates = "";
+  TextEditingController destinationAddress = TextEditingController();
+  TextEditingController contactNumber = TextEditingController();
 
   Position currentPosition,desPosition;
+
+  List<LatLng> pLinesCoordinates = [];
+  Set<Polyline> polylineSet = {};
+  Set<Marker> markersSet = {};
+  Set<Circle> circleSet = {};
 
   var geoLocator = Geolocator();
   double bottomPaddingofMap = 0;
@@ -144,9 +156,10 @@ class _PazadaScreenState extends State<PazadaScreen> {
             padding: EdgeInsets.only(bottom: bottomPaddingofMap),
             mapType: MapType.hybrid,
               // onTap: _onAddMarkerButton,
-              markers: Set.from(_markers),
+              markers: markersSet,
+              circles: circleSet,
               myLocationButtonEnabled: true,
-
+              polylines: polylineSet,
               initialCameraPosition: _kGooglePlex,
               myLocationEnabled: true,
               zoomGesturesEnabled: true,
@@ -157,17 +170,18 @@ class _PazadaScreenState extends State<PazadaScreen> {
               newGoogleMapController = controller;
               locatePosition();
               setState(() {
-                bottomPaddingofMap = 300;
+                bottomPaddingofMap = 320;
               });
             },
             //----------------get latitutde and longtitude using the camera movement---------//
             onCameraMove: (CameraPosition camerapos)async {
+
               searching = false;
               setState(() {});
               finallat = camerapos.target.latitude.toString();
               finallong = camerapos.target.longitude.toString();
               String address2 = await AssistantMethod.nameCoordinatesAddress(camerapos, context);//passes the latlng using cameraposition to assistant method
-              print("this is your Address::" + address2);
+              print("this is your Destination Address::" + address2);
             },
             //------------------------------------------------------------------------//
             onCameraIdle: () {
@@ -176,72 +190,82 @@ class _PazadaScreenState extends State<PazadaScreen> {
             },
           ),
           //------------------MARKER-------------------/
-          Positioned(
-            top: MediaQuery.of(context).size.height / 3.6,
-            left: MediaQuery.of(context).size.width / 2.38,
-            child: Align(
-              alignment: Alignment.center,
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+              top: MediaQuery.of(context).size.height / 4.5,
+
               child: Image.asset(
                 "images/markeruser.png",
                 height: 80,
               ),
             ),
+            ],
           ),
           searching == true
-              ? Positioned(
-            top: MediaQuery.of(context).size.height / 4.5,
-            left: MediaQuery.of(context).size.width / 4.2,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.0),
-                color: Colors.white,
-              ),
-              width: 180,
-              height: 40,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              ? Stack(
+              alignment: Alignment.center,
                 children: [
-                  //-----coordinates--/////
-                  // Text(
-                  //   "Lat $finallat",
-                  //   style: TextStyle(color: Colors.white),
-                  // ),
-                  // Text(
-                  //   "Lng $finallong",
-                  //   style: TextStyle(color: Colors.white),
-                  // ),
-                  //------------------/
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(Provider.of<AppData>(context).destinationLocation!= null
-                        ? Provider.of<AppData>(context).destinationLocation.placename
-                        : "Destination", style: TextStyle(fontSize: 10,),maxLines: 2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-              : Positioned(
-            top: MediaQuery.of(context).size.height / 3.1,
-            left: MediaQuery.of(context).size.width / 2.3,
+                  Positioned(
+            top: MediaQuery.of(context).size.height / 6,
+
             child: Container(
-              padding: EdgeInsets.symmetric(
-                  vertical: 12.0, horizontal: 17.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.0),
-                color: Colors.black.withOpacity(0.75),
-              ),
-              width: 50,
-              height: 40,
-              child: Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
-                  strokeWidth: 2.5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.white,
                 ),
-              ),
+                width: 180,
+                height: 43,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //-----coordinates--/////
+                    // Text(
+                    //   "Lat $finallat",
+                    //   style: TextStyle(color: Colors.white),
+                    // ),
+                    // Text(
+                    //   "Lng $finallong",
+                    //   style: TextStyle(color: Colors.white),
+                    // ),
+                    //------------------/
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Text(Provider.of<AppData>(context).destinationLocation!= null
+                          ? Provider.of<AppData>(context).destinationLocation.placename
+                          : "Destination", style: TextStyle(fontSize: 10, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
             ),
           ),
+              ])
+              : Stack(
+            alignment: Alignment.center,
+                children: [
+                  Positioned(
+            top: MediaQuery.of(context).size.height / 6,
+
+            child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 12.0, horizontal: 17.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.0),
+                  color: Colors.amber,
+                ),
+                width: 50,
+                height: 40,
+                child: Center(
+                  child: SpinKitPulse(
+                   color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+            ),
+          ),
+              ]),
           //-------------------------------/
           // Positioned( DUMMY MARKER
           //   top: 170,
@@ -297,10 +321,10 @@ class _PazadaScreenState extends State<PazadaScreen> {
             right: 0.0,
             bottom: 0.0,
             child: Container(
-              height: 300.0,
+              height: 280.0,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
                 boxShadow:[
                   BoxShadow(
                     color: Colors.black,
@@ -316,78 +340,153 @@ class _PazadaScreenState extends State<PazadaScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Hi, there", style: TextStyle(fontSize: 12),),
-                    Text("Where to", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),),
-                    SizedBox(height: 20,),
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> DropOff()));
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black54,
-                              blurRadius: 6,
-                              spreadRadius: .5,
-                              offset: Offset(.7, .7),
-                            )
+                    Text("Fill in the Destination address", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),),
 
-                          ]
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Row(
-                            children: [
-                              Icon(Icons.search, color: Colors.amberAccent,),
-                              SizedBox(width: 10,),
-                              Text("Search Drop Off")
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height:24),
-                    Row(
-                      children: [
-                        Icon(Icons.location_on_sharp, color: Colors.red,),
-                        SizedBox(width: 12,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(Provider.of<AppData>(context).pickUpLocation!= null
-                            ? Provider.of<AppData>(context).pickUpLocation.placename
-                                : "Add Home", style: TextStyle(fontSize: 10,),maxLines: 2,
-                            ),
-                            SizedBox(height: 4,),
-                            Text("Current Location", style: TextStyle(color: Colors.amber, fontSize: 12),)
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(height:10),
-                    DividerWidget(),
+                    // GestureDetector(
+                    //   onTap: (){
+                    //     Navigator.push(context, MaterialPageRoute(builder: (context)=> DropOff()));
+                    //   },
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: Colors.white,
+                    //       borderRadius: BorderRadius.circular(5.0),
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: Colors.black54,
+                    //           blurRadius: 6,
+                    //           spreadRadius: .5,
+                    //           offset: Offset(.7, .7),
+                    //         )
+                    //
+                    //       ]
+                    //     ),
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.all(12.0),
+                    //       child: Row(
+                    //         children: [
+                    //           Icon(Icons.search, color: Colors.amberAccent,),
+                    //           SizedBox(width: 10,),
+                    //           Text("Search Drop Off")
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),    DROPOFF
+                    // SizedBox(height:10),
+                    // Row(
+                    //   children: [
+                    //     Icon(Icons.location_on_sharp, color: Colors.red,),
+                    //     SizedBox(width: 12,),
+                    //     Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Text(Provider.of<AppData>(context).pickUpLocation!= null
+                    //         ? Provider.of<AppData>(context).pickUpLocation.placename
+                    //             : "Add Home", style: TextStyle(fontSize: 10,),maxLines: 2,
+                    //         ),
+                    //         SizedBox(height: 4,),
+                    //         Text("Current Location", style: TextStyle(color: Colors.amber, fontSize: 12),)
+                    //       ],
+                    //     )
+                    //   ],
+                    // ),
+                    // SizedBox(height:10),
+                    // DividerWidget(),
                     SizedBox(height: 16.0,),
+
                     Row(
                       children: [
-                        Icon(Icons.work, color: Colors.blue,),
+                        SizedBox(width: 12,),
+                        Icon(Icons.location_on, color: Colors.amber,),
                         SizedBox(width: 12,),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(Provider.of<AppData>(context).destinationLocation!= null
                                 ? Provider.of<AppData>(context).destinationLocation.placename
-                                : "Destination", style: TextStyle(fontSize: 10,),maxLines: 2,
+                                : "Destination", style: TextStyle(fontSize: 13,),maxLines: 2,
                             ),
-                            SizedBox(height: 4,),
-                            Text("Your Office Address", style: TextStyle(color: Colors.amber, fontSize: 12),)
+
                           ],
+
                         )
+
                       ],
-                    )
+
+                    ),
+                    SizedBox(height: 10,),
+                    DividerWidget(),
+                    TextField(
+                      controller: destinationAddress,
+                      keyboardType: TextInputType.streetAddress,
+                      decoration: InputDecoration(
+                        prefixIcon:Icon(Icons.work, color: Colors.grey,),
+
+                        labelText: "Complete Address",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.0,
+                        ),
+                        labelStyle: TextStyle(
+                          fontSize: 14.0,
+                          fontFamily: 'bolt',
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    TextField(
+                      controller: contactNumber,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        prefixIcon:Icon(Icons.phone, color: Colors.grey,),
+
+                        labelText: "Contact number",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.0,
+                        ),
+                        labelStyle: TextStyle(
+                          fontSize: 14.0,
+                          fontFamily: 'bolt',
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    SizedBox(height: 10,),
+                    Container(
+                      width: MediaQuery.of(context).size.width * .96,
+                      child: RaisedButton(
+
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                        color: Colors.amber,
+                        child: Container(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Text('Confirm your Destination Location', style: TextStyle(
+                              color: Colors.white,
+
+
+                            ),
+
+                            ),
+                          ),
+                        ),
+                        onPressed: ()async{
+                          print('PRESSED');
+                          await getPlaceDirection();
+                          if(destinationAddress.text.length <= 15 && contactNumber.text != int){
+                            displayToastMessage("Your name must be atleast 5 characters", context);
+                          }
+                        },
+                      ),
+                    ),
                   ],
+
                 ),
               ),
             ),
@@ -406,4 +505,91 @@ class _PazadaScreenState extends State<PazadaScreen> {
 
     );
   }
+  Future <void> getPlaceDirection()async{
+    var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
+    var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
+    var pickupLatLng = LatLng(initialPos.latitude, initialPos.longtitude);
+    var destinationLatLng = LatLng(finalPos.latitude, finalPos.longtitude);
+
+   showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
+
+    var details = await AssistantMethod.obtainPlaceDirectionDetails(pickupLatLng, destinationLatLng);
+    Navigator.pop(context);
+
+    print("This is encoded Points::");
+    print(details.encodedPoints);
+
+    PolylinePoints polylinePoints = PolylinePoints();
+    List <PointLatLng> decodedPolylinePointsResult = polylinePoints.decodePolyline(details.encodedPoints);
+    pLinesCoordinates.clear();
+    if(decodedPolylinePointsResult.isNotEmpty){
+      decodedPolylinePointsResult.forEach((PointLatLng pointLatLng) {
+        pLinesCoordinates.add(LatLng(pointLatLng.latitude, pointLatLng.longitude));
+      });
+    }
+    polylineSet.clear();
+    setState(() {
+      Polyline polyline = Polyline(
+        color: Colors.amber,
+        polylineId: PolylineId("PolylineID"),
+        jointType: JointType.round,
+        points: pLinesCoordinates,
+        width: 5,
+        startCap: Cap.roundCap,
+        endCap: Cap.roundCap,
+        geodesic: true,
+      );
+      polylineSet.add(polyline);
+    });
+    // LatLngBounds latLngBounds;
+    // if(pickupLatLng.latitude > destinationLatLng.latitude && pickupLatLng.longitude > destinationLatLng.longitude){
+    //   latLngBounds = LatLngBounds(southwest: destinationLatLng, northeast: pickupLatLng);
+    //
+    // }
+    // else if(pickupLatLng.longitude > destinationLatLng.longitude){
+    //   latLngBounds = LatLngBounds(southwest: LatLng(pickupLatLng.latitude, destinationLatLng.longitude), northeast: LatLng(destinationLatLng.latitude, pickupLatLng.longitude));
+    //
+    // }
+    // else if(pickupLatLng.latitude > destinationLatLng.latitude){
+    //   latLngBounds = LatLngBounds(southwest: LatLng(destinationLatLng.latitude, pickupLatLng.longitude), northeast: LatLng(pickupLatLng.latitude, destinationLatLng.longitude));
+    //
+    // }else{
+    //   latLngBounds = LatLngBounds(southwest: pickupLatLng, northeast: destinationLatLng);
+    // }
+    // newGoogleMapController.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
+
+    Marker pickupMarker = Marker(
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
+      infoWindow: InfoWindow(title: initialPos.placename, snippet: "Your Location!"),
+      position: pickupLatLng,
+      markerId: MarkerId("pickupID"),
+      
+    );
+    setState(() {
+      markersSet.add(pickupMarker);
+    });
+    Circle pickupCircle = Circle(
+    fillColor: Colors.amber,
+      center: pickupLatLng,
+      radius:12,
+      strokeColor: Colors.amber,
+      strokeWidth: 4,
+      circleId: CircleId("pickupID")
+    );
+    Circle destinationCircle = Circle(
+        fillColor: Colors.amber,
+        center: destinationLatLng,
+        radius:12,
+        strokeColor: Colors.amber,
+        strokeWidth: 4,
+        circleId: CircleId("destinationID")
+    );
+    setState(() {
+      circleSet.add(pickupCircle);
+      circleSet.add(destinationCircle);
+    });
+  }
+}
+displayToastMessage(String Message, BuildContext context){
+  Fluttertoast.showToast(msg: Message);
 }
