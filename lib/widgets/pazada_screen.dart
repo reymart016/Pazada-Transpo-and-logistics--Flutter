@@ -9,6 +9,7 @@ import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/widgets/dropOff_screen/dropOff_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
+import 'package:pazada/widgets/pazada_screen/payment_panel.dart';
 import 'package:pazada/widgets/shared/divider.dart';
 import 'package:pazada/widgets/shared/loading.dart';
 import 'package:pazada/widgets/shared/navbar.dart';
@@ -212,10 +213,10 @@ class _PazadaScreenState extends State<PazadaScreen> {
 
             child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(4.0),
                   color: Colors.white,
                 ),
-                width: 180,
+                width: 250,
                 height: 43,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -231,7 +232,7 @@ class _PazadaScreenState extends State<PazadaScreen> {
                     // ),
                     //------------------/
                     Padding(
-                      padding: const EdgeInsets.all(5.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
                       child: Text(Provider.of<AppData>(context).destinationLocation!= null
                           ? Provider.of<AppData>(context).destinationLocation.placename
                           : "Destination", style: TextStyle(fontSize: 10, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.center,
@@ -511,10 +512,10 @@ class _PazadaScreenState extends State<PazadaScreen> {
     var pickupLatLng = LatLng(initialPos.latitude, initialPos.longtitude);
     var destinationLatLng = LatLng(finalPos.latitude, finalPos.longtitude);
 
-   showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
-
+   //showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentPanel()));
     var details = await AssistantMethod.obtainPlaceDirectionDetails(pickupLatLng, destinationLatLng);
-    Navigator.pop(context);
+    //Navigator.pop(context);
 
     print("This is encoded Points::");
     print(details.encodedPoints);
