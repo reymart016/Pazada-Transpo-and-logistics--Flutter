@@ -103,11 +103,12 @@ class _PaymentPanelState extends State<PaymentPanel> {
                       ),
                       SizedBox(height: 16,),
                      Row(
+                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                        children: [
 
                          Container(
 
-                           width: MediaQuery.of(context).size.width * .40,
+                           width: MediaQuery.of(context).size.width * .38,
                            decoration: BoxDecoration(
                              color: Colors.grey[200],
                              borderRadius: BorderRadius.circular(5),
@@ -137,7 +138,7 @@ class _PaymentPanelState extends State<PaymentPanel> {
                          ),
                          SizedBox(width: 18,),
                          Container(
-                           width: MediaQuery.of(context).size.width * .40,
+                           width: MediaQuery.of(context).size.width * .38,
                            decoration: BoxDecoration(
                              color: Colors.grey[200],
                              borderRadius: BorderRadius.circular(5),
@@ -187,7 +188,8 @@ class _PaymentPanelState extends State<PaymentPanel> {
             children: [
 
               FlatButton(onPressed: (){
-                Navigator.pop(context);
+
+                Navigator.pop(context, "obtainDirection");
               },
                 color: Colors.amber,
                 minWidth:MediaQuery.of(context).size.width * .96 ,
