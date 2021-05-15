@@ -45,7 +45,7 @@ dependencies:
   geocoder: ^0.2.1
   flutter_polyline_points: ^0.2.4
   get: ^4.1.4
-
+  animated_text_kit: ^2.5.4
   flutter_svg: ^0.22.0
 
 

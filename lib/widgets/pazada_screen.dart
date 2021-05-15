@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
+import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:pazada/widgets/dropOff_screen/dropOff_screen.dart';
@@ -54,14 +56,20 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
   double rideDetailsContainer = 0;
   double destinationContainer = 300;
+  double loadingRider = 0;
+
 
   List payments = ["Cash", "Gcash","Pazinga"];
   String paymentChoose;
 
   DirectionDetails tripDirectionDetails;
 
+  DatabaseReference rideRequestRef;
+
   var geoLocator = Geolocator();
   double bottomPaddingofMap = 0;
+
+
 
   void displayRideDetailsContainer()async{
     await getPlaceDirection();
@@ -70,7 +78,49 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
         destinationContainer = 0;
         rideDetailsContainer =280;
     });
+    saveRideRequest();
   }
+  cancelSearch(){
+    Navigator.pop(context);
+    rideRequestRef.remove();
+  }
+  void saveRideRequest(){
+
+    rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
+    var pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+    var dropOff = Provider.of<AppData>(context, listen: false).destinationLocation;
+
+
+    Map pickUpCoordinates ={
+      "latitude": pickUp.latitude.toString(),
+      "longtitude": pickUp.latitude.toString(),
+    };
+    Map destinationCoordinates ={
+      "latitude": dropOff.latitude.toString(),
+      "longtitude": dropOff.latitude.toString(),
+    };
+    Map rideInfoMap ={
+      "driver_id": "waiting",
+      "payment_method": "cash",
+      "pickup": pickUpCoordinates,
+      "destination": destinationCoordinates,
+      "created_at": DateTime.now().toString(),
+      "passenger_name": usersCurrentInfo.name,
+      "passenger_phone": usersCurrentInfo.phone,
+      "pickup_address": pickUp.placename,
+      "destination_address": dropOff.placename,
+    };
+
+    rideRequestRef.set(rideInfoMap);
+
+  }
+
+  void cancelRideRequest(){
+      rideRequestRef.remove();
+  }
+
+
+
   void locatePosition()async{
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
@@ -134,6 +184,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
   @override
   void initState() {
+    AssistantMethod.getCurrentOnlineInformation(); //BOOKING PART
     requestPerms();
     super.initState();
   }
@@ -576,56 +627,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                       children: [
                         Text("testings", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),),
 
-                        // GestureDetector(
-                        //   onTap: (){
-                        //     Navigator.push(context, MaterialPageRoute(builder: (context)=> DropOff()));
-                        //   },
-                        //   child: Container(
-                        //     decoration: BoxDecoration(
-                        //       color: Colors.white,
-                        //       borderRadius: BorderRadius.circular(5.0),
-                        //       boxShadow: [
-                        //         BoxShadow(
-                        //           color: Colors.black54,
-                        //           blurRadius: 6,
-                        //           spreadRadius: .5,
-                        //           offset: Offset(.7, .7),
-                        //         )
-                        //
-                        //       ]
-                        //     ),
-                        //     child: Padding(
-                        //       padding: const EdgeInsets.all(12.0),
-                        //       child: Row(
-                        //         children: [
-                        //           Icon(Icons.search, color: Colors.amberAccent,),
-                        //           SizedBox(width: 10,),
-                        //           Text("Search Drop Off")
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),    DROPOFF
-                        // SizedBox(height:10),
-                        // Row(
-                        //   children: [
-                        //     Icon(Icons.location_on_sharp, color: Colors.red,),
-                        //     SizedBox(width: 12,),
-                        //     Column(
-                        //       crossAxisAlignment: CrossAxisAlignment.start,
-                        //       children: [
-                        //         Text(Provider.of<AppData>(context).pickUpLocation!= null
-                        //         ? Provider.of<AppData>(context).pickUpLocation.placename
-                        //             : "Add Home", style: TextStyle(fontSize: 10,),maxLines: 2,
-                        //         ),
-                        //         SizedBox(height: 4,),
-                        //         Text("Current Location", style: TextStyle(color: Colors.amber, fontSize: 12),)
-                        //       ],
-                        //     )
-                        //   ],
-                        // ),
-                        // SizedBox(height:10),
-                        // DividerWidget(),
+
                         SizedBox(height: 16.0,),
 
                         Container(
@@ -643,11 +645,14 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                                   children: [
                                     Text("Trike",style: TextStyle(fontFamily: "bolt",fontSize: 12),
                                     ),
-                                    Text("10km",style: TextStyle(fontFamily: "bolt",fontSize: 12),
+                                    Text(((tripDirectionDetails != null)? tripDirectionDetails.distanceText : ''),style: TextStyle(fontFamily: "bolt",fontSize: 12),
                                     ),
 
                                   ],
 
+                                ),
+                                Expanded(child: Container(),),
+                                Text(((tripDirectionDetails != null)? '\PHP: ${AssistantMethod.calculateFares(tripDirectionDetails)}' : ''),style: TextStyle(fontFamily: "bolt",fontSize: 12),
                                 )
 
                               ],
@@ -713,8 +718,12 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                                     ),
                                   ),
                                   onPressed: ()async{
-                                    print('PRESSED');
 
+                                    print('PRESSED');
+                                    setState(() {
+                                      destinationContainer =0;
+                                      loadingRider = 280;
+                                    });
                                   },
                                 ),
                               ),
@@ -750,14 +759,63 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                 ),
               ),
             ),
-            // Padding(padding: EdgeInsets.all(10),
-            //   child: Row(
-            //     children: [
-            //       button(_onAddMarkerButton, Icons.add_location_alt_outlined)
-            //     ],
-            //   ),
-            //
-            // )
+            Positioned(
+              left: 0.0,
+              right: 0.0,
+              bottom: 0.0,
+              child: GestureDetector(
+                onTap: (){
+                  FocusScope.of(context).requestFocus(FocusNode());
+                },
+                child: Container(
+                  height: loadingRider,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                      boxShadow:[
+                        BoxShadow(
+                          color: Colors.black,
+                          blurRadius: 16,
+                          spreadRadius: .5,
+                          offset: Offset(.7, .7),
+                        )
+                      ]
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(child: Text("Please wait...", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),)),
+
+
+
+
+
+                        SizedBox(height: 60,),
+
+                        Center(
+                            child: GestureDetector(
+                              onTap: cancelSearch,
+                            child: SpinKitPulse(
+                              color: Colors.amber,
+                              size: 50,
+
+                            )
+                        )
+                        ),
+
+
+
+
+                      ],
+
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
 
         ),

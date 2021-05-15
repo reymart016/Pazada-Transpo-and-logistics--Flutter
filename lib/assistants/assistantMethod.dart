@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/requestAssistants.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/address.dart';
+import 'package:pazada/models/allUsers.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:provider/provider.dart';
 
@@ -72,5 +75,21 @@ class AssistantMethod{
     double localFare = totalFareAmount *  50;
     return localFare.truncate();
 
+  }
+
+  static void getCurrentOnlineInformation()async{
+
+
+    firebaseUser =await FirebaseAuth.instance.currentUser;
+    String userId = firebaseUser.uid;
+    DatabaseReference reference = FirebaseDatabase.instance.reference().child('PazadaUsers').child(userId);
+
+    reference.once().then((DataSnapshot dataSnapShot)
+    {
+      if(dataSnapShot.value != null){
+        usersCurrentInfo = Users.fromSnapshot(dataSnapShot);
+      }
+    }
+    );
   }
 }

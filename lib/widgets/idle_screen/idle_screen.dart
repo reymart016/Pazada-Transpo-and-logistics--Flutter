@@ -6,6 +6,7 @@ import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/pazada_screen/payment_panel.dart';
 
 class IdleScreen extends StatefulWidget {
+  static const String idScreen = "idleScreen";
   @override
   _IdleScreenState createState() => _IdleScreenState();
 }
