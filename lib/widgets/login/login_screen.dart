@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pazada/bottomBar/bottomAppBar.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/shared/loading.dart';
@@ -46,7 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   prefixIcon:Icon(Icons.email),
-                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.amber), borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   labelText: "Email",
                   hintStyle: TextStyle(
                     color: Colors.grey,
@@ -69,7 +71,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
                 decoration: InputDecoration(
                   prefixIcon:Icon(Icons.lock),
-                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.amber), borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   labelText: "Password",
                   hintStyle: TextStyle(
                     color: Colors.grey,
@@ -159,6 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
       displayToastMessage("Error:" + errMsg.toString(), context);
     }
     )).user;
+
     if(firebaseUser != null){
       setState(() {
         loading = true;
@@ -167,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
       usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap){
         if(snap.value != null){
           print('done');
-          Navigator.pushNamedAndRemoveUntil(context, ScreenStatus.idScreen, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
           displayToastMessage("Mabuhay, your now part of Pazada", context);
         }
         else{

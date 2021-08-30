@@ -14,8 +14,8 @@ class Users{
   Users.fromSnapshot(DataSnapshot dataSnapshot){
     id = dataSnapshot.key;
     email = dataSnapshot.value["email"];
-    email = dataSnapshot.value["name"];
-    email = dataSnapshot.value["phone"];
+    name = dataSnapshot.value["name"];
+    phone = dataSnapshot.value["phone"];
 
   }
 }

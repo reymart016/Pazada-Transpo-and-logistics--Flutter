@@ -7,9 +7,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
+import 'package:pazada/assistants/geoFireAssistant.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/directionDetails.dart';
+import 'package:pazada/models/nearbyAvalableDrivers.dart';
 import 'package:pazada/widgets/dropOff_screen/dropOff_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen/payment_panel.dart';
@@ -23,6 +25,7 @@ import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:location/location.dart' as lct;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
 
 
 class PazadaScreen extends StatefulWidget {
@@ -55,11 +58,11 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
   Set<Circle> circleSet = {};
 
   double rideDetailsContainer = 0;
-  double destinationContainer = 300;
+  double destinationContainer = 280;
   double loadingRider = 0;
 
 
-  List payments = ["Cash", "Gcash","Pazinga"];
+  List payments = ["Cash", "Gcash"];
   String paymentChoose;
 
   DirectionDetails tripDirectionDetails;
@@ -68,6 +71,9 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
   var geoLocator = Geolocator();
   double bottomPaddingofMap = 0;
+
+  bool nearbyAvailableDriverKeyLoaded = false;
+  BitmapDescriptor nearbyIcon;
 
 
 
@@ -93,11 +99,11 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
     Map pickUpCoordinates ={
       "latitude": pickUp.latitude.toString(),
-      "longtitude": pickUp.latitude.toString(),
+      "longitude": pickUp.longitude.toString(),
     };
     Map destinationCoordinates ={
       "latitude": dropOff.latitude.toString(),
-      "longtitude": dropOff.latitude.toString(),
+      "longitude": dropOff.longitude.toString(),
     };
     Map rideInfoMap ={
       "driver_id": "waiting",
@@ -132,6 +138,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     print("POSITION::$currentPosition");
     String address = await AssistantMethod.searchCoordinatesAddress(position, context);
     print("this is your Address::" + address);
+    initGeofireListener();
 
   }
 
@@ -144,6 +151,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     zoom: 14.4746,
   );
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
 
   _onAddMarkerButton(LatLng tappedPoint){
     print(tappedPoint);
@@ -216,332 +224,321 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
   //-------------------------------------/
   @override
   Widget build(BuildContext context) {
+    createIconMarker();
+    return Scaffold(
 
-    return SafeArea(
-      child: Scaffold(
+      body: Stack(
+        children: [
 
-        body: Stack(
-          children: [
+          GoogleMap(
+            padding: EdgeInsets.only(bottom: bottomPaddingofMap),
+            mapType: MapType.normal,
+              // onTap: _onAddMarkerButton,
+              markers: markersSet,
+              circles: circleSet,
+              myLocationButtonEnabled: true,
+              polylines: polylineSet,
+              initialCameraPosition: _kGooglePlex,
+              myLocationEnabled: true,
+              zoomGesturesEnabled: true,
+               zoomControlsEnabled: true,
 
-            GoogleMap(
-              padding: EdgeInsets.only(bottom: bottomPaddingofMap),
-              mapType: MapType.hybrid,
-                // onTap: _onAddMarkerButton,
-                markers: markersSet,
-                circles: circleSet,
-                myLocationButtonEnabled: true,
-                polylines: polylineSet,
-                initialCameraPosition: _kGooglePlex,
-                myLocationEnabled: true,
-                zoomGesturesEnabled: true,
-                 zoomControlsEnabled: true,
+            onMapCreated: (GoogleMapController controller)async{
+              _controllerGoogleMap.complete(controller);
+              newGoogleMapController = controller;
 
-              onMapCreated: (GoogleMapController controller){
-                _controllerGoogleMap.complete(controller);
-                newGoogleMapController = controller;
-                locatePosition();
-                setState(() {
-                  bottomPaddingofMap = 320;
-                });
-              },
-              //----------------get latitutde and longtitude using the camera movement---------//
-              onCameraMove: (CameraPosition camerapos)async {
+              locatePosition();
+              setState(() {
+                bottomPaddingofMap = 320;
+              });
 
-                searching = false;
-                setState(() {});
-                finallat = camerapos.target.latitude.toString();
-                finallong = camerapos.target.longitude.toString();
-                String address2 = await AssistantMethod.nameCoordinatesAddress(camerapos, context);//passes the latlng using cameraposition to assistant method
-                print("this is your Destination Address::" + address2);
-              },
-              //------------------------------------------------------------------------//
-              onCameraIdle: () {
-                searching = true;
-                setState(() {});
-              },
+            },
+            //----------------get latitutde and longtitude using the camera movement---------//
+            onCameraMove: (CameraPosition camerapos)async {
+
+              searching = false;
+              setState(() {});
+              finallat = camerapos.target.latitude.toString();
+              finallong = camerapos.target.longitude.toString();
+              String address2 = await AssistantMethod.nameCoordinatesAddress(camerapos, context);//passes the latlng using cameraposition to assistant method
+              print("this is your Destination Address::" + address2);
+            },
+            //------------------------------------------------------------------------//
+            onCameraIdle: () {
+              searching = true;
+              setState(() {});
+            },
+          ),
+          //------------------MARKER-------------------/
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+              top: MediaQuery.of(context).size.height / 3.9,
+
+              child: Image.asset(
+                "images/markeruser.png",
+                height: 80,
+              ),
             ),
-            //------------------MARKER-------------------/
-            Stack(
+            ],
+          ),
+          searching == true
+              ? Stack(
               alignment: Alignment.center,
-              children: [
-                Positioned(
-                top: MediaQuery.of(context).size.height / 4.5,
+                children: [
+                  Positioned(
+            top: MediaQuery.of(context).size.height / 5.3,
 
-                child: Image.asset(
-                  "images/markeruser.png",
-                  height: 80,
-                ),
-              ),
-              ],
-            ),
-            searching == true
-                ? Stack(
-                alignment: Alignment.center,
-                  children: [
-                    Positioned(
-              top: MediaQuery.of(context).size.height / 6,
+            child: Container(
 
-              child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4.0),
-                    color: Colors.white,
-                  ),
-                  width: 250,
-                  height: 43,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      //-----coordinates--/////
-                      // Text(
-                      //   "Lat $finallat",
-                      //   style: TextStyle(color: Colors.white),
-                      // ),
-                      // Text(
-                      //   "Lng $finallong",
-                      //   style: TextStyle(color: Colors.white),
-                      // ),
-                      //------------------/
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                        child: Text(Provider.of<AppData>(context).destinationLocation!= null
-                            ? Provider.of<AppData>(context).destinationLocation.placename
-                            : "Destination", style: TextStyle(fontSize: 10, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-              ),
-            ),
-                ])
-                : Stack(
-              alignment: Alignment.center,
-                  children: [
-                    Positioned(
-              top: MediaQuery.of(context).size.height / 6,
-
-              child: Container(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 17.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                    color: Colors.amber,
-                  ),
-                  width: 50,
-                  height: 40,
-                  child: Center(
-                    child: SpinKitPulse(
-                     color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-              ),
-            ),
-                ]),
-            //-------------------------------/
-            // Positioned( DUMMY MARKER
-            //   top: 170,
-            //
-            //   child: Padding(
-            //     padding: const EdgeInsets.symmetric(horizontal: 175),
-            //     child: FloatingActionButton(
-            //       backgroundColor: Colors.transparent,
-            //       child: Icon(Icons.location_on, color: Colors.amber, size: 40,),
-            //     ),
-            //   ),
-            // ),
-
-            Positioned(
-              top: 20,
-              left: 22,
-              child: Container(
-                width: 85,
-                height: 25,
                 decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-
-
+                  borderRadius: BorderRadius.circular(4.0),
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      blurRadius: 6,
-                      spreadRadius: .5,
-                      offset: Offset(
-                        .7,.7
-                      )
-                    )
-                  ]
                 ),
-                child: Row(
+                width: 250,
+                height: 43,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: 4,),
-                    CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Image.asset("images/PAZINGA.png", height: 20,width: 20,),
-                      radius: 10,
+                    //-----coordinates--/////
+                    // Text(
+                    //   "Lat $finallat",
+                    //   style: TextStyle(color: Colors.white),
+                    // ),
+                    // Text(
+                    //   "Lng $finallong",
+                    //   style: TextStyle(color: Colors.white),
+                    // ),
+                    //------------------/
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                      child: Text(Provider.of<AppData>(context).destinationLocation!= null
+                          ? Provider.of<AppData>(context).destinationLocation.placename
+                          : "Destination", style: TextStyle(fontSize: 10, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.center,
+                      ),
                     ),
-                    SizedBox(width: 10,),
-                    Text("365.00")
                   ],
                 ),
-              ),
             ),
-            Positioned(
-              left: 0.0,
-              right: 0.0,
-              bottom: 0.0,
-              child: Container(
-                height: destinationContainer,
+          ),
+              ])
+              : Stack(
+            alignment: Alignment.center,
+                children: [
+                  Positioned(
+            top: MediaQuery.of(context).size.height / 6,
+
+            child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 12.0, horizontal: 17.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                  boxShadow:[
-                    BoxShadow(
-                      color: Colors.black,
-                      blurRadius: 16,
-                      spreadRadius: .5,
-                      offset: Offset(.7, .7),
-                    )
-                  ]
+                  borderRadius: BorderRadius.circular(12.0),
+                  color: Colors.amber,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                width: 50,
+                height: 40,
+                child: Center(
+                  child: SpinKitPulse(
+                   color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+            ),
+          ),
+              ]),
+          //-------------------------------/
+          // Positioned( DUMMY MARKER
+          //   top: 170,
+          //
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 175),
+          //     child: FloatingActionButton(
+          //       backgroundColor: Colors.transparent,
+          //       child: Icon(Icons.location_on, color: Colors.amber, size: 40,),
+          //     ),
+          //   ),
+          // ),
 
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Fill in the Destination address", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),),
+          // Positioned(
+          //   top: 20,
+          //   left: 22,
+          //   child: Container(
+          //     width: 85,
+          //     height: 25,
+          //     decoration: BoxDecoration(
+          //       shape: BoxShape.rectangle,
+          //
+          //
+          //       color: Colors.white,
+          //       borderRadius: BorderRadius.circular(22),
+          //       boxShadow: [
+          //         BoxShadow(
+          //           color: Colors.black,
+          //           blurRadius: 6,
+          //           spreadRadius: .5,
+          //           offset: Offset(
+          //             .7,.7
+          //           )
+          //         )
+          //       ]
+          //     ),
+          //     child: Row(
+          //       children: [
+          //         SizedBox(width: 4,),
+          //         CircleAvatar(
+          //           backgroundColor: Colors.white,
+          //           child: Image.asset("images/PAZINGA.png", height: 20,width: 20,),
+          //           radius: 10,
+          //         ),
+          //         SizedBox(width: 10,),
+          //         Text("365.00")
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          Positioned(
+            left: 0.0,
+            right: 0.0,
+            bottom: 0.0,
+            child: Container(
+              height: destinationContainer,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                boxShadow:[
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 20,
+                    spreadRadius: .5,
+                    offset: Offset(.7, .7),
+                  )
+                ]
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
 
-                      // GestureDetector(
-                      //   onTap: (){
-                      //     Navigator.push(context, MaterialPageRoute(builder: (context)=> DropOff()));
-                      //   },
-                      //   child: Container(
-                      //     decoration: BoxDecoration(
-                      //       color: Colors.white,
-                      //       borderRadius: BorderRadius.circular(5.0),
-                      //       boxShadow: [
-                      //         BoxShadow(
-                      //           color: Colors.black54,
-                      //           blurRadius: 6,
-                      //           spreadRadius: .5,
-                      //           offset: Offset(.7, .7),
-                      //         )
-                      //
-                      //       ]
-                      //     ),
-                      //     child: Padding(
-                      //       padding: const EdgeInsets.all(12.0),
-                      //       child: Row(
-                      //         children: [
-                      //           Icon(Icons.search, color: Colors.amberAccent,),
-                      //           SizedBox(width: 10,),
-                      //           Text("Search Drop Off")
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),    DROPOFF
-                      // SizedBox(height:10),
-                      // Row(
-                      //   children: [
-                      //     Icon(Icons.location_on_sharp, color: Colors.red,),
-                      //     SizedBox(width: 12,),
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         Text(Provider.of<AppData>(context).pickUpLocation!= null
-                      //         ? Provider.of<AppData>(context).pickUpLocation.placename
-                      //             : "Add Home", style: TextStyle(fontSize: 10,),maxLines: 2,
-                      //         ),
-                      //         SizedBox(height: 4,),
-                      //         Text("Current Location", style: TextStyle(color: Colors.amber, fontSize: 12),)
-                      //       ],
-                      //     )
-                      //   ],
-                      // ),
-                      // SizedBox(height:10),
-                      // DividerWidget(),
-                      SizedBox(height: 16.0,),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Fill in the Destination address", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),),
 
-                      Row(
-                        children: [
-                          SizedBox(width: 12,),
-                          Icon(Icons.location_on, color: Colors.amber,),
-                          SizedBox(width: 12,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(Provider.of<AppData>(context).destinationLocation!= null
-                                  ? Provider.of<AppData>(context).destinationLocation.placename
-                                  : "Destination", style: TextStyle(fontSize: 13,),maxLines: 2,
+
+                    SizedBox(height: 16.0,),
+
+                    Row(
+                      children: [
+                        SizedBox(width: 12,),
+                        Icon(Icons.location_on, color: Colors.amber,),
+                        SizedBox(width: 12,),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(Provider.of<AppData>(context).destinationLocation!= null
+                                ? Provider.of<AppData>(context).destinationLocation.placename
+                                : "Destination", style: TextStyle(fontSize: 13,),maxLines: 2,
+                            ),
+
+                          ],
+
+                        )
+
+                      ],
+
+                    ),
+                    SizedBox(height: 10,),
+                    DividerWidget(),
+                    TextField(
+                      controller: destinationAddress,
+                      keyboardType: TextInputType.streetAddress,
+                      decoration: InputDecoration(
+                        prefixIcon:Icon(Icons.work, color: Colors.grey,),
+
+                        labelText: "Landmark",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.0,
+                        ),
+                        labelStyle: TextStyle(
+                          fontSize: 14.0,
+                          fontFamily: 'bolt',
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    TextField(
+                      controller: contactNumber,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        prefixIcon:Icon(Icons.phone, color: Colors.grey,),
+
+                        labelText: "Contact number",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.0,
+                        ),
+                        labelStyle: TextStyle(
+                          fontSize: 14.0,
+                          fontFamily: 'bolt',
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                        width: MediaQuery.of(context).size.width * .43,
+                        child: RaisedButton(
+
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0)),
+                          color: Colors.amber,
+                          child: Container(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Text('Confirm', style: TextStyle(
+                                color: Colors.white,
+
+
                               ),
 
-                            ],
-
-                          )
-
-                        ],
-
-                      ),
-                      SizedBox(height: 10,),
-                      DividerWidget(),
-                      TextField(
-                        controller: destinationAddress,
-                        keyboardType: TextInputType.streetAddress,
-                        decoration: InputDecoration(
-                          prefixIcon:Icon(Icons.work, color: Colors.grey,),
-
-                          labelText: "Complete Address",
-                          hintStyle: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 10.0,
+                              ),
+                            ),
                           ),
-                          labelStyle: TextStyle(
-                            fontSize: 14.0,
-                            fontFamily: 'bolt',
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
+                          onPressed: ()async{
+                            print('PRESSED');
+                            ////res = await Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentPanel())); temporary
+                            Navigator.pop(context, "obtainDirection");
+                            if(destinationAddress.text.length <= 15 || contactNumber.text == null){
+                              displayToastMessage("address and contact number is not valid or too short", context);
+                            }
+                            else if(res == "obtainDirection"){
+                              displayRideDetailsContainer();
+                            }
+
+                            else{
+                              await getPlaceDirection();
+                            }
+                          },
                         ),
-                        style: TextStyle(fontSize: 14.0),
                       ),
-                      TextField(
-                        controller: contactNumber,
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                          prefixIcon:Icon(Icons.phone, color: Colors.grey,),
-
-                          labelText: "Contact number",
-                          hintStyle: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 10.0,
-                          ),
-                          labelStyle: TextStyle(
-                            fontSize: 14.0,
-                            fontFamily: 'bolt',
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      SizedBox(height: 10,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
+                        Container(
                           width: MediaQuery.of(context).size.width * .43,
                           child: RaisedButton(
 
                             shape: new RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5.0)),
-                            color: Colors.amber,
+                            color: Colors.red,
                             child: Container(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 10),
-                                child: Text('Confirm', style: TextStyle(
+                                child: Text('Cancel', style: TextStyle(
                                   color: Colors.white,
 
 
@@ -550,284 +547,248 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                                 ),
                               ),
                             ),
-                            onPressed: ()async{
-                              print('PRESSED');
-                              res = await Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentPanel()));
-                              if(destinationAddress.text.length <= 15 || contactNumber.text == null){
-                                displayToastMessage("address and contact number is not valid or too short", context);
-                              }
-                              else if(res == "obtainDirection"){
-                                displayRideDetailsContainer();
-                              }
-
-                              else{
-                                await getPlaceDirection();
-                              }
+                            onPressed: (){
+                              Navigator.pop(context);
                             },
                           ),
                         ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * .43,
-                            child: RaisedButton(
+                   ] ),
+                  ],
 
-                              shape: new RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5.0)),
-                              color: Colors.red,
-                              child: Container(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                  child: Text('Cancel', style: TextStyle(
-                                    color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0.0,
+            right: 0.0,
+            bottom: 0.0,
+            child: GestureDetector(
+              onTap: (){
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: Container(
+                height: rideDetailsContainer,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                    boxShadow:[
+                      BoxShadow(
+                        color: Colors.black,
+                        blurRadius: 16,
+                        spreadRadius: .5,
+                        offset: Offset(.7, .7),
+                      )
+                    ]
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Review your Booking", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),),
 
 
+                      SizedBox(height: 16.0,),
+
+                      Container(
+                        width: double.infinity,
+                        color:  Colors.amber,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              SizedBox(width: 12,),
+                              Icon(Icons.bike_scooter),
+                              SizedBox(width: 12,),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Trike",style: TextStyle(fontFamily: "bolt",fontSize: 12),
+                                  ),
+                                  Text(((tripDirectionDetails != null)? tripDirectionDetails.distanceText : ''),style: TextStyle(fontFamily: "bolt",fontSize: 12),
                                   ),
 
+                                ],
+
+                              ),
+                              Expanded(child: Container(),),
+                              Text(((tripDirectionDetails != null)? '\PHP: ${AssistantMethod.calculateFares(tripDirectionDetails)}' : ''),style: TextStyle(fontFamily: "bolt",fontSize: 12),
+                              )
+
+                            ],
+
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+
+                      Container(
+                        width: MediaQuery.of(context).size.width * .96,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(5),
+
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal:5,),
+                          child: DropdownButton(
+
+                            underline: SizedBox(),
+                            isExpanded: true,
+                            icon: Icon(Icons.arrow_drop_down_circle_outlined),
+                            hint: Text("Select Payment",style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center, ),
+                            value: paymentChoose,
+                            onChanged:(paymentValue){
+                              setState(() {
+                                paymentChoose = paymentValue;
+                              });
+                            },
+                            items: payments.map((vehicleItem){
+                              return DropdownMenuItem(
+
+                                value: vehicleItem,
+                                child: Text(vehicleItem,style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center,),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 10,),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * .43,
+                              child: RaisedButton(
+
+                                shape: new RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                color: Colors.amber,
+                                child: Container(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    child: Text('Confirm', style: TextStyle(
+                                      color: Colors.white,
+
+
+                                    ),
+
+                                    ),
                                   ),
                                 ),
+                                onPressed: ()async{
+
+                                  print('PRESSED');
+                                  setState(() {
+                                    destinationContainer =0;
+                                    loadingRider = 280;
+                                  });
+                                },
                               ),
-                              onPressed: (){
-                                Navigator.pop(context);
-                              },
                             ),
-                          ),
-                     ] ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .43,
+                              child: RaisedButton(
+
+                                shape: new RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                color: Colors.red,
+                                child: Container(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    child: Text('Cancel', style: TextStyle(
+                                      color: Colors.white,
+
+
+                                    ),
+
+                                    ),
+                                  ),
+                                ),
+                                onPressed: (){
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          ] ),
                     ],
 
                   ),
                 ),
               ),
             ),
-            Positioned(
-              left: 0.0,
-              right: 0.0,
-              bottom: 0.0,
-              child: GestureDetector(
-                onTap: (){
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                child: Container(
-                  height: rideDetailsContainer,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                      boxShadow:[
-                        BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 16,
-                          spreadRadius: .5,
-                          offset: Offset(.7, .7),
-                        )
-                      ]
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+          ),
+          Positioned(
+            left: 0.0,
+            right: 0.0,
+            bottom: 0.0,
+            child: GestureDetector(
+              onTap: (){
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: Container(
+                height: loadingRider,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                    boxShadow:[
+                      BoxShadow(
+                        color: Colors.black,
+                        blurRadius: 16,
+                        spreadRadius: .5,
+                        offset: Offset(.7, .7),
+                      )
+                    ]
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
 
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("testings", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),),
-
-
-                        SizedBox(height: 16.0,),
-
-                        Container(
-                          width: double.infinity,
-                          color:  Colors.amber,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                SizedBox(width: 12,),
-                                Icon(Icons.bike_scooter),
-                                SizedBox(width: 12,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Trike",style: TextStyle(fontFamily: "bolt",fontSize: 12),
-                                    ),
-                                    Text(((tripDirectionDetails != null)? tripDirectionDetails.distanceText : ''),style: TextStyle(fontFamily: "bolt",fontSize: 12),
-                                    ),
-
-                                  ],
-
-                                ),
-                                Expanded(child: Container(),),
-                                Text(((tripDirectionDetails != null)? '\PHP: ${AssistantMethod.calculateFares(tripDirectionDetails)}' : ''),style: TextStyle(fontFamily: "bolt",fontSize: 12),
-                                )
-
-                              ],
-
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10,),
-
-                        Container(
-                          width: MediaQuery.of(context).size.width * .96,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(5),
-
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal:5,),
-                            child: DropdownButton(
-
-                              underline: SizedBox(),
-                              isExpanded: true,
-                              icon: Icon(Icons.arrow_drop_down_circle_outlined),
-                              hint: Text("Select Payment",style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center, ),
-                              value: paymentChoose,
-                              onChanged:(paymentValue){
-                                setState(() {
-                                  paymentChoose = paymentValue;
-                                });
-                              },
-                              items: payments.map((vehicleItem){
-                                return DropdownMenuItem(
-
-                                  value: vehicleItem,
-                                  child: Text(vehicleItem,style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center,),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 10,),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * .43,
-                                child: RaisedButton(
-
-                                  shape: new RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  color: Colors.amber,
-                                  child: Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      child: Text('Confirm', style: TextStyle(
-                                        color: Colors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(child: Text("Please wait...", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),)),
 
 
-                                      ),
-
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: ()async{
-
-                                    print('PRESSED');
-                                    setState(() {
-                                      destinationContainer =0;
-                                      loadingRider = 280;
-                                    });
-                                  },
-                                ),
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .43,
-                                child: RaisedButton(
-
-                                  shape: new RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  color: Colors.red,
-                                  child: Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      child: Text('Cancel', style: TextStyle(
-                                        color: Colors.white,
 
 
-                                      ),
 
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: (){
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                            ] ),
-                      ],
+                      SizedBox(height: 60,),
 
-                    ),
+                      Center(
+                          child: GestureDetector(
+                            onTap: cancelSearch,
+                          child: SpinKitPulse(
+                            color: Colors.amber,
+                            size: 50,
+
+                          )
+                      )
+                      ),
+
+
+
+
+                    ],
+
                   ),
                 ),
               ),
             ),
-            Positioned(
-              left: 0.0,
-              right: 0.0,
-              bottom: 0.0,
-              child: GestureDetector(
-                onTap: (){
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                child: Container(
-                  height: loadingRider,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                      boxShadow:[
-                        BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 16,
-                          spreadRadius: .5,
-                          offset: Offset(.7, .7),
-                        )
-                      ]
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(child: Text("Please wait...", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),)),
-
-
-
-
-
-                        SizedBox(height: 60,),
-
-                        Center(
-                            child: GestureDetector(
-                              onTap: cancelSearch,
-                            child: SpinKitPulse(
-                              color: Colors.amber,
-                              size: 50,
-
-                            )
-                        )
-                        ),
-
-
-
-
-                      ],
-
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-
-        ),
+          ),
+        ],
 
       ),
+
     );
   }
   Future <void> getPlaceDirection()async{
     var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
     var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
-    var pickupLatLng = LatLng(initialPos.latitude, initialPos.longtitude);
-    var destinationLatLng = LatLng(finalPos.latitude, finalPos.longtitude);
+    var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
+    var destinationLatLng = LatLng(finalPos.latitude, finalPos.longitude);
 
    //showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
 
@@ -910,6 +871,88 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
       circleSet.add(destinationCircle);
     });
   }
+  void initGeofireListener(){
+    print("FUCKING MARKERSs");
+    Geofire.initialize("availableDrivers");
+    Geofire.queryAtLocation(currentPosition.latitude, currentPosition.longitude, 15).listen((map) {
+      print(currentPosition.latitude + currentPosition.longitude);
+      print(map);
+      if (map != null) {
+        var callBack = map['callBack'];
+
+        //latitude will be retrieved from map['latitude']
+        //longitude will be retrieved from map['longitude']
+
+        switch (callBack) {
+          case Geofire.onKeyEntered:
+           NearbyAvailableDrivers nearbyAvailableDrivers = NearbyAvailableDrivers();
+           nearbyAvailableDrivers.key = map['key'];
+           nearbyAvailableDrivers.latitude = map['latitude'];
+           nearbyAvailableDrivers.longitude = map['longitude'];
+           GeoFireAssistant.nearbyAvailableDriversList.add(nearbyAvailableDrivers);
+
+             updateAvailableDriversOnMap();
+
+            break;
+
+          case Geofire.onKeyExited:
+            GeoFireAssistant.removeDriverFromList(map['key']);
+            updateAvailableDriversOnMap();
+            break;
+
+          case Geofire.onKeyMoved:
+            NearbyAvailableDrivers nearbyAvailableDrivers = NearbyAvailableDrivers();
+            nearbyAvailableDrivers.key = map['key'];
+            nearbyAvailableDrivers.latitude = map['latitude'];
+            nearbyAvailableDrivers.longitude = map['longitude'];
+            GeoFireAssistant.updateDriverNearbylocation(nearbyAvailableDrivers);
+          // Update your key's location
+            break;
+
+          case Geofire.onGeoQueryReady:
+          // All Intial Data is loaded
+          updateAvailableDriversOnMap();
+
+            break;
+        }
+      }
+
+      setState(() {});
+    //tt
+  });
+
+}
+  void updateAvailableDriversOnMap(){
+    setState(() {
+      markersSet.clear();
+    });
+    Set<Marker> tMarkers = Set<Marker>();
+    for(NearbyAvailableDrivers driver in GeoFireAssistant.nearbyAvailableDriversList){
+      LatLng driverAvailablePosition = LatLng(driver.latitude, driver.longitude);
+      Marker marker = Marker(
+        markerId: MarkerId('driver${driver.key}'),
+        position: driverAvailablePosition,
+        icon: nearbyIcon,
+
+
+      );
+      tMarkers.add(marker);
+      setState(() {
+
+        markersSet = tMarkers;
+      });
+    }
+  }
+  void createIconMarker(){
+    if(nearbyIcon == null){
+      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context, size: Size(.2, .2));
+      BitmapDescriptor.fromAssetImage(imageConfiguration, 'images/pazadamarker.png').then((value){
+        nearbyIcon =value;
+      }
+      );
+    }
+  }
+
 }
 displayToastMessage(String Message, BuildContext context){
   Fluttertoast.showToast(msg: Message);

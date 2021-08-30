@@ -13,7 +13,7 @@ class _PaymentPanelState extends State<PaymentPanel> {
   TextEditingController dropOffTextEditingController = TextEditingController();
   String valueChoose,vehicleChoose;
   List listItem = ["PazPaz", "Willing to Wait"];
-  List vehicleItem = ["Trike", "Habal","Padyak"];
+  List vehicleItem = ["Catablan - Pabor", "Habal","Padyak"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +26,7 @@ class _PaymentPanelState extends State<PaymentPanel> {
 
             Center(
               child: Container(
-                height: 270,
+                height: 215,
                 alignment: Alignment.center,
 
                 width: MediaQuery.of(context).size.width * .96,
@@ -102,73 +102,74 @@ class _PaymentPanelState extends State<PaymentPanel> {
                           ),)],
                       ),
                       SizedBox(height: 16,),
-                     Row(
-                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                       children: [
-
-                         Container(
-
-                           width: MediaQuery.of(context).size.width * .38,
-                           decoration: BoxDecoration(
-                             color: Colors.grey[200],
-                             borderRadius: BorderRadius.circular(5),
-
-                           ),
-                           child: Padding(
-                             padding: const EdgeInsets.symmetric(horizontal:5,),
-                             child: DropdownButton(
-                               underline: SizedBox(),
-                               isExpanded: true,
-                               icon: Icon(Icons.arrow_drop_down_circle_outlined),
-                               hint: Text("Select Service", style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center, ),
-                               value: valueChoose,
-                               onChanged:(newValue){
-                                 setState(() {
-                                   valueChoose = newValue;
-                                 });
-                               },
-                               items: listItem.map((valueItem){
-                                 return DropdownMenuItem(
-                                   value: valueItem,
-                                   child: Text(valueItem,style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center,),
-                                 );
-                               }).toList(),
-                             ),
-                           ),
-                         ),
-                         SizedBox(width: 18,),
-                         Container(
-                           width: MediaQuery.of(context).size.width * .38,
-                           decoration: BoxDecoration(
-                             color: Colors.grey[200],
-                             borderRadius: BorderRadius.circular(5),
-
-                           ),
-                           child: Padding(
-                             padding: const EdgeInsets.symmetric(horizontal:5,),
-                             child: DropdownButton(
-                               underline: SizedBox(),
-                               isExpanded: true,
-                               icon: Icon(Icons.arrow_drop_down_circle_outlined),
-                               hint: Text("Select Vehicle",style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center, ),
-                               value: vehicleChoose,
-                               onChanged:(vehicleValue){
-                                 setState(() {
-                                   vehicleChoose = vehicleValue;
-                                 });
-                               },
-                               items: vehicleItem.map((vehicleItem){
-                                 return DropdownMenuItem(
-                                   value: vehicleItem,
-                                   child: Text(vehicleItem,style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center,),
-                                 );
-                               }).toList(),
-                             ),
-                           ),
-                         ),
-                       ],
-                     )
+                     // Row(
+                     //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                     //   children: [
+                     //
+                     //     Container(
+                     //
+                     //       width: MediaQuery.of(context).size.width * .38,
+                     //       decoration: BoxDecoration(
+                     //         color: Colors.grey[200],
+                     //         borderRadius: BorderRadius.circular(5),
+                     //
+                     //       ),
+                     //       child: Padding(
+                     //         padding: const EdgeInsets.symmetric(horizontal:5,),
+                     //         child: DropdownButton(
+                     //           underline: SizedBox(),
+                     //           isExpanded: true,
+                     //           icon: Icon(Icons.arrow_drop_down_circle_outlined),
+                     //           hint: Text("Select Service", style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center, ),
+                     //           value: valueChoose,
+                     //           onChanged:(newValue){
+                     //             setState(() {
+                     //               valueChoose = newValue;
+                     //             });
+                     //           },
+                     //           items: listItem.map((valueItem){
+                     //             return DropdownMenuItem(
+                     //               value: valueItem,
+                     //               child: Text(valueItem,style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center,),
+                     //             );
+                     //           }).toList(),
+                     //         ),
+                     //       ),
+                     //     ),
+                     //     SizedBox(width: 18,),
+                     //     Container(
+                     //       width: MediaQuery.of(context).size.width * .38,
+                     //       decoration: BoxDecoration(
+                     //         color: Colors.grey[200],
+                     //         borderRadius: BorderRadius.circular(5),
+                     //
+                     //       ),
+                     //       child: Padding(
+                     //         padding: const EdgeInsets.symmetric(horizontal:5,),
+                     //         child: DropdownButton(
+                     //           underline: SizedBox(),
+                     //           isExpanded: true,
+                     //           icon: Icon(Icons.arrow_drop_down_circle_outlined),
+                     //           hint: Text("Select Toda",style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center, ),
+                     //           value: vehicleChoose,
+                     //           onChanged:(vehicleValue){
+                     //             setState(() {
+                     //               vehicleChoose = vehicleValue;
+                     //             });
+                     //           },
+                     //           items: vehicleItem.map((vehicleItem){
+                     //             return DropdownMenuItem(
+                     //               value: vehicleItem,
+                     //               child: Text(vehicleItem,style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center,),
+                     //             );
+                     //           }).toList(),
+                     //         ),
+                     //       ),
+                     //     ),
+                     //   ],
+                     // )
                     ],
+                    
                   ),
                 ),
               ),

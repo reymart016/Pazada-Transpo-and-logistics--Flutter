@@ -1,7 +1,7 @@
 class Address{
   String placeFormattedAddress, placename, placeId;
-  double latitude, longtitude;
+  double latitude, longitude;
 
   Address({this.placeFormattedAddress, this.placename, this.placeId,
-      this.latitude, this.longtitude});
+      this.latitude, this.longitude});
 }

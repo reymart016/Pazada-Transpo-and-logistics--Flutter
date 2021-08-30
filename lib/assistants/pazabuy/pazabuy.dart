@@ -8,10 +8,14 @@ class Pazabuy extends StatefulWidget {
 class _PazabuyState extends State<Pazabuy> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return SingleChildScrollView(
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Text("Pazabuy"),
+        body: Container(
+          child: Column(
+            children: [
+              Text("Pazabuy"),
+            ],
+          ),
         ),
       ),
     );
