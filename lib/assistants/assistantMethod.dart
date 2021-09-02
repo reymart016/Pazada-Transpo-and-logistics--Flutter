@@ -50,6 +50,7 @@ class AssistantMethod{
     return placeAddress;
   }
 
+
   static Future <DirectionDetails> obtainPlaceDirectionDetails(LatLng initialLocation, LatLng finalPosition)async{
 
     String directionUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${initialLocation.latitude},${initialLocation.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&key=$mapKey";
@@ -99,5 +100,23 @@ class AssistantMethod{
     int randomNumber = random.nextInt(num);
     return randomNumber.toDouble();
 
+  }
+
+  static Future<String> nameCoordinatesAddress2(CameraPosition camerapos, context)async{
+    String placeAddress = "";
+    String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${camerapos.target.latitude},${camerapos.target.longitude}&key=$mapKey";
+    var response = await RequestAssistant.getRequest(url);
+
+    if(response!= "failed"){
+      placeAddress = response["results"][0]["formatted_address"];
+
+      Address desuserPickUpAddress = new Address();
+      desuserPickUpAddress.longitude = camerapos.target.longitude;
+      desuserPickUpAddress.latitude = camerapos.target.latitude;
+      desuserPickUpAddress.placename = placeAddress;
+
+      Provider.of<AppData>(context, listen: false).updateDestinationAddress(desuserPickUpAddress);
+    }
+    return placeAddress;
   }
 }

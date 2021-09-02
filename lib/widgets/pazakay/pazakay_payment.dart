@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
@@ -12,7 +13,7 @@ class PazakayPayment extends StatefulWidget {
   @override
   _PazakayPaymentState createState() => _PazakayPaymentState();
 }
-List payments = ["Cash", "Gcash"];
+List payments = ["Cash", "Gcash (Coming Soon)"];
 String paymentChoose;
 Position currentPosition,desPosition;
 
@@ -75,7 +76,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                       SizedBox(height: 16.0,),
 
                       Container(
-                        height: 100,
+                        height: 130,
                         width: double.infinity,
 
                         decoration: BoxDecoration(
@@ -83,26 +84,33 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                           border: Border.all(width: 3,color: Colors.amber),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical:30.0, horizontal: 5),
+                          padding: const EdgeInsets.only(top:10.0, bottom: 10, right: 20, left: 15),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SizedBox(width: 12,),
-                              Icon(Icons.bike_scooter),
-                              SizedBox(width: 12,),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Trike",style: TextStyle(fontFamily: "bolt",fontSize: 12),
-                                  ),
-                                  Text(((tripDirectionDetails != null)? tripDirectionDetails.distanceText : ''),style: TextStyle(fontFamily: "bolt",fontSize: 12),
-                                  ),
 
-                                ],
+                              Padding(
+                                padding: const EdgeInsets.only(top:5.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Trike",style: TextStyle(fontFamily: "bolt-bold",fontSize: 30, color: Colors.amber),
+                                    ),
+                                    Text("Affordable ride for every Juan. \nMax Capacity: 4 people.",style:TextStyle(fontFamily: "bolt",fontSize: 17)),
+                                    SizedBox(height: 10,),
+                                    Container(child: Row(
+                                      children: [
+                                        Icon(Icons.speed,color: Colors.grey,size: 12,),
+                                        SizedBox(width: 5,),
+                                        Text("0.5 x 0.4 x 0.5 Meter. Up to 4 people", style: TextStyle(fontFamily: "bolt",fontSize: 12, color: Colors.grey),)
+                                      ],
+                                    ),)
+                                  ],
 
+                                ),
                               ),
-                              Expanded(child: Container(),),
-                              Text(((tripDirectionDetails != null)? '\PHP: ${AssistantMethod.calculateFares(tripDirectionDetails)}' : ''),style: TextStyle(fontFamily: "bolt",fontSize: 12),
-                              )
+
+                              SvgPicture.asset('images/svg/trikeA.svg',height: 50,),
 
                             ],
 
@@ -111,38 +119,88 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                       ),
                       SizedBox(height: 10,),
 
+                      // Container(
+                      //   width: MediaQuery.of(context).size.width * .96,
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.grey[200],
+                      //     borderRadius: BorderRadius.circular(5),
+                      //
+                      //   ),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.symmetric(horizontal:5,),
+                      //     child: DropdownButton(
+                      //
+                      //       underline: SizedBox(),
+                      //       isExpanded: true,
+                      //       icon: Icon(Icons.arrow_drop_down_circle_outlined),
+                      //       hint: Text("Select Payment",style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center, ),
+                      //       value: paymentChoose,
+                      //       onChanged:(paymentValue){
+                      //         setState(() {
+                      //           paymentChoose = paymentValue;
+                      //         });
+                      //       },
+                      //       items: payments.map((vehicleItem){
+                      //         return DropdownMenuItem(
+                      //
+                      //           value: vehicleItem,
+                      //           child: Text(vehicleItem,style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center,),
+                      //         );
+                      //       }).toList(),
+                      //     ),
+                      //   ),
+                      // ),
+                      SizedBox(height: 10,),
                       Container(
-                        width: MediaQuery.of(context).size.width * .96,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(5),
-
-                        ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal:5,),
-                          child: DropdownButton(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
 
-                            underline: SizedBox(),
-                            isExpanded: true,
-                            icon: Icon(Icons.arrow_drop_down_circle_outlined),
-                            hint: Text("Select Payment",style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center, ),
-                            value: paymentChoose,
-                            onChanged:(paymentValue){
-                              setState(() {
-                                paymentChoose = paymentValue;
-                              });
-                            },
-                            items: payments.map((vehicleItem){
-                              return DropdownMenuItem(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                                value: vehicleItem,
-                                child: Text(vehicleItem,style: TextStyle(fontSize: 15, fontFamily: "bolt"),textAlign: TextAlign.center,),
-                              );
-                            }).toList(),
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Origin:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                      SizedBox(height: 10,),
+                                      Text('Destination:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                      SizedBox(height: 10,),
+                                      Text('Distance:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                      SizedBox(height: 10,),
+                                      Text('Succeeding Kilometer:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(Provider.of<AppData>(context).pickUpLocation!= null
+                                          ? Provider.of<AppData>(context).pickUpLocation.placename
+                                          : "Add Home", style: TextStyle(fontSize: 11,),maxLines: 1,textAlign: TextAlign.left,
+                                      ),
+                                      SizedBox(height: 10,),
+                                      Text(Provider.of<AppData>(context).destinationLocation!= null
+                                          ? Provider.of<AppData>(context).destinationLocation.placename
+                                          : "Destination", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left,
+                                      ),
+                                      SizedBox(height: 10,),
+                                      Text(((tripDirectionDetails != null)? tripDirectionDetails.distanceText : ''),style: TextStyle(fontFamily: "bolt",fontSize: 11),
+                                      ),
+                                      SizedBox(height: 10,),
+
+                                      Text('N/A', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                    ],
+
+                                  )
+                                ],
+                              ),
+
+                            ],
                           ),
                         ),
                       ),
-
                       // SizedBox(height: MediaQuery.of(context).size.height/4),
                       // Row(
                       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,7 +270,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
           SizedBox.expand(
             child: DraggableScrollableSheet(
               initialChildSize: .23,
-              minChildSize: .15,
+              minChildSize: .23,
               maxChildSize: .23,
               builder: (BuildContext c, s){
                 return Container(
@@ -262,7 +320,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                           children: [
                             Container(
                               height: 55,
-                              width: MediaQuery.of(context).size.width * .93,
+                              width: MediaQuery.of(context).size.width * .92,
                               child: RaisedButton(
 
                                 shape: new RoundedRectangleBorder(
@@ -297,7 +355,8 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                 );
               },
             ),
-          )
+          ),
+
         ]
 
 

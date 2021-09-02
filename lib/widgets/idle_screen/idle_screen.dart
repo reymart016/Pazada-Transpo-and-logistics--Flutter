@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pazada/user_dashboard/PazadaCard.dart';
 import 'package:pazada/user_dashboard/color.dart';
 import 'package:pazada/user_dashboard/layout.dart';
@@ -7,6 +8,7 @@ import 'package:pazada/widgets/pazabuy_screen/pazabuy_screen.dart';
 
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/pazada_screen/payment_panel.dart';
+import 'package:pazada/widgets/pazakay/mode2/pazakay_query2.dart';
 import 'package:pazada/widgets/pazakay/pazakay_query.dart';
 
 
@@ -124,11 +126,72 @@ class _IdleScreenState extends State<IdleScreen> {
                 children: [
                   SizedBox(height: spacing),
                   GestureDetector(
-                    onTap: services,
+                    onTap: (){
+                      showDialog(context: context, builder: (context)=>AlertDialog(
+                        title: Text("Choose Service"),
+                        content: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: services3,
+                                child: Container(
+                                  height: 100,
+                                  alignment: Alignment.center,
+
+                                  width: MediaQuery.of(context).size.width/4,
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber,
+                                    borderRadius: BorderRadius.circular(10),
+
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(9.0),
+                                    child: Column(
+                                      children: [
+                                        SvgPicture.asset('images/svg/trikeA.svg', height: 60,),
+                                        Text('Book Now', style: TextStyle(fontFamily: "bolt",fontSize: 11, color: Colors.white),),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: services4,
+                                child: Container(
+                                  height: 100,
+                                  alignment: Alignment.center,
+
+                                  width: MediaQuery.of(context).size.width/4,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(10),
+
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(9.0),
+                                    child: Column(
+                                      children: [
+                                        SvgPicture.asset('images/svg/man.svg', height: 60,),
+                                        SizedBox(height: 2,),
+                                        Text('Book for Someone', style: TextStyle(fontFamily: "bolt",fontSize: 10, color: Colors.white),),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        actions: [
+
+                        ],
+                      ));
+                    },
                     child: PazadaCard(
                       color: pazakay,
                       label: "Pazakay",
-                      svgPath: 'images/bus.svg',
+                      svgPath: 'images/svg/Artboard 4.svg',
                     ),
                   ),
                   GestureDetector(
@@ -164,5 +227,61 @@ class _IdleScreenState extends State<IdleScreen> {
   void services3 (){
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazakayQuery()));
   }
+  void services4 (){
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazakayQuery2()));
+  }
 
-}                                                                                                           
+}
+class SimpleCustomAlert extends StatelessWidget {
+  final title;
+  SimpleCustomAlert(this.title);
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4)
+      ),
+      child: Container(
+        height: 200,
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                color: Colors.white70,
+                child: Icon(Icons.account_balance_wallet, size: 60,),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                color: Colors.redAccent,
+                child: SizedBox.expand(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(title,
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        RaisedButton(
+                          color: Colors.white,
+                          child: Text('Okay'),
+                          onPressed: ()=> {
+                            Navigator.of(context).pop()
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

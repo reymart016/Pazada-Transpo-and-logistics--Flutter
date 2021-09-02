@@ -28,15 +28,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 
 
-class PazadaScreen extends StatefulWidget {
+class PazadaScreen2 extends StatefulWidget {
   static const String idScreen = "pazadaScreen";
 
 
   @override
-  _PazadaScreenState createState() => _PazadaScreenState();
+  _PazadaScreen2State createState() => _PazadaScreen2State();
 }
 
-class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMixin {
+class _PazadaScreen2State extends State<PazadaScreen2> with TickerProviderStateMixin {
   var res;
   Completer<GoogleMapController> _controllerGoogleMap = Completer();
   GoogleMapController newGoogleMapController;
@@ -83,8 +83,8 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     await getPlaceDirection();
 
     setState(() {
-        destinationContainer = 0;
-        rideDetailsContainer =280;
+      destinationContainer = 0;
+      rideDetailsContainer =280;
     });
     saveRideRequest();
   }
@@ -95,7 +95,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
   void saveRideRequest(){
 
     rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
-    var pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+    var pickUp = Provider.of<AppData>(context, listen: false).destinationLocation;
     var dropOff = Provider.of<AppData>(context, listen: false).destinationLocation;
 
 
@@ -124,7 +124,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
   }
 
   void cancelRideRequest(){
-      rideRequestRef.remove();
+    rideRequestRef.remove();
   }
 
 
@@ -182,7 +182,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
   Widget button(Function function, IconData icon){
     return FloatingActionButton(onPressed: function,
-    materialTapTargetSize: MaterialTapTargetSize.padded,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
       backgroundColor: Colors.amber,
       child: Icon(
         icon,
@@ -235,15 +235,15 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
           GoogleMap(
             padding: EdgeInsets.only(bottom: bottomPaddingofMap),
             mapType: MapType.normal,
-              // onTap: _onAddMarkerButton,
-              markers: markersSet,
-              circles: circleSet,
-              myLocationButtonEnabled: true,
-              polylines: polylineSet,
-              initialCameraPosition: _kGooglePlex,
-              myLocationEnabled: true,
-              zoomGesturesEnabled: true,
-               zoomControlsEnabled: true,
+            // onTap: _onAddMarkerButton,
+            markers: markersSet,
+            circles: circleSet,
+            myLocationButtonEnabled: true,
+            polylines: polylineSet,
+            initialCameraPosition: _kGooglePlex,
+            myLocationEnabled: true,
+            zoomGesturesEnabled: true,
+            zoomControlsEnabled: true,
 
             onMapCreated: (GoogleMapController controller)async{
               _controllerGoogleMap.complete(controller);
@@ -276,78 +276,78 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
             alignment: Alignment.center,
             children: [
               Positioned(
-              top: MediaQuery.of(context).size.height / 3.9,
+                top: MediaQuery.of(context).size.height / 3.9,
 
-              child: Image.asset(
-                "images/markeruser.png",
-                height: 80,
+                child: Image.asset(
+                  "images/markeruser.png",
+                  height: 80,
+                ),
               ),
-            ),
             ],
           ),
           searching == true
               ? Stack(
               alignment: Alignment.center,
-                children: [
-                  Positioned(
-            top: MediaQuery.of(context).size.height / 5.3,
+              children: [
+                Positioned(
+                  top: MediaQuery.of(context).size.height / 5.3,
 
-            child: Container(
+                  child: Container(
 
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4.0),
-                  color: Colors.white,
-                ),
-                width: 250,
-                height: 43,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    //-----coordinates--/////
-                    // Text(
-                    //   "Lat $finallat",
-                    //   style: TextStyle(color: Colors.white),
-                    // ),
-                    // Text(
-                    //   "Lng $finallong",
-                    //   style: TextStyle(color: Colors.white),
-                    // ),
-                    //------------------/
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                      child: Text(Provider.of<AppData>(context).destinationLocation!= null
-                          ? Provider.of<AppData>(context).destinationLocation.placename
-                          : "Destination", style: TextStyle(fontSize: 10, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.center,
-                      ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.0),
+                      color: Colors.white,
                     ),
-                  ],
-                ),
-            ),
-          ),
-              ])
-              : Stack(
-            alignment: Alignment.center,
-                children: [
-                  Positioned(
-            top: MediaQuery.of(context).size.height / 6,
-
-            child: Container(
-                padding: EdgeInsets.symmetric(
-                    vertical: 12.0, horizontal: 17.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.0),
-                  color: Colors.amber,
-                ),
-                width: 50,
-                height: 40,
-                child: Center(
-                  child: SpinKitPulse(
-                   color: Colors.white,
-                    size: 20,
+                    width: 250,
+                    height: 43,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //-----coordinates--/////
+                        // Text(
+                        //   "Lat $finallat",
+                        //   style: TextStyle(color: Colors.white),
+                        // ),
+                        // Text(
+                        //   "Lng $finallong",
+                        //   style: TextStyle(color: Colors.white),
+                        // ),
+                        //------------------/
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                          child: Text(Provider.of<AppData>(context).destinationLocation!= null
+                              ? Provider.of<AppData>(context).destinationLocation.placename
+                              : "Destination", style: TextStyle(fontSize: 10, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-            ),
-          ),
+              ])
+              : Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned(
+                  top: MediaQuery.of(context).size.height / 6,
+
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 17.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      color: Colors.amber,
+                    ),
+                    width: 50,
+                    height: 40,
+                    child: Center(
+                      child: SpinKitPulse(
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
               ]),
           //-------------------------------/
           // Positioned( DUMMY MARKER
@@ -406,16 +406,16 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
             child: Container(
               height: destinationContainer,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                boxShadow:[
-                  BoxShadow(
-                    color: Colors.black,
-                    blurRadius: 20,
-                    spreadRadius: .5,
-                    offset: Offset(.7, .7),
-                  )
-                ]
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                  boxShadow:[
+                    BoxShadow(
+                      color: Colors.black,
+                      blurRadius: 20,
+                      spreadRadius: .5,
+                      offset: Offset(.7, .7),
+                    )
+                  ]
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
@@ -492,69 +492,69 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                     ),
                     SizedBox(height: 10,),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                        width: MediaQuery.of(context).size.width * .43,
-                        child: RaisedButton(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * .43,
+                            child: RaisedButton(
 
-                          shape: new RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0)),
-                          color: Colors.amber,
-                          child: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Text('Confirm', style: TextStyle(
-                                color: Colors.white,
-
-
-                              ),
-
-                              ),
-                            ),
-                          ),
-                          onPressed: ()async{
-                            print('PRESSED');
-                            ////res = await Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentPanel())); temporary
-                            Navigator.pop(context, "obtainDirection");
-                            if(destinationAddress.text.length <= 15 || contactNumber.text == null){
-                              displayToastMessage("address and contact number is not valid or too short", context);
-                            }
-                            else if(res == "obtainDirection"){
-                              displayRideDetailsContainer();
-                            }
-
-                            else{
-                              await getPlaceDirection();
-                            }
-                          },
-                        ),
-                      ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * .43,
-                          child: RaisedButton(
-
-                            shape: new RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            color: Colors.red,
-                            child: Container(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                child: Text('Cancel', style: TextStyle(
-                                  color: Colors.white,
+                              shape: new RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0)),
+                              color: Colors.amber,
+                              child: Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  child: Text('Confirm', style: TextStyle(
+                                    color: Colors.white,
 
 
-                                ),
+                                  ),
 
+                                  ),
                                 ),
                               ),
+                              onPressed: ()async{
+                                print('PRESSED');
+                                ////res = await Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentPanel())); temporary
+                                Navigator.pop(context, "obtainDirection");
+                                if(destinationAddress.text.length <= 15 || contactNumber.text == null){
+                                  displayToastMessage("address and contact number is not valid or too short", context);
+                                }
+                                else if(res == "obtainDirection"){
+                                  displayRideDetailsContainer();
+                                }
+
+                                else{
+                                  await getPlaceDirection();
+                                }
+                              },
                             ),
-                            onPressed: (){
-                              Navigator.pop(context);
-                            },
                           ),
-                        ),
-                   ] ),
+                          Container(
+                            width: MediaQuery.of(context).size.width * .43,
+                            child: RaisedButton(
+
+                              shape: new RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0)),
+                              color: Colors.red,
+                              child: Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  child: Text('Cancel', style: TextStyle(
+                                    color: Colors.white,
+
+
+                                  ),
+
+                                  ),
+                                ),
+                              ),
+                              onPressed: (){
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                        ] ),
                   ],
 
                 ),
@@ -761,13 +761,13 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
                       Center(
                           child: GestureDetector(
-                            onTap: cancelSearch,
-                          child: SpinKitPulse(
-                            color: Colors.amber,
-                            size: 50,
+                              onTap: cancelSearch,
+                              child: SpinKitPulse(
+                                color: Colors.amber,
+                                size: 50,
 
+                              )
                           )
-                      )
                       ),
 
 
@@ -792,7 +792,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
     var destinationLatLng = LatLng(finalPos.latitude, finalPos.longitude);
 
-   //showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
+    //showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
 
     var details = await AssistantMethod.obtainPlaceDirectionDetails(pickupLatLng, destinationLatLng);
     setState(() {
@@ -847,18 +847,18 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
       infoWindow: InfoWindow(title: initialPos.placename, snippet: "Your Location!"),
       position: pickupLatLng,
       markerId: MarkerId("pickupID"),
-      
+
     );
     setState(() {
       markersSet.add(pickupMarker);
     });
     Circle pickupCircle = Circle(
-    fillColor: Colors.amber,
-      center: pickupLatLng,
-      radius:12,
-      strokeColor: Colors.amber,
-      strokeWidth: 4,
-      circleId: CircleId("pickupID")
+        fillColor: Colors.amber,
+        center: pickupLatLng,
+        radius:12,
+        strokeColor: Colors.amber,
+        strokeWidth: 4,
+        circleId: CircleId("pickupID")
     );
     Circle destinationCircle = Circle(
         fillColor: Colors.amber,
@@ -887,13 +887,13 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
         switch (callBack) {
           case Geofire.onKeyEntered:
-           NearbyAvailableDrivers nearbyAvailableDrivers = NearbyAvailableDrivers();
-           nearbyAvailableDrivers.key = map['key'];
-           nearbyAvailableDrivers.latitude = map['latitude'];
-           nearbyAvailableDrivers.longitude = map['longitude'];
-           GeoFireAssistant.nearbyAvailableDriversList.add(nearbyAvailableDrivers);
+            NearbyAvailableDrivers nearbyAvailableDrivers = NearbyAvailableDrivers();
+            nearbyAvailableDrivers.key = map['key'];
+            nearbyAvailableDrivers.latitude = map['latitude'];
+            nearbyAvailableDrivers.longitude = map['longitude'];
+            GeoFireAssistant.nearbyAvailableDriversList.add(nearbyAvailableDrivers);
 
-             updateAvailableDriversOnMap();
+            updateAvailableDriversOnMap();
 
             break;
 
@@ -908,22 +908,22 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
             nearbyAvailableDrivers.latitude = map['latitude'];
             nearbyAvailableDrivers.longitude = map['longitude'];
             GeoFireAssistant.updateDriverNearbylocation(nearbyAvailableDrivers);
-          // Update your key's location
+            // Update your key's location
             break;
 
           case Geofire.onGeoQueryReady:
           // All Intial Data is loaded
-          updateAvailableDriversOnMap();
+            updateAvailableDriversOnMap();
 
             break;
         }
       }
 
       setState(() {});
-    //tt
-  });
+      //tt
+    });
 
-}
+  }
   void updateAvailableDriversOnMap(){
     setState(() {
       markersSet.clear();
