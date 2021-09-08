@@ -102,20 +102,25 @@ class AssistantMethod{
 
   }
 
-  static Future<String> nameCoordinatesAddress2(CameraPosition camerapos, context)async{
+  static Future<String> nameCoordinatesAddress2(CameraPosition camerapos2, context)async{
     String placeAddress = "";
-    String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${camerapos.target.latitude},${camerapos.target.longitude}&key=$mapKey";
+    String st1, st2, st3,st4;
+    String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${camerapos2.target.latitude},${camerapos2.target.longitude}&key=$mapKey";
     var response = await RequestAssistant.getRequest(url);
 
     if(response!= "failed"){
       placeAddress = response["results"][0]["formatted_address"];
+      // st1 = response["results"][0]["address_components"][0]["long_name"];
+      // st2 = response["results"][0]["address_components"][4]["long_name"];
+      // st3 = response["results"][0]["address_components"][5]["long_name"];
+      // st4 = response["results"][0]["address_components"][6]["long_name"];
+      // placeAddress = st1 + ", " + st2 + ", " + st3 + ", " + st4;
+      Address desuserPickUpAddress2 = new Address();
+      desuserPickUpAddress2.longitude = camerapos2.target.longitude;
+      desuserPickUpAddress2.latitude = camerapos2.target.latitude;
+      desuserPickUpAddress2.placename = placeAddress;
 
-      Address desuserPickUpAddress = new Address();
-      desuserPickUpAddress.longitude = camerapos.target.longitude;
-      desuserPickUpAddress.latitude = camerapos.target.latitude;
-      desuserPickUpAddress.placename = placeAddress;
-
-      Provider.of<AppData>(context, listen: false).updateDestinationAddress(desuserPickUpAddress);
+      Provider.of<AppData>(context, listen: false).updateDestinationAddress2(desuserPickUpAddress2);
     }
     return placeAddress;
   }

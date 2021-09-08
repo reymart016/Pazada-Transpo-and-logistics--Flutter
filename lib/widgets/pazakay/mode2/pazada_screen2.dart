@@ -256,13 +256,13 @@ class _PazadaScreen2State extends State<PazadaScreen2> with TickerProviderStateM
 
             },
             //----------------get latitutde and longtitude using the camera movement---------//
-            onCameraMove: (CameraPosition camerapos)async {
+            onCameraMove: (CameraPosition camerapos2)async {
 
               searching = false;
               setState(() {});
-              finallat = camerapos.target.latitude.toString();
-              finallong = camerapos.target.longitude.toString();
-              String address2 = await AssistantMethod.nameCoordinatesAddress(camerapos, context);//passes the latlng using cameraposition to assistant method
+              finallat = camerapos2.target.latitude.toString();
+              finallong = camerapos2.target.longitude.toString();
+              String address2 = await AssistantMethod.nameCoordinatesAddress2(camerapos2, context);//passes the latlng using cameraposition to assistant method
               print("this is your Destination Address::" + address2);
             },
             //------------------------------------------------------------------------//
@@ -315,8 +315,8 @@ class _PazadaScreen2State extends State<PazadaScreen2> with TickerProviderStateM
                         //------------------/
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                          child: Text(Provider.of<AppData>(context).destinationLocation!= null
-                              ? Provider.of<AppData>(context).destinationLocation.placename
+                          child: Text(Provider.of<AppData>(context).destinationLocation2!= null
+                              ? Provider.of<AppData>(context).destinationLocation2.placename
                               : "Destination", style: TextStyle(fontSize: 10, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.center,
                           ),
                         ),
@@ -433,16 +433,18 @@ class _PazadaScreen2State extends State<PazadaScreen2> with TickerProviderStateM
                         SizedBox(width: 12,),
                         Icon(Icons.location_on, color: Colors.amber,),
                         SizedBox(width: 12,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(Provider.of<AppData>(context).destinationLocation!= null
-                                ? Provider.of<AppData>(context).destinationLocation.placename
-                                : "Destination", style: TextStyle(fontSize: 13,),maxLines: 2,
-                            ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(Provider.of<AppData>(context).destinationLocation2!= null
+                                  ? Provider.of<AppData>(context).destinationLocation2.placename
+                                  : "Destination", style: TextStyle(fontSize: 13,),maxLines: 2,
+                              ),
 
-                          ],
+                            ],
 
+                          ),
                         )
 
                       ],

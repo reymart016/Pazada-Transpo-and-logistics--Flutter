@@ -1,4 +1,5 @@
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -13,6 +14,9 @@ import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:provider/provider.dart';
+import 'package:pazada/main.dart';
+import 'package:pazada/configs/MapsConfig.dart';
+
 
 class PazakayQuery2 extends StatefulWidget {
   @override
@@ -28,6 +32,10 @@ class _PazakayQuery2State extends State<PazakayQuery2> {
   String CurrentPosition, mapLocation;
   Position currentPosition,desPosition;
   String manualBook='';
+  bool mapbook =false;
+  bool autoLoc = false;
+  String manualBooking = "";
+  TextEditingController mapBooking = TextEditingController();
 
   List<LatLng> pLinesCoordinates = [];
   Set<Polyline> polylineSet = {};
@@ -103,9 +111,17 @@ class _PazakayQuery2State extends State<PazakayQuery2> {
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
                                       child: GestureDetector(
-                                        onTap: pazakay2,
-                                        child: Text(Provider.of<AppData>(context).destinationLocation2!= null
-                                            ? Provider.of<AppData>(context).destinationLocation2.placename
+                                        onTap: (){
+                                          pazakay2();
+                                          setState(() {
+                                            mapbook = true;
+                                            autoLoc = false;
+                                          });
+                                        },
+                                        child: Text(mapbook == true && Provider.of<AppData>(context).destinationLocation2!= null
+                                            ?  Provider.of<AppData>(context).destinationLocation2.placename
+                                            : autoLoc ==true && Provider.of<AppData>(context).pickUpLocation!= null
+                                            ? Provider.of<AppData>(context).pickUpLocation.placename
                                             : "Add Home", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left,
                                         ),
                                       ),
@@ -114,7 +130,16 @@ class _PazakayQuery2State extends State<PazakayQuery2> {
                                 ),
 
                                 GestureDetector(
-                                    onTap: pazakay,
+                                    onTap: (){
+                                      setState(() {
+                                        mapbook = false;
+                                        autoLoc = true;
+                                      });
+                                      saveManualMapLocation();
+
+                                      print('PRESS');
+                                      print(manualBooking);
+                                    },
                                     child: Icon(Icons.my_location_outlined)
                                 ),
                               ],
@@ -257,7 +282,8 @@ class _PazakayQuery2State extends State<PazakayQuery2> {
 
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
   }
-  void pazakay2 (){
+  Future<void> pazakay2 ()async{
+
 
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen2()));
   }
@@ -273,6 +299,18 @@ class _PazakayQuery2State extends State<PazakayQuery2> {
 
 
   }
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  Future<void> saveManualMapLocation()async{
+    String userId = firebaseUser.uid;
+    var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
+    Map manualMapBooking = {
+      "map_location": finalPos
+
+    };
+    usersRef.child(userId).child("manual_booking").set(manualMapBooking);
+
+  }
+
   Future <void> getPlaceDirection()async{
     var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
     var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;

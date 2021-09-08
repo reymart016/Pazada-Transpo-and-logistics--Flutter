@@ -173,26 +173,30 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                       Text('Succeeding Kilometer:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
                                     ],
                                   ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(Provider.of<AppData>(context).pickUpLocation!= null
-                                          ? Provider.of<AppData>(context).pickUpLocation.placename
-                                          : "Add Home", style: TextStyle(fontSize: 11,),maxLines: 1,textAlign: TextAlign.left,
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Text(Provider.of<AppData>(context).destinationLocation!= null
-                                          ? Provider.of<AppData>(context).destinationLocation.placename
-                                          : "Destination", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left,
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Text(((tripDirectionDetails != null)? tripDirectionDetails.distanceText : ''),style: TextStyle(fontFamily: "bolt",fontSize: 11),
-                                      ),
-                                      SizedBox(height: 10,),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(Provider.of<AppData>(context).destinationLocation2!= null
+                                            ?  Provider.of<AppData>(context).destinationLocation2.placename
+                                            : Provider.of<AppData>(context).pickUpLocation!= null
+                                            ? Provider.of<AppData>(context).pickUpLocation.placename
+                                            : "Add Home", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 10,),
+                                        Text(Provider.of<AppData>(context).destinationLocation!= null
+                                            ? Provider.of<AppData>(context).destinationLocation.placename
+                                            : "Destination", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis
+                                        ),
+                                        SizedBox(height: 10,),
+                                        Text(((tripDirectionDetails != null)? tripDirectionDetails.distanceText : ''),style: TextStyle(fontFamily: "bolt",fontSize: 11),
+                                        ),
+                                        SizedBox(height: 10,),
 
-                                      Text('N/A', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
-                                    ],
+                                        Text('N/A', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                      ],
 
+                                    ),
                                   )
                                 ],
                               ),

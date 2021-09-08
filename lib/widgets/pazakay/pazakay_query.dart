@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
+import 'package:pazada/widgets/pazakay/mode2/pazada_screen2.dart';
 import 'package:pazada/widgets/pazakay/pazakay_payment.dart';
 import 'package:pazada/widgets/shared/divider.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +14,9 @@ import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:provider/provider.dart';
+import 'package:pazada/main.dart';
+import 'package:location/location.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PazakayQuery extends StatefulWidget {
   @override
@@ -31,9 +36,19 @@ class _PazakayQueryState extends State<PazakayQuery> {
   Set<Polyline> polylineSet = {};
   Set<Marker> markersSet = {};
   Set<Circle> circleSet = {};
+  PermissionStatus _permissionGranted;
+  final Location location = Location();
+
+  bool mapbook =false;
+  bool autoLoc = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Pazakay'),
+
+      ),
       body: SafeArea(
         child: Column(
             children: [Container(
@@ -101,10 +116,18 @@ class _PazakayQueryState extends State<PazakayQuery> {
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
                                       child: GestureDetector(
-                                        onTap: pazakay,
-                                        child: Text(Provider.of<AppData>(context).pickUpLocation!= null
+                                        onTap: (){
+                                          pazakay2();
+                                          setState(() {
+                                            mapbook = true;
+                                            autoLoc = false;
+                                          });
+                                        },
+                                        child: Text(mapbook == true && Provider.of<AppData>(context).destinationLocation2!= null
+                                            ?  Provider.of<AppData>(context).destinationLocation2.placename
+                                            : autoLoc ==true && Provider.of<AppData>(context).pickUpLocation!= null
                                             ? Provider.of<AppData>(context).pickUpLocation.placename
-                                            : "Add Home", style: TextStyle(fontSize: 15,),maxLines: 2,textAlign: TextAlign.left,
+                                            : "Add Home", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ),
@@ -112,7 +135,16 @@ class _PazakayQueryState extends State<PazakayQuery> {
                                 ),
 
                                 GestureDetector(
-                                    onTap: getPosition,
+                                    onTap: (){
+                                      setState(() {
+                                        mapbook = false;
+                                        autoLoc = true;
+                                      });
+                                      saveManualMapLocation();
+
+                                      print('PRESS');
+
+                                    },
                                     child: Icon(Icons.my_location_outlined)
                                 ),
                               ],
@@ -138,7 +170,9 @@ class _PazakayQueryState extends State<PazakayQuery> {
                                     ),
                                   ),),
                                 GestureDetector(
-                                    onTap: pazakay,
+                                    onTap: (){
+                                      _requestPermission();
+                                    },
                                     child: Icon(Icons.my_location_outlined)
                                 ),
                               ],
@@ -251,9 +285,14 @@ class _PazakayQueryState extends State<PazakayQuery> {
 
     );
   }
+
   void pazakay (){
 
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
+  }
+  void pazakay2 (){
+
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen2()));
   }
   void pazakayPayment (){
 
@@ -265,6 +304,28 @@ class _PazakayQueryState extends State<PazakayQuery> {
 
     });
 
+  }
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  Future<void> saveManualMapLocation()async{
+    String userId = firebaseUser.uid;
+    var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
+    Map manualMapBooking = {
+      "map_location": finalPos
+
+    };
+    usersRef.child(userId).child("manual_booking").set(manualMapBooking);
+
+  }
+  Future<void> _requestPermission() async {
+    if (_permissionGranted != PermissionStatus.granted) {
+      final PermissionStatus permissionRequestedResult =
+      await location.requestPermission();
+      setState(() {
+        _permissionGranted = permissionRequestedResult;
+      });
+    }
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
   }
   Future <void> getPlaceDirection()async{
     var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
