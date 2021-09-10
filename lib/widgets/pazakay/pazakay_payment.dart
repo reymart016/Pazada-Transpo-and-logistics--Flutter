@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
+import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,22 @@ DirectionDetails tripDirectionDetails;
 
 DatabaseReference rideRequestRef;
 class _PazakayPaymentState extends State<PazakayPayment> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+  void checkStatus(){
+    if(Provider.of<AppData>(context).destinationLocation2!= null){
+     setState(() {
+       mapbook = true;
+       autoLoc = false;
+     });
+    }else{
+      mapbook = false;
+      autoLoc = true;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -76,7 +93,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                       SizedBox(height: 16.0,),
 
                       Container(
-                        height: 130,
+                        height: MediaQuery.of(context).size.height/5.5,
                         width: double.infinity,
 
                         decoration: BoxDecoration(
@@ -177,9 +194,9 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        Text(Provider.of<AppData>(context).destinationLocation2!= null
+                                        Text(Provider.of<AppData>(context).destinationLocation2!= null && mapbook == true
                                             ?  Provider.of<AppData>(context).destinationLocation2.placename
-                                            : Provider.of<AppData>(context).pickUpLocation!= null
+                                            : Provider.of<AppData>(context).pickUpLocation!= null && autoLoc == true
                                             ? Provider.of<AppData>(context).pickUpLocation.placename
                                             : "Add Home", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis,
                                         ),
@@ -343,7 +360,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                   ),
                                 ),
                                 onPressed: ()async{
-
+                                  saveRideRequest();
                                   print('PRESSED');
                                   setState(() {
                                     // destinationContainer =0;
@@ -369,6 +386,41 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     );
 
 }
+  void saveRideRequest(){
+    var pickUp;
+    rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
+    if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
+      pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+    }else{
+      pickUp = Provider.of<AppData>(context, listen: false).destinationLocation2;
+    }
+
+    var dropOff = Provider.of<AppData>(context, listen: false).destinationLocation;
+
+
+    Map pickUpCoordinates ={
+      "latitude": pickUp.latitude.toString(),
+      "longitude": pickUp.longitude.toString(),
+    };
+    Map destinationCoordinates ={
+      "latitude": dropOff.latitude.toString(),
+      "longitude": dropOff.longitude.toString(),
+    };
+    Map rideInfoMap ={
+      "driver_id": "waiting",
+      "payment_method": "cash",
+      "pickup": pickUpCoordinates,
+      "destination": destinationCoordinates,
+      "created_at": DateTime.now().toString(),
+      "passenger_name": usersCurrentInfo.name,
+      "passenger_phone": usersCurrentInfo.phone,
+      "pickup_address": pickUp.placename,
+      "destination_address": dropOff.placename,
+    };
+
+    rideRequestRef.set(rideInfoMap);
+
+  }
   Future <void> getPlaceDirection()async{
     var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
     var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;

@@ -6,3 +6,5 @@ String mapKey ="AIzaSyCi2plScLf7yEWftiuD_kmApMNbHUFkbsA";
 User firebaseUser;
 User currentfirebaseUser;
 Users usersCurrentInfo;
+bool mapbook =false;
+bool autoLoc = false;

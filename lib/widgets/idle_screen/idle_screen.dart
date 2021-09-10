@@ -24,6 +24,13 @@ class IdleScreen extends StatefulWidget {
 }
 
 class _IdleScreenState extends State<IdleScreen> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Users currentUserInfo;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +42,7 @@ class _IdleScreenState extends State<IdleScreen> {
           children: [
 
           Container(
-          height: 270,
+          height: 230,
           alignment: Alignment.center,
 
           width: MediaQuery.of(context).size.width,
@@ -53,7 +60,7 @@ class _IdleScreenState extends State<IdleScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                      Text("Hello \n"+ usersCurrentInfo.name,style: TextStyle(fontSize: 40, fontFamily: "bolt-bold", color: Colors.white) ,maxLines: 2, ),
+                      Expanded(child: Text("Hello \n",style: TextStyle(fontSize: 30, fontFamily: "bolt-bold", color: Colors.white) ,maxLines: 2, )),
 
                         Icon(Icons.notifications_active, color: Colors.white, size: 30,),
 
@@ -72,7 +79,7 @@ class _IdleScreenState extends State<IdleScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  height: 80,
+                  height: 70,
                   alignment: Alignment.center,
                   width: MediaQuery.of(context).size.width * .80,
                   decoration: BoxDecoration(
@@ -123,103 +130,98 @@ class _IdleScreenState extends State<IdleScreen> {
             child: Text("Choose your desired Service",style: TextStyle(fontSize: 20, fontFamily: "bolt-bold", color: Colors.black) ,maxLines: 2, ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(vertical: spacing / 2),
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: spacing),
-                    GestureDetector(
-                      onTap: (){
-                        showDialog(context: context, builder: (context)=>AlertDialog(
-                          title: Text("Choose Service"),
-                          content: Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: services3,
-                                  child: Container(
-                                    height: 100,
-                                    alignment: Alignment.center,
+            padding: const EdgeInsets.only(left:8.0, right: 8, bottom: 8, top: 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
 
-                                    width: MediaQuery.of(context).size.width/4,
-                                    decoration: BoxDecoration(
-                                      color: Colors.amber,
-                                      borderRadius: BorderRadius.circular(10),
+              children: [
+                SizedBox(height: spacing),
+                GestureDetector(
+                  onTap: (){
+                    showDialog(context: context, builder: (context)=>AlertDialog(
+                      title: Text("Choose Service"),
+                      content: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: services3,
+                              child: Container(
+                                height: 100,
+                                alignment: Alignment.center,
 
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(9.0),
-                                      child: Column(
-                                        children: [
-                                          SvgPicture.asset('images/svg/trikeA.svg', height: 60,),
-                                          Text('Book Now', style: TextStyle(fontFamily: "bolt",fontSize: 11, color: Colors.white),),
-                                        ],
-                                      ),
-                                    ),
+                                width: MediaQuery.of(context).size.width/3.5,
+                                decoration: BoxDecoration(
+                                  color: Colors.amber,
+                                  borderRadius: BorderRadius.circular(10),
+
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(9.0),
+                                  child: Column(
+                                    children: [
+                                      SvgPicture.asset('images/svg/trikeA.svg', height: 60,),
+                                      Text('Book Now', style: TextStyle(fontFamily: "bolt",fontSize: 11, color: Colors.white),),
+                                    ],
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: services4,
-                                  child: Container(
-                                    height: 100,
-                                    alignment: Alignment.center,
-
-                                    width: MediaQuery.of(context).size.width/4,
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(10),
-
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(9.0),
-                                      child: Column(
-                                        children: [
-                                          SvgPicture.asset('images/svg/man.svg', height: 60,),
-                                          SizedBox(height: 2,),
-                                          Text('Book for Someone', style: TextStyle(fontFamily: "bolt",fontSize: 10, color: Colors.white),),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                          actions: [
+                            GestureDetector(
+                              onTap: services4,
+                              child: Container(
+                                height: 100,
+                                alignment: Alignment.center,
 
+                                width: MediaQuery.of(context).size.width/3.5,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(10),
+
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(9.0),
+                                  child: Column(
+                                    children: [
+                                      SvgPicture.asset('images/svg/man.svg', height: 60,),
+                                      SizedBox(height: 2,),
+                                      Text('Book for Someone', style: TextStyle(fontFamily: "bolt",fontSize: 10, color: Colors.white),),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
-                        ));
-                      },
-                      child: PazadaCard(
-                        color: pazakay,
-                        label: "Pazakay",
-                        svgPath: 'images/svg/Artboard 4.svg',
+                        ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: services2,
-                      child: PazadaCard(
-                        color: pazabuy,
-                        label: "Pazabuy",
-                        svgPath: 'images/svg/sidetric.svg',
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: services3,
-                      child: PazadaCard(
-                        color: pazship,
-                        label: "PazShip",
-                        svgPath: 'images/svg/delman1.svg',
-                      ),
-                    ),
-                  ],
+                      actions: [
+
+                      ],
+                    ));
+                  },
+                  child: PazadaCard(
+                    color: pazakay,
+                    label: "Pazakay",
+                    svgPath: 'images/svg/Artboard 4.svg',
+                  ),
                 ),
-              ),
+                GestureDetector(
+                  onTap: services2,
+                  child: PazadaCard(
+                    color: pazabuy,
+                    label: "Pazabuy",
+                    svgPath: 'images/svg/sidetric.svg',
+                  ),
+                ),
+                GestureDetector(
+                  onTap: services3,
+                  child: PazadaCard(
+                    color: pazship,
+                    label: "PazShip",
+                    svgPath: 'images/svg/delman1.svg',
+                  ),
+                ),
+              ],
             ),
           )
     ]

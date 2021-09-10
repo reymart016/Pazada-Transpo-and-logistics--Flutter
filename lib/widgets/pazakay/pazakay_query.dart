@@ -39,8 +39,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
   PermissionStatus _permissionGranted;
   final Location location = Location();
 
-  bool mapbook =false;
-  bool autoLoc = false;
+
 
   @override
   Widget build(BuildContext context) {

@@ -26,7 +26,7 @@ class PazadaCard extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
         child: Container(
           padding: EdgeInsets.all(spacing),
-          height: 115,
+          height: MediaQuery.of(context).size.height/6.9,
           color: color,
           child: Stack(
             children: [
