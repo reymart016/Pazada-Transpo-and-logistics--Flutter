@@ -248,6 +248,7 @@ class _PazadaScreen2State extends State<PazadaScreen2> with TickerProviderStateM
             onMapCreated: (GoogleMapController controller)async{
               _controllerGoogleMap.complete(controller);
               newGoogleMapController = controller;
+              print("THIS TEXT IS WORKING::");
 
               locatePosition();
               setState(() {
@@ -921,7 +922,7 @@ class _PazadaScreen2State extends State<PazadaScreen2> with TickerProviderStateM
         }
       }
 
-      setState(() {});
+
       //tt
     });
 

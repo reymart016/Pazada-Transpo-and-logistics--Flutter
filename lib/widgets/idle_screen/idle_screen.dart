@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/main.dart';
 import 'package:pazada/models/allUsers.dart';
 import 'package:pazada/user_dashboard/PazadaCard.dart';
 import 'package:pazada/user_dashboard/color.dart';
@@ -14,6 +17,7 @@ import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/pazada_screen/payment_panel.dart';
 import 'package:pazada/widgets/pazakay/mode2/pazakay_query2.dart';
 import 'package:pazada/widgets/pazakay/pazakay_query.dart';
+import 'package:pazada/widgets/pazship/pazship_query.dart';
 import 'package:provider/provider.dart';
 
 
@@ -24,12 +28,13 @@ class IdleScreen extends StatefulWidget {
 }
 
 class _IdleScreenState extends State<IdleScreen> {
-
+ AssistantMethod assistantMethod = AssistantMethod();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Users currentUserInfo;
+   
   }
   @override
   Widget build(BuildContext context) {
@@ -60,7 +65,7 @@ class _IdleScreenState extends State<IdleScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                      Expanded(child: Text("Hello \n",style: TextStyle(fontSize: 30, fontFamily: "bolt-bold", color: Colors.white) ,maxLines: 2, )),
+                      Expanded(child: Text("Hello \n" ,style: TextStyle(fontSize: 30, fontFamily: "bolt-bold", color: Colors.white) ,maxLines: 2, )),
 
                         Icon(Icons.notifications_active, color: Colors.white, size: 30,),
 
@@ -150,7 +155,7 @@ class _IdleScreenState extends State<IdleScreen> {
                                 height: 100,
                                 alignment: Alignment.center,
 
-                                width: MediaQuery.of(context).size.width/3.5,
+                                width: MediaQuery.of(context).size.width/4,
                                 decoration: BoxDecoration(
                                   color: Colors.amber,
                                   borderRadius: BorderRadius.circular(10),
@@ -173,7 +178,7 @@ class _IdleScreenState extends State<IdleScreen> {
                                 height: 100,
                                 alignment: Alignment.center,
 
-                                width: MediaQuery.of(context).size.width/3.5,
+                                width: MediaQuery.of(context).size.width/4,
                                 decoration: BoxDecoration(
                                   color: Colors.red,
                                   borderRadius: BorderRadius.circular(10),
@@ -214,7 +219,7 @@ class _IdleScreenState extends State<IdleScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: services3,
+                  onTap: pazshipQuery,
                   child: PazadaCard(
                     color: pazship,
                     label: "PazShip",
@@ -240,6 +245,17 @@ class _IdleScreenState extends State<IdleScreen> {
   void services4 (){
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazakayQuery2()));
   }
+  void pazshipQuery (){
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazShipQuery()));
+  }
+  void retrieveUserData()async{
+   usersRef.child(currentfirebaseUser.uid).once().then((DataSnapshot dataSnapshot){
+     if(dataSnapshot != null){
+       usersCurrentInfo = Users.fromSnapshot(dataSnapshot);
+
+     }
+   });
+ }
 
 }
 class SimpleCustomAlert extends StatelessWidget {

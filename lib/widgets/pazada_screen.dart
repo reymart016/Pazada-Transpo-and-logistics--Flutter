@@ -129,6 +129,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
 
 
+
   void locatePosition()async{
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
@@ -248,7 +249,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
             onMapCreated: (GoogleMapController controller)async{
               _controllerGoogleMap.complete(controller);
               newGoogleMapController = controller;
-
+              print("THIS TEXT IS WORKING::");
               locatePosition();
               setState(() {
                 bottomPaddingofMap = 320;

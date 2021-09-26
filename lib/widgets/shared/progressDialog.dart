@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pazada/widgets/shared/loading.dart';
 
 class ProgressDialog extends StatelessWidget {
@@ -7,7 +8,7 @@ class ProgressDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.amber,
+      backgroundColor: Colors.white,
       child: Container(
         margin: EdgeInsets.all(15),
         width: double.infinity,
@@ -21,7 +22,9 @@ class ProgressDialog extends StatelessWidget {
           child: Row(
             children: [
               SizedBox(width: 6,),
-              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black),),
+              Container(
+                height: 50,
+                  child: SpinKitHourGlass(color: Colors.amber, )),
               SizedBox(width: 26,),
               Text(
                 message,

@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pazada/bottomBar/bottomAppBar.dart';
+import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/widgets/idle_screen/idle_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
@@ -19,6 +20,10 @@ void main()async {
   runApp(MyApp());
 }
   DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("PazadaUsers");
+  DatabaseReference driversRef = FirebaseDatabase.instance.reference().child("PazadaDrivers");
+  DatabaseReference newRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request");
+  //DatabaseReference rideRequestRef = FirebaseDatabase.instance.reference().child("PazadaDrivers").child(currentfirebaseUser.uid).child("newRide");
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override

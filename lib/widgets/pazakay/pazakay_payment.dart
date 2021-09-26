@@ -1,36 +1,72 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
+import 'package:pazada/assistants/geoFireAssistant.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/main.dart';
 import 'package:pazada/models/directionDetails.dart';
+import 'package:pazada/models/nearbyAvalableDrivers.dart';
+import 'package:pazada/widgets/shared/progressDialog.dart';
 import 'package:provider/provider.dart';
 
 class PazakayPayment extends StatefulWidget {
   @override
   _PazakayPaymentState createState() => _PazakayPaymentState();
 }
-List payments = ["Cash", "Gcash (Coming Soon)"];
-String paymentChoose;
-Position currentPosition,desPosition;
 
-List<LatLng> pLinesCoordinates = [];
-Set<Polyline> polylineSet = {};
-Set<Marker> markersSet = {};
-Set<Circle> circleSet = {};
 
-DirectionDetails tripDirectionDetails;
-
-DatabaseReference rideRequestRef;
 class _PazakayPaymentState extends State<PazakayPayment> {
-  @override
+  List payments = ["Cash", "Gcash (Coming Soon)"];
+  String paymentChoose;
+  Position currentPosition,desPosition;
+
+  List<LatLng> pLinesCoordinates = [];
+  Set<Polyline> polylineSet = {};
+  Set<Marker> markersSet = {};
+  Set<Circle> circleSet = {};
+
+  DirectionDetails tripDirectionDetails;
+  DatabaseReference rideRequestRef;
+
+
+
+  List<NearbyAvailableDrivers> availableDrivers;
+  BitmapDescriptor nearbyIcon;
+
+  AssistantMethod assistantMethod = AssistantMethod();
+  Completer<GoogleMapController> _controllerGoogleMap = Completer();
+  GoogleMapController newGoogleMapController;
+  void locatePosition()async{
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    currentPosition = position;
+    LatLng latLngPosition = LatLng(position.latitude, position.longitude);
+    CameraPosition cameraPosition = new CameraPosition(target: latLngPosition, zoom: 16);
+    newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+    print("POSITION::$currentPosition");
+    String address = await AssistantMethod.searchCoordinatesAddress(position, context);
+    print("this is your Address::" + address);
+    initGeofireListener();
+
+  }
+
+
+
   void initState() {
     // TODO: implement initState
     super.initState();
+    getPlaceDirection();
+    locatePosition();
+
   }
   void checkStatus(){
     if(Provider.of<AppData>(context).destinationLocation2!= null){
@@ -350,7 +386,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                 child: Container(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 10),
-                                    child: Text('Confirm', style: TextStyle(
+                                    child: Text('Request', style: TextStyle(
                                       color: Colors.white,
 
 
@@ -360,8 +396,14 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                   ),
                                 ),
                                 onPressed: ()async{
+                                  availableDrivers = GeoFireAssistant.nearbyAvailableDriversList;
+
+
+
                                   saveRideRequest();
+                                  await searchNearestDriver();
                                   print('PRESSED');
+                                  print(availableDrivers);
                                   setState(() {
                                     // destinationContainer =0;
                                     // loadingRider = 280;
@@ -386,9 +428,11 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     );
 
 }
-  void saveRideRequest(){
+  void saveRideRequest()async{
+    print("SAVEEEEEEEEEEEEEEEEEEEEEEEE");
     var pickUp;
     rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
+    await searchNearestDriver();
     if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
       pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
     }else{
@@ -422,13 +466,25 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
   }
   Future <void> getPlaceDirection()async{
-    var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
+
+    var pickUp;
+
+    var pickupLatLng;
+    //var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
     var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
-    var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
+    //var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
     var destinationLatLng = LatLng(finalPos.latitude, finalPos.longitude);
+    if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
+      pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+      pickupLatLng = LatLng(pickUp.latitude, pickUp.longitude);
+    }else{
+      pickUp = Provider.of<AppData>(context, listen: false).destinationLocation2;
+      pickupLatLng = LatLng(pickUp.latitude, pickUp.longitude);
+    }
 
     //showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
 
+    print(pickupLatLng);
     var details = await AssistantMethod.obtainPlaceDirectionDetails(pickupLatLng, destinationLatLng);
     setState(() {
       tripDirectionDetails = details;
@@ -479,7 +535,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
     Marker pickupMarker = Marker(
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
-      infoWindow: InfoWindow(title: initialPos.placename, snippet: "Your Location!"),
+      // infoWindow: InfoWindow(title: initialPos.placename, snippet: "Your Location!"),
       position: pickupLatLng,
       markerId: MarkerId("pickupID"),
 
@@ -508,5 +564,119 @@ class _PazakayPaymentState extends State<PazakayPayment> {
       circleSet.add(destinationCircle);
     });
   }
+  void searchNearestDriver(){
+
+    print("GUMAGANA!!!");
+
+    showDialog(context: context,barrierDismissible: false, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
+    if(availableDrivers.length == 0){
+
+      rideRequestRef.remove();
+      return;
+
+    }
+    Navigator.pop(context);
+    var driver = availableDrivers[0];
+    print("GUMAGANA!!ATA");
+    print(driver.toString());
+    availableDrivers.removeAt(0);
+    notifyDriver(driver);
+  }
+
+  void notifyDriver(NearbyAvailableDrivers driver){
+    String token ="";
+    driversRef.child(driver.key).child("newRide").set(rideRequestRef.key);
+    driversRef.child(driver.key).child("token").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot != null){
+        token = dataSnapshot.value.toString();
+        AssistantMethod.sendNotificationToDriver(token, context, rideRequestRef.key);
+      }
+      print(token);
+    });
+
+  }
+  void initGeofireListener(){
+    print("FUCKING MARKERSs");
+    Geofire.initialize("availableDrivers");
+    Geofire.queryAtLocation(currentPosition.latitude, currentPosition.longitude, 15).listen((map) {
+      print(currentPosition.latitude + currentPosition.longitude);
+      print(map);
+      if (map != null) {
+        var callBack = map['callBack'];
+
+        //latitude will be retrieved from map['latitude']
+        //longitude will be retrieved from map['longitude']
+
+        switch (callBack) {
+          case Geofire.onKeyEntered:
+            NearbyAvailableDrivers nearbyAvailableDrivers = NearbyAvailableDrivers();
+            nearbyAvailableDrivers.key = map['key'];
+            nearbyAvailableDrivers.latitude = map['latitude'];
+            nearbyAvailableDrivers.longitude = map['longitude'];
+            GeoFireAssistant.nearbyAvailableDriversList.add(nearbyAvailableDrivers);
+
+            updateAvailableDriversOnMap();
+
+            break;
+
+          case Geofire.onKeyExited:
+            GeoFireAssistant.removeDriverFromList(map['key']);
+            updateAvailableDriversOnMap();
+            break;
+
+          case Geofire.onKeyMoved:
+            NearbyAvailableDrivers nearbyAvailableDrivers = NearbyAvailableDrivers();
+            nearbyAvailableDrivers.key = map['key'];
+            nearbyAvailableDrivers.latitude = map['latitude'];
+            nearbyAvailableDrivers.longitude = map['longitude'];
+            GeoFireAssistant.updateDriverNearbylocation(nearbyAvailableDrivers);
+            // Update your key's location
+            break;
+
+          case Geofire.onGeoQueryReady:
+          // All Intial Data is loaded
+            updateAvailableDriversOnMap();
+
+            break;
+        }
+      }
+
+      setState(() {});
+      //tt
+    });
+
+  }
+  void updateAvailableDriversOnMap(){
+    setState(() {
+      markersSet.clear();
+    });
+    Set<Marker> tMarkers = Set<Marker>();
+    for(NearbyAvailableDrivers driver in GeoFireAssistant.nearbyAvailableDriversList){
+      LatLng driverAvailablePosition = LatLng(driver.latitude, driver.longitude);
+      Marker marker = Marker(
+        markerId: MarkerId('driver${driver.key}'),
+        position: driverAvailablePosition,
+        icon: nearbyIcon,
+
+
+      );
+      tMarkers.add(marker);
+      setState(() {
+
+        markersSet = tMarkers;
+      });
+    }
+  }
+  void createIconMarker(){
+    if(nearbyIcon == null){
+      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context, size: Size(.2, .2));
+      BitmapDescriptor.fromAssetImage(imageConfiguration, 'images/pazadamarker.png').then((value){
+        nearbyIcon =value;
+      }
+      );
+    }
+  }
+
+
 }
 

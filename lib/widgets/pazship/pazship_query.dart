@@ -22,12 +22,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:location/location.dart' as lct;
 
-class PazakayQuery extends StatefulWidget {
+class PazShipQuery extends StatefulWidget {
   @override
-  _PazakayQueryState createState() => _PazakayQueryState();
+  _PazShipQueryState createState() => _PazShipQueryState();
 }
 
-class _PazakayQueryState extends State<PazakayQuery> {
+class _PazShipQueryState extends State<PazShipQuery> {
   TextEditingController pickUpTextEditingController = TextEditingController();
   TextEditingController dropOffTextEditingController = TextEditingController();
   String valueChoose,vehicleChoose;
@@ -48,13 +48,10 @@ class _PazakayQueryState extends State<PazakayQuery> {
 
   AssistantMethod assistantMethod = AssistantMethod();
 
+  TextEditingController itemNameTextEditingController = new TextEditingController();
+  TextEditingController itemValueTextEditingController = new TextEditingController();
 
-  @override
-  void initState() {
-    // TODO: implement initState
 
-    _requestPermissionB();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +64,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
           },
             child: Icon(Icons.keyboard_arrow_left, color: Colors.white,)
         ),
-        title: Text('Pazakay', style: TextStyle(
+        title: Text('PazShip', style: TextStyle(
           color: Colors.white,
         ),),
 
@@ -77,28 +74,65 @@ class _PazakayQueryState extends State<PazakayQuery> {
             children: [Container(
               child: Column(
                 children: [
-                  Container(
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 200,
-                      child: Carousel(
-                        dotSize: 2,
-                        dotSpacing: 15,
-                        dotColor: Colors.white,
-                        indicatorBgPadding: 5,
-                        dotBgColor: Colors.transparent,
-                        images: [
-                          Image.asset("images/jpegs/1.jpg", fit: BoxFit.cover,),
-                          Image.asset("images/jpegs/2.jpg", fit: BoxFit.cover),
-                          Image.asset("images/jpegs/3.jpg", fit: BoxFit.cover),
-                        ],
+                  SizedBox(height: 20,),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextField(
+
+                      controller: itemNameTextEditingController,
+                      keyboardType: TextInputType.name,
+                      decoration: InputDecoration(
+                        prefixIcon:Icon(Icons.add_box_rounded),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.amber), borderRadius: BorderRadius.circular(10)),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+
+                        labelText: "Item Name",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.0,
+                        ),
+                        labelStyle: TextStyle(
+                          fontSize: 14.0,
+                          fontFamily: 'bolt',
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
                       ),
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                  ),
+                  Padding(
+
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextField(
+                      controller: itemValueTextEditingController,
+                      keyboardType: TextInputType.name,
+                      decoration: InputDecoration(
+                        prefixIcon:Icon(Icons.monetization_on_outlined),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.amber), borderRadius: BorderRadius.circular(10)),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+
+                        labelText: "Item Value",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.0,
+                        ),
+                        labelStyle: TextStyle(
+                          fontSize: 14.0,
+                          fontFamily: 'bolt',
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      style: TextStyle(fontSize: 14.0),
                     ),
                   ),
 
+                  SizedBox(height: 20,),
+
                   Center(
                     child: Container(
-                      height: 260,
+                      height: MediaQuery.of(context).size.height/3,
                       alignment: Alignment.center,
 
                       width: MediaQuery.of(context).size.width * .96,
@@ -164,7 +198,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
                                         mapbook = false;
                                         autoLoc = true;
                                       });
-                                       await saveManualMapLocation();
+                                      await saveManualMapLocation();
 
                                       print('PRESS');
 
@@ -203,7 +237,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
                             ),
                           ),
 
-                              // Row(
+                          // Row(
                           //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           //   children: [
                           //
@@ -352,16 +386,6 @@ class _PazakayQueryState extends State<PazakayQuery> {
     }
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
   }
-  Future<void> _requestPermissionB() async {
-    if (_permissionGranted != PermissionStatus.granted) {
-      final PermissionStatus permissionRequestedResult =
-      await location.requestPermission();
-      setState(() {
-        _permissionGranted = permissionRequestedResult;
-      });
-    }
-
-  }
   Future <void> getPlaceDirection()async{
     var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
     var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
@@ -449,6 +473,5 @@ class _PazakayQueryState extends State<PazakayQuery> {
       circleSet.add(destinationCircle);
     });
   }
-
 
 }

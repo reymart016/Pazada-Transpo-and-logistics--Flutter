@@ -1,18 +1,27 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/requestAssistants.dart';
 import 'package:pazada/configs/MapsConfig.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/main.dart';
 import 'package:pazada/models/address.dart';
 import 'package:pazada/models/allUsers.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart'as http;
+
 
 class AssistantMethod{
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static Future<String> searchCoordinatesAddress(Position position, context)async{
     String placeAddress = "";
     String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$mapKey";
@@ -124,6 +133,89 @@ class AssistantMethod{
     }
     return placeAddress;
   }
+  void locatePosition()async{
+    Completer<GoogleMapController> _controllerGoogleMap = Completer();
+    GoogleMapController newGoogleMapController;
+    var geoLocator = Geolocator();
+    Position currentPosition,desPosition;
+
+
+    Position position =await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    currentPosition = position;
+    LatLng latLngPosition = LatLng(position.latitude, position.longitude);
+    CameraPosition cameraPosition = new CameraPosition(target: latLngPosition, zoom: 16);
+    newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+    print("POSITION::$currentPosition");
+    //String address = await AssistantMethod.searchCoordinatesAddress(position, context);
+    //print("this is your Address::" + address);
+    //initGeofireListener();
+
+  }
+
+  static void retrieveUserData(context){
+    usersRef.child(currentfirebaseUser.uid).once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot != null){
+        String currentUsername = dataSnapshot.value.toString();
+
+
+      }
+    });
+  }
+
+  static sendNotificationToDriver(String token, context, String ride_request_id)async{
+    var finalDestination;
+    var destinationA = Provider.of<AppData>(context, listen: false).destinationLocation;
+    var destinationB = Provider.of<AppData>(context, listen: false).destinationLocation2;
+    if(destinationA != null){
+      finalDestination = destinationA.placename;
+    }else{
+      finalDestination = destinationB.placename;
+
+    }
+
+    Map<String, String> headerMap = {
+      'Content-Type': 'application/json',
+      'Authorization': serverToken,
+    };
+
+    Map notificationMap = {
+      'body': 'Destination Address, ${finalDestination}',
+      'title': 'New Pazada Request Nearby',
+    };
+
+    Map dataMap = {
+      'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+      'id': '1',
+      'status': 'done',
+      'ride_request_id': ride_request_id,
+    };
+
+    Map sendNotificationMap = {
+      "notification": notificationMap,
+      "data": dataMap,
+      "priority": "high",
+      "to": token,
+    };
+    var res = await http.post(
+      'https://fcm.googleapis.com/fcm/send',
+      headers: headerMap,
+      body: jsonEncode(sendNotificationMap),
+    );
+  }
+
+  Future<String> getCurrentUID() async {
+    return await _firebaseAuth.currentUser.uid;
+  }
+
+
+
+
+
+
+
+
+
 
 
 }
