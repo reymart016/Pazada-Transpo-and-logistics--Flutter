@@ -434,16 +434,18 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                         SizedBox(width: 12,),
                         Icon(Icons.location_on, color: Colors.amber,),
                         SizedBox(width: 12,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(Provider.of<AppData>(context).destinationLocation!= null
-                                ? Provider.of<AppData>(context).destinationLocation.placename
-                                : "Destination", style: TextStyle(fontSize: 13,),maxLines: 2,
-                            ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(Provider.of<AppData>(context).destinationLocation!= null
+                                  ? Provider.of<AppData>(context).destinationLocation.placename
+                                  : "Destination", style: TextStyle(fontSize: 13,),maxLines: 2,
+                              ),
 
-                          ],
+                            ],
 
+                          ),
                         )
 
                       ],

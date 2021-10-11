@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/models/pazship_order.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/pazakay/mode2/pazada_screen2.dart';
 import 'package:pazada/widgets/pazakay/pazakay_payment.dart';
@@ -54,6 +55,8 @@ class _PazakayQueryState extends State<PazakayQuery> {
     // TODO: implement initState
 
     _requestPermissionB();
+
+    setStat();
   }
 
   @override
@@ -98,7 +101,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
 
                   Center(
                     child: Container(
-                      height: 260,
+                      height: MediaQuery.of(context).size.height/3.2,
                       alignment: Alignment.center,
 
                       width: MediaQuery.of(context).size.width * .96,
@@ -183,18 +186,23 @@ class _PazakayQueryState extends State<PazakayQuery> {
                                 Icon(Icons.location_on,color: Colors.red,),
                                 SizedBox(width: 5,),
                                 Expanded(
-                                  child: Container(
 
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal:30, vertical: 25),
-                                      child: Text(Provider.of<AppData>(context).destinationLocation!= null
-                                          ? Provider.of<AppData>(context).destinationLocation.placename
-                                          : "Destination", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left,
+                                  child: GestureDetector(
+                                    onTap: pazakay,
+                                    child: Container(
+
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal:30, vertical: 25),
+                                        child: Text(Provider.of<AppData>(context).destinationLocation!= null
+                                            ? Provider.of<AppData>(context).destinationLocation.placename
+                                            : "Destination", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left,
+                                        ),
                                       ),
                                     ),
                                   ),),
                                 GestureDetector(
-                                    onTap: (){
+                                    onTap: ()async{
+                                      await getPlaceDirection();
                                       _requestPermission();
                                     },
                                     child: Icon(Icons.my_location_outlined)
@@ -329,6 +337,12 @@ class _PazakayQueryState extends State<PazakayQuery> {
     });
 
   }
+  void setStat(){
+    PazShipOrder pazShipOrder = new PazShipOrder();
+    pazShipOrder.stats = false;
+    Provider.of<AppData>(context, listen: false).updatePazShip(pazShipOrder);
+  }
+
 
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;

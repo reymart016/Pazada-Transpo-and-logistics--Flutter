@@ -10,4 +10,8 @@ String state = "normal";
 
 String serverToken = "key=AAAA8vgZhqg:APA91bGM0qMEDNFOtFx0uDKoaIz-EmojVi-VsZhWePrXYUIqi2-58fZ1OMElknWYC3BwNqfn6NP6bbdgEMLlDrqblnoDhEPKvum9H9IF-RbouyhKFp1ec0FKXUTPtcKG-Nwk1oYEqQdM";
 
+DatabaseReference pazShipRef = FirebaseDatabase.instance.reference().child("PazShip_Booking");
+
+int driveRequesttimeOut = 40;
+
 

@@ -29,12 +29,16 @@ class IdleScreen extends StatefulWidget {
 
 class _IdleScreenState extends State<IdleScreen> {
  AssistantMethod assistantMethod = AssistantMethod();
+ DatabaseReference usersReff = FirebaseDatabase.instance.reference().child("PazadaUsers");
+
+ String username ="";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Users currentUserInfo;
-   
+    retrieveUserData();
+   print("USERNAME::"+ username);
   }
   @override
   Widget build(BuildContext context) {
@@ -65,7 +69,7 @@ class _IdleScreenState extends State<IdleScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                      Expanded(child: Text("Hello \n" ,style: TextStyle(fontSize: 30, fontFamily: "bolt-bold", color: Colors.white) ,maxLines: 2, )),
+                      Expanded(child: Text("Hello \n" + username,style: TextStyle(fontSize: 30, fontFamily: "bolt-bold", color: Colors.white) ,maxLines: 2, )),
 
                         Icon(Icons.notifications_active, color: Colors.white, size: 30,),
 
@@ -249,12 +253,12 @@ class _IdleScreenState extends State<IdleScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazShipQuery()));
   }
   void retrieveUserData()async{
-   usersRef.child(currentfirebaseUser.uid).once().then((DataSnapshot dataSnapshot){
-     if(dataSnapshot != null){
-       usersCurrentInfo = Users.fromSnapshot(dataSnapshot);
+    DataSnapshot dataSnapshot = await usersRef.child(currentfirebaseUser.uid).once();
+    Map pazadaProfile = dataSnapshot.value;
 
-     }
-   });
+setState(() {
+  username = pazadaProfile['name'];
+});
  }
 
 }

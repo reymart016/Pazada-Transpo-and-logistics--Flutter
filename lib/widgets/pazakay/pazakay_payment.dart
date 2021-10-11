@@ -10,11 +10,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/assistants/geoFireAssistant.dart';
 import 'package:pazada/configs/MapsConfig.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:pazada/models/nearbyAvalableDrivers.dart';
+import 'package:pazada/widgets/shared/noDriverAvailableDialog.dart';
 import 'package:pazada/widgets/shared/progressDialog.dart';
+import 'package:pazada/widgets/shared/searchingDriver.dart';
 import 'package:provider/provider.dart';
 
 class PazakayPayment extends StatefulWidget {
@@ -40,6 +43,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
   List<NearbyAvailableDrivers> availableDrivers;
   BitmapDescriptor nearbyIcon;
+  String state = "normal";
 
   AssistantMethod assistantMethod = AssistantMethod();
   Completer<GoogleMapController> _controllerGoogleMap = Completer();
@@ -246,7 +250,9 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                         ),
                                         SizedBox(height: 10,),
 
-                                        Text('N/A', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                        Text(Provider.of<AppData>(context, listen: false).pazShipOrder.key != null ?
+                                        Provider.of<AppData>(context,listen: false).pazShipOrder.key : ''
+                                          , style: TextStyle(fontFamily: "bolt",fontSize: 11),),
                                       ],
 
                                     ),
@@ -258,65 +264,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                           ),
                         ),
                       ),
-                      // SizedBox(height: MediaQuery.of(context).size.height/4),
-                      // Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: [
-                      //       Container(
-                      //         height: 55,
-                      //         width: MediaQuery.of(context).size.width * .885,
-                      //         child: RaisedButton(
-                      //
-                      //           shape: new RoundedRectangleBorder(
-                      //               borderRadius: BorderRadius.circular(5.0)),
-                      //           color: Colors.amber,
-                      //           child: Container(
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.symmetric(vertical: 10),
-                      //               child: Text('Confirm', style: TextStyle(
-                      //                 color: Colors.white,
-                      //
-                      //
-                      //               ),
-                      //
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           onPressed: ()async{
-                      //
-                      //             print('PRESSED');
-                      //             setState(() {
-                      //               // destinationContainer =0;
-                      //               // loadingRider = 280;
-                      //             });
-                      //           },
-                      //         ),
-                      //       ),
-                      //       // Container(
-                      //       //   width: MediaQuery.of(context).size.width * .43,
-                      //       //   child: RaisedButton(
-                      //       //
-                      //       //     shape: new RoundedRectangleBorder(
-                      //       //         borderRadius: BorderRadius.circular(5.0)),
-                      //       //     color: Colors.red,
-                      //       //     child: Container(
-                      //       //       child: Padding(
-                      //       //         padding: const EdgeInsets.symmetric(vertical: 10),
-                      //       //         child: Text('Cancel', style: TextStyle(
-                      //       //           color: Colors.white,
-                      //       //
-                      //       //
-                      //       //         ),
-                      //       //
-                      //       //         ),
-                      //       //       ),
-                      //       //     ),
-                      //       //     onPressed: (){
-                      //       //       Navigator.pop(context);
-                      //       //     },
-                      //       //   ),
-                      //       // ),
-                      //     ] ),
+
                     ],
 
                   ),
@@ -396,6 +344,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                   ),
                                 ),
                                 onPressed: ()async{
+                                  searchingDriver();
                                   availableDrivers = GeoFireAssistant.nearbyAvailableDriversList;
 
 
@@ -405,6 +354,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                   print('PRESSED');
                                   print(availableDrivers);
                                   setState(() {
+                                    state = "requesting";
                                     // destinationContainer =0;
                                     // loadingRider = 280;
                                   });
@@ -431,7 +381,12 @@ class _PazakayPaymentState extends State<PazakayPayment> {
   void saveRideRequest()async{
     print("SAVEEEEEEEEEEEEEEEEEEEEEEEE");
     var pickUp;
-    rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
+
+    if(Provider.of<AppData>(context, listen: false).pazShipOrder.key!=null && Provider.of<AppData>(context, listen: false).pazShipOrder.stats == true){
+      rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").child(Provider.of<AppData>(context, listen: false).pazShipOrder.key);
+    }else{
+      rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
+    }
     await searchNearestDriver();
     if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
       pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
@@ -440,6 +395,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     }
 
     var dropOff = Provider.of<AppData>(context, listen: false).destinationLocation;
+    var fare = AssistantMethod.calculateFares(tripDirectionDetails);
 
 
     Map pickUpCoordinates ={
@@ -454,6 +410,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
       "driver_id": "waiting",
       "payment_method": "cash",
       "pickup": pickUpCoordinates,
+      "fares": fare,
       "destination": destinationCoordinates,
       "created_at": DateTime.now().toString(),
       "passenger_name": usersCurrentInfo.name,
@@ -462,7 +419,19 @@ class _PazakayPaymentState extends State<PazakayPayment> {
       "destination_address": dropOff.placename,
     };
 
-    rideRequestRef.set(rideInfoMap);
+    rideRequestRef.update({
+      "driver_id": "waiting",
+      "payment_method": "cash",
+      "pickup": pickUpCoordinates,
+      "fares": fare,
+      "destination": destinationCoordinates,
+      "created_at": DateTime.now().toString(),
+      "passenger_name": usersCurrentInfo.name,
+      "passenger_phone": usersCurrentInfo.phone,
+      "pickup_address": pickUp.placename,
+      "destination_address": dropOff.placename,
+
+    });
 
   }
   Future <void> getPlaceDirection()async{
@@ -568,14 +537,17 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
     print("GUMAGANA!!!");
 
-    showDialog(context: context,barrierDismissible: false, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
+
+    //showDialog(context: context,barrierDismissible: false, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
     if(availableDrivers.length == 0){
 
+      noDriverFound();
+      cancelRideRequest();
       rideRequestRef.remove();
       return;
 
     }
-    Navigator.pop(context);
+    //Navigator.pop(context);
     var driver = availableDrivers[0];
     print("GUMAGANA!!ATA");
     print(driver.toString());
@@ -587,14 +559,66 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     String token ="";
     driversRef.child(driver.key).child("newRide").set(rideRequestRef.key);
     driversRef.child(driver.key).child("token").once().then((DataSnapshot dataSnapshot){
-      if(dataSnapshot != null){
+      if(dataSnapshot.value != null){
         token = dataSnapshot.value.toString();
         AssistantMethod.sendNotificationToDriver(token, context, rideRequestRef.key);
+      }else{
+        return;
       }
+      const oneSecondPassed = Duration(seconds: 1);
+      var timer = Timer.periodic(oneSecondPassed, (timer) {
+        if(state != "requesting"){
+          driversRef.child(driver.key).child("newRide").set("cancelled");
+          driversRef.child(driver.key).child("newRide").onDisconnect();
+          driveRequesttimeOut = 40;
+          timer.cancel();
+        }
+        driversRef.child(driver.key).child("newRide").onValue.listen((event) {
+          if(event.snapshot.toString() == "accepted"){
+            driversRef.child(driver.key).child("newRide").onDisconnect();
+            driveRequesttimeOut = 40;
+            timer.cancel();
+          }
+        });
+
+
+        driveRequesttimeOut = driveRequesttimeOut - 1;
+        if(driveRequesttimeOut == 0){
+          driversRef.child(driver.key).child("newRide").set("timeout");
+          driversRef.child(driver.key).child("newRide").onDisconnect();
+          driveRequesttimeOut = 40;
+          timer.cancel();
+          searchNearestDriver();
+        }
+      });
       print(token);
     });
 
   }
+
+  void noDriverFound()
+  {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => NoDriverAvailableDialog()
+    );
+  }
+  void searchingDriver(){
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => SearchingDriver()
+    );
+  }
+  void cancelRideRequest(){
+    rideRequestRef.remove();
+    setState(() {
+      state = "normal";
+    });
+  }
+
+
   void initGeofireListener(){
     print("FUCKING MARKERSs");
     Geofire.initialize("availableDrivers");

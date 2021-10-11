@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pazada/bottomBar/bottomAppBar.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
+import 'package:pazada/widgets/shared/bottomNavigationBar.dart';
 
 class SignupScreen extends StatefulWidget {
   static const String idScreen = "signup";
@@ -247,7 +249,7 @@ class _SignupScreenState extends State<SignupScreen> {
       };
       usersRef.child(firebaseUser.uid).set(userDatamap);
       displayToastMessage("Mabuhay, your now part of Pazada", context);
-      Navigator.pushNamedAndRemoveUntil(context, PazadaScreen.idScreen, (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
 
     }
     else{

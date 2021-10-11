@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/models/pazship_order.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/pazakay/mode2/pazada_screen2.dart';
 import 'package:pazada/widgets/pazakay/pazakay_payment.dart';
@@ -50,7 +52,14 @@ class _PazShipQueryState extends State<PazShipQuery> {
 
   TextEditingController itemNameTextEditingController = new TextEditingController();
   TextEditingController itemValueTextEditingController = new TextEditingController();
+  DatabaseReference rideRequestRef;
+  String key = "";
+ @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
 
+  }
 
 
   @override
@@ -132,7 +141,7 @@ class _PazShipQueryState extends State<PazShipQuery> {
 
                   Center(
                     child: Container(
-                      height: MediaQuery.of(context).size.height/3,
+                      height: MediaQuery.of(context).size.height/3.2,
                       alignment: Alignment.center,
 
                       width: MediaQuery.of(context).size.width * .96,
@@ -217,16 +226,20 @@ class _PazShipQueryState extends State<PazShipQuery> {
                                 Icon(Icons.location_on,color: Colors.red,),
                                 SizedBox(width: 5,),
                                 Expanded(
-                                  child: Container(
+                                  child: GestureDetector(
+                                    onTap: pazakay,
+                                    child: Container(
 
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal:30, vertical: 25),
-                                      child: Text(Provider.of<AppData>(context).destinationLocation!= null
-                                          ? Provider.of<AppData>(context).destinationLocation.placename
-                                          : "Destination", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal:30, vertical: 25),
+                                        child: Text(Provider.of<AppData>(context).destinationLocation!= null
+                                            ? Provider.of<AppData>(context).destinationLocation.placename
+                                            : "Destination", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left,
+                                        ),
                                       ),
                                     ),
-                                  ),),
+                                  ),
+                                ),
                                 GestureDetector(
                                     onTap: (){
                                       _requestPermission();
@@ -321,9 +334,10 @@ class _PazShipQueryState extends State<PazShipQuery> {
 
                     FlatButton(onPressed: ()async{
                       await getPlaceDirection();
-
+                      savePazshipBooking();
                       //Navigator.pop(context, "obtainDirection");
                       pazakayPayment();
+                      //setStat();
                     },
                       color: Colors.amber,
                       minWidth:MediaQuery.of(context).size.width * .96 ,
@@ -357,11 +371,42 @@ class _PazShipQueryState extends State<PazShipQuery> {
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazakayPayment()));
   }
   void getPosition (){
+
+
     setState(() {
       CurrentPosition = Provider.of<AppData>(context).pickUpLocation.placename;
 
     });
 
+  }
+
+
+  void savePazshipBooking(){
+    PazShipOrder pazShipOrder = new PazShipOrder();
+    pazShipOrder.itemName = itemNameTextEditingController.text;
+    pazShipOrder.itemValue = itemValueTextEditingController.text;
+    pazShipOrder.stats = true;
+    Provider.of<AppData>(context, listen: false).updatePazShip(pazShipOrder);
+
+    rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
+    Map pazShipBooking = {
+        "item_name": itemNameTextEditingController.text,
+        "item_value": itemValueTextEditingController.text,
+        "PazShip": true,
+    };
+
+    rideRequestRef.set(pazShipBooking);
+    pazShipOrder.key = rideRequestRef.key;
+    Provider.of<AppData>(context, listen: false).updatePazShip(pazShipOrder);
+
+  }
+  void setStat(){
+    PazShipOrder pazShipOrder = new PazShipOrder();
+
+    setState(() {
+      pazShipOrder.stats = true;
+    });
+    Provider.of<AppData>(context, listen: false).updatePazShip(pazShipOrder);
   }
 
 

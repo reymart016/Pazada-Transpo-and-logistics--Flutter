@@ -8,6 +8,7 @@ import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/widgets/idle_screen/idle_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
+import 'package:pazada/widgets/shared/bottomNavigationBar.dart';
 import 'package:pazada/widgets/shared/screenState.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: FirebaseAuth.instance.currentUser == null ? LoginScreen.idScreen : BottomBar.idScreen,
         routes: {
+          BottomNavBar.idScreen: (context) => BottomNavBar(),
           BottomBar.idScreen: (context) => BottomBar(),
           IdleScreen.idScreen: (context) => IdleScreen(),
           SignupScreen.idScreen: (context) => SignupScreen(),

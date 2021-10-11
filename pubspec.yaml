@@ -50,6 +50,7 @@ dependencies:
   flutter_geofire: ^1.0.3
   carousel_pro: ^1.0.0
   assets_audio_player: ^2.0.13+1
+  bottom_navy_bar: ^6.0.0
 
 
 dev_dependencies:
