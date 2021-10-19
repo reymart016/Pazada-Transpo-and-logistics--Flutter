@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lottie/lottie.dart';
 
 class SearchingDriver extends StatelessWidget {
   @override
@@ -35,7 +36,7 @@ class SearchingDriver extends StatelessWidget {
 
                 SizedBox(height: 5,),
                 Center(
-                  child: SpinKitPulse(color: Colors.amber,),
+                  child: Lottie.asset('assets/lotties/delivery.json', height:100),
                 ),
                 SizedBox(height: 10,),
                 Padding(

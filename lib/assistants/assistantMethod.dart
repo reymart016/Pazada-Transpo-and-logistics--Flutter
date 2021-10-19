@@ -164,6 +164,7 @@ class AssistantMethod{
   }
 
   static sendNotificationToDriver(String token, context, String ride_request_id)async{
+    String url = 'https://fcm.googleapis.com/fcm/send';
     var finalDestination;
     var destinationA = Provider.of<AppData>(context, listen: false).destinationLocation;
     var destinationB = Provider.of<AppData>(context, listen: false).destinationLocation2;
@@ -198,7 +199,7 @@ class AssistantMethod{
       "to": token,
     };
     var res = await http.post(
-      'https://fcm.googleapis.com/fcm/send',
+      Uri.parse(url),
       headers: headerMap,
       body: jsonEncode(sendNotificationMap),
     );

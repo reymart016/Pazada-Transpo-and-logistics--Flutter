@@ -8,7 +8,9 @@ import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/widgets/idle_screen/idle_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
+import 'package:pazada/widgets/pazakay/pazakay_payment.dart';
 import 'package:pazada/widgets/shared/bottomNavigationBar.dart';
+import 'package:pazada/widgets/shared/driverInfo.dart';
 import 'package:pazada/widgets/shared/screenState.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
 import 'package:provider/provider.dart';
@@ -47,7 +49,9 @@ class MyApp extends StatelessWidget {
           SignupScreen.idScreen: (context) => SignupScreen(),
           LoginScreen.idScreen: (context) => LoginScreen(),
           PazadaScreen.idScreen: (context) => PazadaScreen(),
-          ScreenStatus.idScreen: (context) => ScreenStatus()
+          ScreenStatus.idScreen: (context) => ScreenStatus(),
+          PazakayPayment.idScreen: (context) => PazakayPayment(),
+          DriverInfo.idScreen: (context) => DriverInfo()
         },
         debugShowCheckedModeBanner: false,
       ),

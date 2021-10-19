@@ -51,6 +51,10 @@ dependencies:
   carousel_pro: ^1.0.0
   assets_audio_player: ^2.0.13+1
   bottom_navy_bar: ^6.0.0
+  lottie: 0.7.0+1
+  logger: ^0.6.0
+
+
 
 
 dev_dependencies:
@@ -73,6 +77,8 @@ flutter:
      - images/
      - images/svg/
      - images/jpegs/
+     - assets/
+     - assets/lotties/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
