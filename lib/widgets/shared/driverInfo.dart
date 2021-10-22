@@ -13,7 +13,14 @@ class DriverInfo extends StatefulWidget {
 
 class _DriverInfoState extends State<DriverInfo> {
   @override
-
+void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(Provider.of<AppData>(context, listen: false).pazadaDriver != null){
+      rideStreamSubscription.pause();
+      print("::::::::::::::::::::::::::::");
+    }
+  }
   void dispose() {
     // TODO: implement dispose
     super.dispose();

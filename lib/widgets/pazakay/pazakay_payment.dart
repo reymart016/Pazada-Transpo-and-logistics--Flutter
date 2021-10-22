@@ -402,7 +402,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     }else{
       rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
     }
-    await searchNearestDriver();
+    //await searchNearestDriver();
     if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
       pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
     }else{
@@ -514,12 +514,12 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
 
       if(rideStatus == 'accepted'){
-
+        Navigator.pop(context);
         driverInfo();
         if(Provider.of<AppData>(context, listen: false).pazadaDriver.username != null
             && Provider.of<AppData>(context, listen: false).pazadaDriver.number != null
             && Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_details != null){
-          rideStreamSubscription.cancel();
+
         }
 
 
@@ -657,8 +657,9 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
     //showDialog(context: context,barrierDismissible: false, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
     if(availableDrivers.length == 0){
-      Navigator.pop(context);
+
       noDriverFound();
+      Navigator.pop(context);
       cancelRideRequest();
       rideRequestRef.remove();
       return;
@@ -693,6 +694,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
         driversRef.child(driver.key).child("newRide").onValue.listen((event) {
           if(event.snapshot.toString() == "accepted"){
             driversRef.child(driver.key).child("newRide").onDisconnect();
+
             driveRequesttimeOut = 40;
             timer.cancel();
           }
@@ -705,7 +707,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
           driversRef.child(driver.key).child("newRide").onDisconnect();
           driveRequesttimeOut = 40;
           timer.cancel();
-          searchNearestDriver();
+          //searchNearestDriver();
         }
       });
       print(token);
