@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
+import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/profile/profile_screen.dart';
 import 'package:pazada/widgets/idle_screen/idle_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
@@ -30,11 +31,16 @@ class _BottomBarState extends State<BottomBar> {
 // Number of tabs
   final tabs = [
     IdleScreen(),
-    Profile(),
+    ProfileScreen(),
     Center(child: PrimaryText(text: 'Profile Page', size: 40, color: AppColors.primary)),
     Center(child: PrimaryText(text: 'Cart detail Page', size: 40, color: AppColors.primary)),
   ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
 
+  }
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);

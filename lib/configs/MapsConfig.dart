@@ -13,3 +13,5 @@ bool autoLoc = false;
 DirectionDetails tripDirectionDetails;
 bool pazshipp = false;
 bool pazakayy = false;
+String userId = "";
+FirebaseAuth auth;

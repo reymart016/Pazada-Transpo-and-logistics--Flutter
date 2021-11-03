@@ -21,7 +21,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   List activepage = [
     IdleScreen(),
-    Profile(),
+    ProfileScreen(),
 
   ];
 

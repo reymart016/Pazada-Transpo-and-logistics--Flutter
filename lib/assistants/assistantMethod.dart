@@ -93,9 +93,11 @@ class AssistantMethod{
 
 
     firebaseUser =await FirebaseAuth.instance.currentUser;
-    String userId = firebaseUser.uid;
+    userId = firebaseUser.uid;
     DatabaseReference reference = FirebaseDatabase.instance.reference().child('PazadaUsers').child(userId);
-
+    print("============================");
+    print(userId);
+    print("============================");
     reference.once().then((DataSnapshot dataSnapShot)
     {
       if(dataSnapShot.value != null){
@@ -208,6 +210,8 @@ class AssistantMethod{
   Future<String> getCurrentUID() async {
     return await _firebaseAuth.currentUser.uid;
   }
+
+
 
 
 

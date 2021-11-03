@@ -129,7 +129,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
                           SizedBox(height: 16,),
                           DividerWidget(),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal:14.0, vertical:10),
+                            padding: const EdgeInsets.only(top:20, left: 10, bottom: 20, right: 10),
                             child: Row(
                               children:[
                                 Icon(Icons.circle,color: Colors.amber,),
@@ -140,7 +140,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
 
 
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
+                                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                                       child: GestureDetector(
                                         onTap: (){
                                           pazakay2();
@@ -180,7 +180,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
                           DividerWidget(),
 
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal:14.0,vertical: 10),
+                            padding: const EdgeInsets.only(top:14, left: 10, bottom: 20, right: 10),
                             child: Row(
                               children: [
                                 Icon(Icons.location_on,color: Colors.red,),
@@ -192,7 +192,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
                                     child: Container(
 
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal:30, vertical: 25),
+                                        padding: const EdgeInsets.symmetric(horizontal:30, vertical: 10),
                                         child: Text(Provider.of<AppData>(context).destinationLocation!= null
                                             ? Provider.of<AppData>(context).destinationLocation.placename
                                             : "Destination", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left,
@@ -301,7 +301,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
                     },
                       color: Colors.amber,
                       minWidth:MediaQuery.of(context).size.width * .96 ,
-                      height: 60,
+                      height: 50,
                       child: Text("Request", style: TextStyle(fontFamily: "bolt", fontSize:18, color: Colors.white),textAlign: TextAlign.center, ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),

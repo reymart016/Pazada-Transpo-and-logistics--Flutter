@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/configs/MapsConfig.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/models/allUsers.dart';
@@ -31,14 +32,20 @@ class _IdleScreenState extends State<IdleScreen> {
  AssistantMethod assistantMethod = AssistantMethod();
  DatabaseReference usersReff = FirebaseDatabase.instance.reference().child("PazadaUsers");
 
- String username ="";
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Users currentUserInfo;
     retrieveUserData();
+    print(userId);
+    AssistantMethod.getCurrentOnlineInformation();
+    setState(() {
+      username = username;
+    });
    print("USERNAME::"+ username);
+    getProfileDetails();
   }
   @override
   Widget build(BuildContext context) {
@@ -219,7 +226,7 @@ class _IdleScreenState extends State<IdleScreen> {
                   child: PazadaCard(
                     color: pazabuy,
                     label: "Pazabuy",
-                    svgPath: 'images/svg/sidetric.svg',
+                    svgPath: 'images/svg/pazabuy.svg',
                   ),
                 ),
                 GestureDetector(
@@ -227,7 +234,7 @@ class _IdleScreenState extends State<IdleScreen> {
                   child: PazadaCard(
                     color: pazship,
                     label: "PazShip",
-                    svgPath: 'images/svg/delman1.svg',
+                    svgPath: 'images/svg/sidetric.svg',
                   ),
                 ),
               ],
@@ -256,11 +263,26 @@ class _IdleScreenState extends State<IdleScreen> {
     DataSnapshot dataSnapshot = await usersRef.child(currentfirebaseUser.uid).once();
     Map pazadaProfile = dataSnapshot.value;
 
+
 setState(() {
   username = pazadaProfile['name'];
 });
  }
+ void getProfileDetails()async{
+   currentfirebaseUser = await FirebaseAuth.instance.currentUser;
+   DataSnapshot dataSnapshot = await usersRef.child(userId).once();
+   print("=====1111111=============");
+   print(usersCurrentInfo.id);
+   Map pazadaProfile = dataSnapshot.value;
+   setState(() {
+     username = pazadaProfile['name'];
+     number = pazadaProfile['phone'];
+     email = pazadaProfile['email'];
+     userName = username;
 
+   });
+   print(username +" "+ number +" "+ email);
+ }
 }
 class SimpleCustomAlert extends StatelessWidget {
   final title;
@@ -314,4 +336,5 @@ class SimpleCustomAlert extends StatelessWidget {
       ),
     );
   }
+
 }

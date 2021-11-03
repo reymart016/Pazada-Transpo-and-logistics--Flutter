@@ -41,7 +41,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
   Set<Circle> circleSet = {};
 
   DirectionDetails tripDirectionDetails;
-  DatabaseReference rideRequestRef;
+
 
 
 
@@ -628,7 +628,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
         circleId: CircleId("destinationID")
     );
     setState(() {
-      circleSet.add(pickupCircle);
+        circleSet.add(pickupCircle);
       circleSet.add(destinationCircle);
     });
   }
@@ -638,7 +638,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     setState(() {
       pazadaDriver.username = driverInformation['driver_name'];
       pazadaDriver.vehicle_details = driverInformation['vehicle_details'];
-      pazadaDriver.vehicle_plateNum = driverInformation['vehicle_plateNum'];
+      pazadaDriver.vehicle_plateNum = driverInformation['vehicle_plateNum'].toString();
       username = Provider.of<AppData>(context, listen: false).pazadaDriver.username;
       vehicle_plateNum = Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_plateNum;
       vehicle_details = Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_details;
@@ -674,7 +674,11 @@ class _PazakayPaymentState extends State<PazakayPayment> {
   }
 
   void notifyDriver(NearbyAvailableDrivers driver){
+    keyy = rideRequestRef.key;
     String token ="";
+    setState(() {
+      driverID = driver.key;//this will pass the driver UID to a global variable and can be use later
+    });
     driversRef.child(driver.key).child("newRide").set(rideRequestRef.key);
     driversRef.child(driver.key).child("token").once().then((DataSnapshot dataSnapshot){
       if(dataSnapshot.value != null){
@@ -790,7 +794,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
             break;
 
           case Geofire.onGeoQueryReady:
-          // All Intial Data is loaded
+           // All Intial Data is loaded
             updateAvailableDriversOnMap();
 
             break;

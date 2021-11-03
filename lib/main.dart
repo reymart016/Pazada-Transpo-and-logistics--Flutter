@@ -15,10 +15,12 @@ import 'package:pazada/widgets/shared/screenState.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
 import 'package:provider/provider.dart';
 
+import 'assistants/assistantMethod.dart';
 import 'dataHandler/appData.dart';
 
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
+  AssistantMethod.getCurrentOnlineInformation();
   await Firebase.initializeApp();
   runApp(MyApp());
 }

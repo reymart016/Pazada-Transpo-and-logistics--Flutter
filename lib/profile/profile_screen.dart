@@ -1,78 +1,305 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/configs/MapsConfig.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/main.dart';
-import 'package:pazada/models/allUsers.dart';
+import 'package:pazada/widgets/login/login_screen.dart';
 
-class Profile extends StatefulWidget {
+class ProfileScreen extends StatefulWidget {
   @override
-  _ProfileState createState() => _ProfileState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileState extends State<Profile> {
-  User currentfirebaseUser;
-  //DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("PazadaUsers");
-  String username ="";
-  String number = "";
-  String email = "";
+class _ProfileScreenState extends State<ProfileScreen> {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-
- final FirebaseAuth auth = FirebaseAuth.instance;
-
-  @override
   void initState() {
     // TODO: implement initState
-
-    getProfileDetails();
+    AssistantMethod.getCurrentOnlineInformation();
+    //getProfileDetails();
     super.initState();
   }
   @override
+
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        body: SafeArea(
-
-          child: Column(
-            children: [
-              Text(username, style: TextStyle(
-                  fontSize: 30, fontFamily: "bolt"
-              ),),
-              Text(number, style: TextStyle(
-                  fontSize: 30, fontFamily: "bolt"
-              ),),
-              Text(email, style: TextStyle(
-                  fontSize: 30, fontFamily: "bolt"
-              ),),
-              FlatButton(onPressed: ()async{
-
-                await auth.signOut();
-
-              },
-                color: Colors.amber,
-                minWidth:MediaQuery.of(context).size.width * .96 ,
-                height: 60,
-                child: Text("Sign-out", style: TextStyle(fontFamily: "bolt", fontSize:18, color: Colors.white),textAlign: TextAlign.center, ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-
-                ),
-              )
-            ],
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.white,
+                Colors.white
+              ],
+              begin: FractionalOffset.bottomCenter,
+              end: FractionalOffset.topCenter,
+            ),
           ),
         ),
-      ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 73),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Icon(
+                      //   AntDesign.arrowleft,
+                      //   color: Colors.black54,
+                      // ),
+                      GestureDetector(
+                        onTap: _signOut,
+                        child: Icon(
+                          AntDesign.logout,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'My\nProfile',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 34,
+                      fontFamily: 'bolt-bold',
+                    ),
+                  ),
+                  SizedBox(
+                    height: 22,
+                  ),
+                  Container(
+                    height: height * 0.43,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        double innerHeight = constraints.maxHeight;
+                        double innerWidth = constraints.maxWidth;
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                height: innerHeight * 0.72,
+                                width: innerWidth,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.amber,
+                                ),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 80,
+                                    ),
+                                    Text(
+                                      username,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'bolt-bold',
+                                        fontSize: 37,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Text(
+                                              'Total Rides',
+                                              style: TextStyle(
+                                                color: Colors.grey[700],
+                                                fontFamily: 'bolt',
+                                                fontSize: 25,
+                                              ),
+                                            ),
+                                            Text(
+                                              '10',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'bolt',
+                                                fontSize: 25,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 25,
+                                            vertical: 8,
+                                          ),
+                                          child: Container(
+                                            height: 50,
+                                            width: 3,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(100),
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              'Pending',
+                                              style: TextStyle(
+                                                color: Colors.grey[700],
+                                                fontFamily: 'bolt',
+                                                fontSize: 25,
+                                              ),
+                                            ),
+                                            Text(
+                                              '1',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'bolt',
+                                                fontSize: 25,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 110,
+                              right: 20,
+                              child: Icon(
+                                AntDesign.setting,
+                                color: Colors.grey[700],
+                                size: 30,
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: Center(
+                                child: Container(
+                                  child: SvgPicture.asset(
+                                    'images/svg/profileTemp.svg',
+                                    width: innerWidth * 0.45,
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    height: height * 0.5,
+                    width: width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.amber,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            'Ride History',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 27,
+                              fontFamily: 'bolt-bold',
+                            ),
+                          ),
+                          Divider(
+                            thickness: 2.5,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: height * 0.08,
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: height * 0.08,
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: height * 0.08,
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: height * 0.08,
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
-  void getProfileDetails()async{
-    DataSnapshot dataSnapshot = await usersRef.child(currentfirebaseUser.uid).once();
-
-    Map pazadaProfile = dataSnapshot.value;
-    setState(() {
-      username = pazadaProfile['name'];
-      number = pazadaProfile['phone'];
-      email = pazadaProfile['email'];
+  Future signOut()async{
+    auth.signOut().then((c){
+      Navigator.pushNamedAndRemoveUntil(context, LoginScreen.idScreen, (route) => false);
     });
-    print(username +" "+ number +" "+ email);
   }
+  _signOut() async {
+    await _firebaseAuth.signOut().then((c){
+      Navigator.pushNamedAndRemoveUntil(context, LoginScreen.idScreen, (route) => false);
+    });
+  }
+
 }
