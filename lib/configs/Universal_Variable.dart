@@ -40,5 +40,13 @@ StreamSubscription<Event> rideStreamSubscription;
 double starCounter = 0.0;
 String rateTitle = " ";
 
+String rideRequestId = ''; //current ID of the ride
+String pickupLocationText = "";
+String destinationLocationText = "";
+String fareText = "";
+int rideHistoryTotal = 0;
 
+List rideHistoryy = [];
+bool isvisible = false;
 
+String testest = "test";

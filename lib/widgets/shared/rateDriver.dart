@@ -112,9 +112,9 @@ class _RateDriverState extends State<RateDriver> with SingleTickerProviderStateM
                               double oldRatings = double.parse(dataSnapshot.value.toString());
                               double addRatings = oldRatings + starCounter;
                               double averageRatings = addRatings / 2;
-                              driverRatingRef.set(averageRatings.toString());
+                              driverRatingRef.set(averageRatings.toStringAsFixed(2));
                           }else{
-                            driverRatingRef.set(starCounter.toString());
+                            driverRatingRef.set(starCounter.toStringAsFixed(2));
                           }
 
                         });

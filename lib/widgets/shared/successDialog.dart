@@ -1,11 +1,15 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pazada/bottomBar/bottomAppBar.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
+import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/widgets/idle_screen/idle_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/shared/rateDriver.dart';
+import 'package:pazada/configs/MapsConfig.dart';
+import 'package:provider/provider.dart';
 
 class SuccessDialog extends StatefulWidget {
   @override
@@ -65,6 +69,7 @@ class _SuccessDialogState extends State<SuccessDialog> with SingleTickerProvider
                   child: RaisedButton(
                     onPressed: ()
                     {
+                      updateRideHistory();
 
                       Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
                       showDialog(
@@ -100,5 +105,52 @@ class _SuccessDialogState extends State<SuccessDialog> with SingleTickerProvider
         ),
       ),
     );
+
+  }
+  void updateRideHistory()async{
+    DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("PazadaUsers").child(userId).child("history");
+    setState(() {
+      pickupLocationText = Provider.of<AppData>(context, listen: false).destinationLocation2!= null && mapbook == true
+          ?  Provider.of<AppData>(context, listen: false).destinationLocation2.placename
+          : Provider.of<AppData>(context, listen: false).pickUpLocation!= null && autoLoc == true
+          ? Provider.of<AppData>(context, listen: false).pickUpLocation.placename : " ";
+      destinationLocationText = Provider.of<AppData>(context, listen: false).destinationLocation!= null
+          ? Provider.of<AppData>(context, listen: false).destinationLocation.placename
+          : "";
+
+    });
+    Map rideHistory = {
+      "rideID": rideRequestId,
+      "created_at": DateTime.now().toString(),
+      "driver_name": Provider.of<AppData>(context, listen: false).pazadaDriver.username,
+      "pickup_location": pickupLocationText,
+      "destination_location": destinationLocationText,
+      "fare": fareText,
+    };
+
+    //usersRef.child(userId).child("history").child(rideRequestId).set(true);
+
+    usersRef.update(
+      {
+        "rideID": rideRequestId,
+        "created_at": DateTime.now().toString(),
+        "driver_name": Provider.of<AppData>(context, listen: false).pazadaDriver.username,
+        "pickup_location": pickupLocationText,
+        "destination_location": destinationLocationText,
+        "fare": fareText,
+      }
+    );
+    usersRef.once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value != null){
+        setState(() {
+            rideHistoryy = dataSnapshot.value;
+        });
+        print("=================================");
+        print(dataSnapshot.value.length);
+        print("=================================");
+      }
+    });
+    
+
   }
 }

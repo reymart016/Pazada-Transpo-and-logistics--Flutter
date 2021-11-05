@@ -93,7 +93,7 @@ class AssistantMethod{
 
 
     firebaseUser =await FirebaseAuth.instance.currentUser;
-    userId = firebaseUser.uid;
+    userId = firebaseUser.uid; // get the uid of the current user
     DatabaseReference reference = FirebaseDatabase.instance.reference().child('PazadaUsers').child(userId);
     print("============================");
     print(userId);

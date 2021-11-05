@@ -38,7 +38,7 @@ class _IdleScreenState extends State<IdleScreen> {
     // TODO: implement initState
     super.initState();
     Users currentUserInfo;
-    retrieveUserData();
+    //retrieveUserData();
     print(userId);
     AssistantMethod.getCurrentOnlineInformation();
     setState(() {
@@ -123,7 +123,7 @@ class _IdleScreenState extends State<IdleScreen> {
                                 children: [
 
                                   Text("Total Trips",style: TextStyle(fontSize: 20, fontFamily: "bolt-bold", color: Colors.black) ,maxLines: 3,textAlign: TextAlign.center,  ),
-                                  Text("12",style: TextStyle(fontSize: 20, fontFamily: "bolt-bold", color: Colors.black) ,maxLines: 3,textAlign: TextAlign.center,  ),
+                                  Text(rideHistoryTotal.toString(),style: TextStyle(fontSize: 20, fontFamily: "bolt-bold", color: Colors.black) ,maxLines: 3,textAlign: TextAlign.center,  ),
                                 ],
                               ),
                          ] ),
@@ -281,7 +281,7 @@ setState(() {
      userName = username;
 
    });
-   print(username +" "+ number +" "+ email);
+   print(userName +" "+ number +" "+ email);
  }
 }
 class SimpleCustomAlert extends StatelessWidget {

@@ -57,7 +57,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
   final log = Logger();
   PazadaDriver pazadaDriver = new PazadaDriver();
-  String testerText = '';
+
 
 
 
@@ -84,7 +84,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     super.initState();
     getPlaceDirection();
     locatePosition();
-
+    _isVisible();
   }
   void checkStatus(){
     if(Provider.of<AppData>(context).destinationLocation2!= null){
@@ -242,6 +242,12 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                       Text('Distance:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
                                       SizedBox(height: 10,),
                                       Text('Succeeding Kilometer:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                      // SizedBox(height: 10,),
+                                      // Visibility(visible: isvisible,
+                                      //     child: Text('PazShip Item:', style: TextStyle(fontFamily: "bolt",fontSize: 11),)),
+                                      // SizedBox(height: 10,),
+                                      // Visibility(visible: isvisible,
+                                      //     child: Text('PazShip Item Value:', style: TextStyle(fontFamily: "bolt",fontSize: 11),)),
                                     ],
                                   ),
                                   Expanded(
@@ -264,9 +270,23 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                         ),
                                         SizedBox(height: 10,),
 
-                                        Text(Provider.of<AppData>(context, listen: false).pazShipOrder.key != null ?
-                                        Provider.of<AppData>(context,listen: false).pazShipOrder.key : ''
+                                        // Text(Provider.of<AppData>(context, listen: false).pazShipOrder.key != null ?
+                                        // Provider.of<AppData>(context,listen: false).pazShipOrder.key : ''
+                                        //   , style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                        Text(''
                                           , style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                        // SizedBox(height: 10,),
+                                        // Visibility(visible: isvisible,
+                                        //   child: Text(Provider.of<AppData>(context, listen: false).pazShipOrder != null ?
+                                        //   Provider.of<AppData>(context, listen: false).pazShipOrder.itemName :testest
+                                        //     , style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                        // ),
+                                        // SizedBox(height: 10,),
+                                        // Visibility(visible: isvisible,
+                                        //   child: Text(Provider.of<AppData>(context, listen: false).pazShipOrder != null ?
+                                        //   Provider.of<AppData>(context, listen: false).pazShipOrder.itemValue :testest
+                                        //     , style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                        // ),
                                       ],
 
                                     ),
@@ -393,6 +413,14 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     );
 
 }
+  void _isVisible(){
+    if(Provider.of<AppData>(context, listen: false).pazShipOrder != null){
+      setState(() {
+        isvisible = true;
+      });
+    }
+  }
+
   void saveRideRequest()async{
     print("SAVEEEEEEEEEEEEEEEEEEEEEEEE");
     var pickUp;
@@ -411,6 +439,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
     var dropOff = Provider.of<AppData>(context, listen: false).destinationLocation;
     var fare = AssistantMethod.calculateFares(tripDirectionDetails);
+
 
 
     Map pickUpCoordinates ={
@@ -448,9 +477,13 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
     });
 
-    testerText = rideRequestRef.key;
-    print(testerText);
 
+
+    setState(() {
+      rideRequestId = rideRequestRef.key;
+      fareText = fare.toString();
+    });
+    print("RIDE id::" + rideRequestId);
     //-- get the driver info using streamsubscription---//
 
     rideStreamSubscription = rideRequestRef.onValue.listen((event) {
@@ -633,7 +666,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     });
   }
   void passDriverInfo()async{
-    DataSnapshot dataSnapshot = await usersRef.child("Ride_Request").child(testerText).once();
+    DataSnapshot dataSnapshot = await usersRef.child("Ride_Request").child(rideRequestId).once();
     Map driverInformation = dataSnapshot.value;
     setState(() {
       pazadaDriver.username = driverInformation['driver_name'];

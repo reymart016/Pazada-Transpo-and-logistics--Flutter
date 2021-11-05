@@ -108,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       height: 80,
                                     ),
                                     Text(
-                                      username,
+                                      userName,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'bolt-bold',
@@ -187,7 +187,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               top: 110,
                               right: 20,
                               child: Icon(
-                                AntDesign.setting,
+                                Icons.edit,
                                 color: Colors.grey[700],
                                 size: 30,
                               ),

@@ -141,7 +141,7 @@ class _PazShipQueryState extends State<PazShipQuery> {
 
                   Center(
                     child: Container(
-                      height: MediaQuery.of(context).size.height/3.2,
+                      height: MediaQuery.of(context).size.height/2.9,
                       alignment: Alignment.center,
 
                       width: MediaQuery.of(context).size.width * .96,

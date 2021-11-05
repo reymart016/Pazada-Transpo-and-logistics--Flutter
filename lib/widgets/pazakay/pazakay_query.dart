@@ -6,6 +6,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/configs/MapsConfig.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/pazship_order.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
@@ -55,6 +56,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
     // TODO: implement initState
 
     _requestPermissionB();
+    _isVisible();
 
     setStat();
   }
@@ -317,7 +319,13 @@ class _PazakayQueryState extends State<PazakayQuery> {
 
     );
   }
+  void _isVisible(){
 
+      setState(() {
+        isvisible = false;
+      });
+
+  }
   void pazakay (){
 
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
