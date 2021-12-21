@@ -9,16 +9,22 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/assistants/geoFireAssistant.dart';
 import 'package:pazada/configs/MapsConfig.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:pazada/models/nearbyAvalableDrivers.dart';
+import 'package:pazada/models/pazada_driver.dart';
 import 'package:pazada/widgets/dropOff_screen/dropOff_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen/payment_panel.dart';
 import 'package:pazada/widgets/shared/divider.dart';
+import 'package:pazada/widgets/shared/driverInfo.dart';
 import 'package:pazada/widgets/shared/loading.dart';
 import 'package:pazada/widgets/shared/navbar.dart';
+import 'package:pazada/widgets/shared/noDriverAvailableDialog.dart';
 import 'package:pazada/widgets/shared/progressDialog.dart';
+import 'package:pazada/widgets/shared/searchingDriver.dart';
+import 'package:pazada/widgets/shared/successDialog.dart';
 import 'package:pazada/widgets/signup/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +32,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:location/location.dart' as lct;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../main.dart';
 
 
 class PazadaScreen extends StatefulWidget {
@@ -57,9 +66,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
   Set<Marker> markersSet = {};
   Set<Circle> circleSet = {};
 
-  double rideDetailsContainer = 0;
-  double destinationContainer = 280;
-  double loadingRider = 0;
+
 
 
   List payments = ["Cash", "Gcash"];
@@ -76,6 +83,8 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
   BitmapDescriptor nearbyIcon;
 
   String manualBook ='';
+  PazadaDriver pazadaDriver = new PazadaDriver();
+  List<NearbyAvailableDrivers> availableDrivers;
 
 
 
@@ -123,10 +132,6 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
   }
 
-  void cancelRideRequest(){
-      rideRequestRef.remove();
-  }
-
 
 
 
@@ -147,10 +152,10 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
 
 
-  static const LatLng _center = const LatLng(37.42796133580664, -122.085749655962);
+  static const LatLng _center = const LatLng(15.988647703340895, 120.57377904653549);
 
   static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
+    target: LatLng(15.988647703340895, 120.57377904653549),
     zoom: 14.4746,
   );
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -198,6 +203,8 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     AssistantMethod.getCurrentOnlineInformation(); //BOOKING PART
     requestPerms();
     super.initState();
+    getPlaceDirection();
+
   }
 
 
@@ -754,23 +761,167 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(child: Text("Please wait...", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),)),
+                      Center(child: Text("Pazakay Ride In Progress", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),)),
 
 
 
 
 
-                      SizedBox(height: 60,),
+                      SizedBox(height: 10,),
 
-                      Center(
-                          child: GestureDetector(
-                            onTap: cancelSearch,
-                          child: SpinKitPulse(
-                            color: Colors.amber,
-                            size: 50,
 
-                          )
-                      )
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Driver Name:', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Phone:', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text("Vehicle:", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.username : 'Username', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.number : 'Vehicle', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.vehicle_details : "0016", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Divider(thickness: 2,),
+
+                      SizedBox(height: 10,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: alertCall,
+                                child: Container(
+
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      border: Border.all(color: Colors.greenAccent)
+                                  ),
+
+                                  child: Padding(
+                                    padding: EdgeInsets.all(10.0),
+                                    child:  Icon(Icons.call, color: Colors.greenAccent, size: 20.0,
+
+                                    ),
+
+
+
+                                  ),
+                                ),
+                              ),
+                              Text("Call Driver", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
+                            ],
+                          ),
+                          // Column(
+                          //   children: [
+                          //     Container(
+                          //        decoration: BoxDecoration(
+                          //        borderRadius: BorderRadius.circular(50),
+                          //         border: Border.all(color: Colors.amberAccent)
+                          //         ),
+                          //
+                          //
+                          //         child: Padding(
+                          //           padding: EdgeInsets.all(10.0),
+                          //           child: Icon(Icons.menu_open, color: Colors.amberAccent, size: 20.0,),
+                          //         ),
+                          //       ),
+                          //
+                          //     Text("Details", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
+                          //   ],
+                          // ),
+                          Column(
+                            children: [
+                              GestureDetector(
+                                onTap: (){
+                                  if(cancelBtn == true){
+                                    Navigator.pop(context);
+                                    print("back");
+                                  }else{
+                                    rideStreamSubscription.cancel();
+                                    showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (BuildContext context) => SuccessDialog()
+                                    );
+                                    // String codeSanner = await BarcodeScanner.scan();    //barcode scnner
+                                    // setState(() {
+                                    //   qrCodeResult = codeSanner;
+                                    // });
+                                    // temp(); //NEED TO FIX THE SUCCESS DIALOG NULL BUG
+                                  }
+
+
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      border: Border.all(color:cancelBtn == true? Colors.redAccent : Colors.lightBlueAccent)
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(10.0),
+                                    child: Icon(cancelBtn == true?  Icons.cancel_outlined : Icons.flag_rounded,
+                                      color:cancelBtn == true? Colors.redAccent : Colors.lightBlueAccent, size: 20.0,),
+                                  ),
+                                ),
+                              ),
+                              Text(cancelBtn == true? "Cancel" : "Arrived", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
+                            ],
+                          ),
+                          // Visibility(
+                          //   visible: scanBtn,
+                          //   child: Column(
+                          //     children: [
+                          //       GestureDetector(
+                          //         onTap: (){
+                          //           Navigator.pop(context);
+                          //           print("scan");
+                          //         },
+                          //         child: Container(
+                          //           decoration: BoxDecoration(
+                          //               borderRadius: BorderRadius.circular(50),
+                          //               border: Border.all(color: Colors.amberAccent)
+                          //           ),
+                          //           child: Padding(
+                          //             padding: EdgeInsets.all(10.0),
+                          //             child: Icon(Icons.qr_code_scanner_rounded, color: Colors.amberAccent, size: 20.0,),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       Text("Scan", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
+                          //     ],
+                          //   ),
+                          // ),
+                        ],
                       ),
 
 
@@ -789,11 +940,25 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
 
     );
   }
+  alertCall(){
+    launch("tel://$num");
+  }
   Future <void> getPlaceDirection()async{
-    var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
+
+    var pickUp;
+
+    var pickupLatLng;
+    //var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
     var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
-    var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
+    //var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
     var destinationLatLng = LatLng(finalPos.latitude, finalPos.longitude);
+    if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
+      pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+      pickupLatLng = LatLng(pickUp.latitude, pickUp.longitude);
+    }else{
+      pickUp = Provider.of<AppData>(context, listen: false).destinationLocation2;
+      pickupLatLng = LatLng(pickUp.latitude, pickUp.longitude);
+    }
 
    //showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
 
@@ -828,26 +993,26 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
       );
       polylineSet.add(polyline);
     });
-    // LatLngBounds latLngBounds;
-    // if(pickupLatLng.latitude > destinationLatLng.latitude && pickupLatLng.longitude > destinationLatLng.longitude){
-    //   latLngBounds = LatLngBounds(southwest: destinationLatLng, northeast: pickupLatLng);
-    //
-    // }
-    // else if(pickupLatLng.longitude > destinationLatLng.longitude){
-    //   latLngBounds = LatLngBounds(southwest: LatLng(pickupLatLng.latitude, destinationLatLng.longitude), northeast: LatLng(destinationLatLng.latitude, pickupLatLng.longitude));
-    //
-    // }
-    // else if(pickupLatLng.latitude > destinationLatLng.latitude){
-    //   latLngBounds = LatLngBounds(southwest: LatLng(destinationLatLng.latitude, pickupLatLng.longitude), northeast: LatLng(pickupLatLng.latitude, destinationLatLng.longitude));
-    //
-    // }else{
-    //   latLngBounds = LatLngBounds(southwest: pickupLatLng, northeast: destinationLatLng);
-    // }
-    // newGoogleMapController.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
+    LatLngBounds latLngBounds;
+    if(pickupLatLng.latitude > destinationLatLng.latitude && pickupLatLng.longitude > destinationLatLng.longitude){
+      latLngBounds = LatLngBounds(southwest: destinationLatLng, northeast: pickupLatLng);
+
+    }
+    else if(pickupLatLng.longitude > destinationLatLng.longitude){
+      latLngBounds = LatLngBounds(southwest: LatLng(pickupLatLng.latitude, destinationLatLng.longitude), northeast: LatLng(destinationLatLng.latitude, pickupLatLng.longitude));
+
+    }
+    else if(pickupLatLng.latitude > destinationLatLng.latitude){
+      latLngBounds = LatLngBounds(southwest: LatLng(destinationLatLng.latitude, pickupLatLng.longitude), northeast: LatLng(pickupLatLng.latitude, destinationLatLng.longitude));
+
+    }else{
+      latLngBounds = LatLngBounds(southwest: pickupLatLng, northeast: destinationLatLng);
+    }
+    newGoogleMapController.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
 
     Marker pickupMarker = Marker(
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
-      infoWindow: InfoWindow(title: initialPos.placename, snippet: "Your Location!"),
+      //infoWindow: InfoWindow(title: initialPos.placename, snippet: "Your Location!"),
       position: pickupLatLng,
       markerId: MarkerId("pickupID"),
       
@@ -957,6 +1122,130 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
       );
     }
   }
+
+  void passDriverInfo()async{
+    DataSnapshot dataSnapshot = await usersRef.child("Ride_Request").child(rideRequestId).once();
+    Map driverInformation = dataSnapshot.value;
+    setState(() {
+      pazadaDriver.username = driverInformation['driver_name'];
+      pazadaDriver.vehicle_details = driverInformation['vehicle_details'];
+      pazadaDriver.vehicle_plateNum = driverInformation['vehicle_plateNum'].toString();
+      username = Provider.of<AppData>(context, listen: false).pazadaDriver.username;
+      vehicle_plateNum = Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_plateNum;
+      vehicle_details = Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_details;
+    });
+    print(":::::::::::::::::::::::::::::::::::::::::");
+    print(Provider.of<AppData>(context, listen: false).pazadaDriver.username);
+    print(Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_details);
+    print(Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_plateNum);
+    print(":::::::::::::::::::::::::::::::::::::::::");
+
+  }
+  void searchNearestDriver(){
+
+    print("GUMAGANA!!!");
+
+
+    //showDialog(context: context,barrierDismissible: false, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
+    if(availableDrivers.length == 0){
+
+      noDriverFound();
+      Navigator.pop(context);
+      cancelRideRequest();
+      rideRequestRef.remove();
+      return;
+
+    }
+    //Navigator.pop(context);
+    var driver = availableDrivers[0];
+    print("GUMAGANA!!ATA");
+    print(driver.toString());
+    availableDrivers.removeAt(0);
+    notifyDriver(driver);
+  }
+
+  void notifyDriver(NearbyAvailableDrivers driver){
+    keyy = rideRequestRef.key;
+    String token ="";
+    setState(() {
+      driverID = driver.key;//this will pass the driver UID to a global variable and can be use later
+    });
+    driversRef.child(driver.key).child("newRide").set(rideRequestRef.key);
+    driversRef.child(driver.key).child("token").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value != null){
+        token = dataSnapshot.value.toString();
+        AssistantMethod.sendNotificationToDriver(token, context, rideRequestRef.key);
+      }else{
+        return;
+      }
+      const oneSecondPassed = Duration(seconds: 1);
+      var timer = Timer.periodic(oneSecondPassed, (timer) {
+        if(state != "requesting"){
+          driversRef.child(driver.key).child("newRide").set("cancelled");
+          driversRef.child(driver.key).child("newRide").onDisconnect();
+          driveRequesttimeOut = 40;
+          timer.cancel();
+        }
+        driversRef.child(driver.key).child("newRide").onValue.listen((event) {
+          if(event.snapshot.toString() == "accepted"){
+            driversRef.child(driver.key).child("newRide").onDisconnect();
+
+            driveRequesttimeOut = 40;
+            timer.cancel();
+          }
+        });
+
+
+        driveRequesttimeOut = driveRequesttimeOut - 1;
+        if(driveRequesttimeOut == 0){
+          driversRef.child(driver.key).child("newRide").set("timeout");
+          driversRef.child(driver.key).child("newRide").onDisconnect();
+          driveRequesttimeOut = 40;
+          timer.cancel();
+          //searchNearestDriver();
+        }
+      });
+      print(token);
+    });
+
+  }
+
+  void noDriverFound()
+  {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => NoDriverAvailableDialog()
+    );
+
+  }
+  void searchingDriver(){
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => SearchingDriver()
+    );
+  }
+  void driverInfo(){
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => DriverInfo()
+    );
+
+  }
+
+  void closeCurrentDialog(){
+    Navigator.pop(context);
+  }
+  void cancelRideRequest(){
+    rideRequestRef.remove();
+    setState(() {
+      state = "normal";
+    });
+  }
+
+
 
 }
 displayToastMessage(String Message, BuildContext context){

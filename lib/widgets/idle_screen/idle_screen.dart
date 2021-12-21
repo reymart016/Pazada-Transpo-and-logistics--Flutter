@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pazada/Store/storehome.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
@@ -248,7 +249,7 @@ class _IdleScreenState extends State<IdleScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
   }
   void services2 (){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazabuyItem()));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> StoreHome()));
   }
   void services3 (){
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazakayQuery()));

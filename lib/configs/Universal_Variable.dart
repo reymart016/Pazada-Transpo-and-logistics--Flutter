@@ -50,3 +50,8 @@ List rideHistoryy = [];
 bool isvisible = false;
 
 String testest = "test";
+
+double finalDestination = 0;
+double rideDetailsContainer = 0;
+double destinationContainer = 280;
+double loadingRider = 0;

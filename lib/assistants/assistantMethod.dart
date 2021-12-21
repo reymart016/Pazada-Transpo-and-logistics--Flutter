@@ -101,7 +101,7 @@ class AssistantMethod{
     reference.once().then((DataSnapshot dataSnapShot)
     {
       if(dataSnapShot.value != null){
-        usersCurrentInfo = Users.fromSnapshot(dataSnapShot);
+        usersCurrentInfo = Users.fromSnapshot(dataSnapShot);// access to User models
       }
     }
     );

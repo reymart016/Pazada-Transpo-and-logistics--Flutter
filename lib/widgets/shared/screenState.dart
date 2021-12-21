@@ -21,7 +21,7 @@ class _ScreenStatusState extends State<ScreenStatus> {
 
     //Pazabuy(),
     IdleScreen(),
-    Pazabuy(),
+    PazabuyScreen(),
 
 
   ];

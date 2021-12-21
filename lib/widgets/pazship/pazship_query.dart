@@ -115,7 +115,7 @@ class _PazShipQueryState extends State<PazShipQuery> {
                     padding: const EdgeInsets.all(10.0),
                     child: TextField(
                       controller: itemValueTextEditingController,
-                      keyboardType: TextInputType.name,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         prefixIcon:Icon(Icons.monetization_on_outlined),
                         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.amber), borderRadius: BorderRadius.circular(10)),
@@ -393,6 +393,7 @@ class _PazShipQueryState extends State<PazShipQuery> {
         "item_name": itemNameTextEditingController.text,
         "item_value": itemValueTextEditingController.text,
         "PazShip": true,
+
     };
 
     rideRequestRef.set(pazShipBooking);

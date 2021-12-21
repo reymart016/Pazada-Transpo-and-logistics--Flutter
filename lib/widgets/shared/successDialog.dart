@@ -78,6 +78,10 @@ class _SuccessDialogState extends State<SuccessDialog> with SingleTickerProvider
                           builder: (BuildContext context) => RateDriver()
                       );
                       setState(() {
+
+                          loadingRider = 0;
+                          destinationContainer =280;
+
                         qrCodeResult = "";
                         num = "";
                         cancelBtn = true;

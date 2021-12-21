@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -300,6 +301,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
 
                       //Navigator.pop(context, "obtainDirection");
                       pazakayPayment();
+                      savePazshipBooking();
                     },
                       color: Colors.amber,
                       minWidth:MediaQuery.of(context).size.width * .96 ,
@@ -362,6 +364,24 @@ class _PazakayQueryState extends State<PazakayQuery> {
 
     };
     usersRef.child(userId).child("manual_booking").set(manualMapBooking);
+
+  }
+  void savePazshipBooking(){
+    PazShipOrder pazShipOrder = new PazShipOrder();
+
+    pazShipOrder.stats = true;
+    Provider.of<AppData>(context, listen: false).updatePazShip(pazShipOrder);
+
+    rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
+    Map pazShipBooking = {
+
+      "PazShip": false,
+
+    };
+
+    rideRequestRef.set(pazShipBooking);
+    pazShipOrder.key = rideRequestRef.key;
+    Provider.of<AppData>(context, listen: false).updatePazShip(pazShipOrder);
 
   }
   Future<void> _requestPermission() async {

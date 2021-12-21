@@ -6,6 +6,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/widgets/pazada_screen.dart';
+import 'package:pazada/widgets/pazakay/pazakay.dart';
 import 'package:pazada/widgets/shared/successDialog.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -113,117 +115,151 @@ void initState() {
 
                 SizedBox(height: 15,),
                 Divider(thickness: 2,),
+                // Row( NOTIFICATION BUTTONS DISABLED TEMPORARILY
+                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //   children: [
+                //     Column(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         GestureDetector(
+                //           onTap: alertCall,
+                //           child: Container(
+                //
+                //             decoration: BoxDecoration(
+                //               borderRadius: BorderRadius.circular(50),
+                //               border: Border.all(color: Colors.greenAccent)
+                //             ),
+                //
+                //             child: Padding(
+                //               padding: EdgeInsets.all(10.0),
+                //               child:  Icon(Icons.call, color: Colors.greenAccent, size: 20.0,
+                //
+                //                   ),
+                //
+                //
+                //
+                //             ),
+                //           ),
+                //         ),
+                //         Text("Call Driver", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
+                //       ],
+                //     ),
+                //     // Column(
+                //     //   children: [
+                //     //     Container(
+                //     //        decoration: BoxDecoration(
+                //     //        borderRadius: BorderRadius.circular(50),
+                //     //         border: Border.all(color: Colors.amberAccent)
+                //     //         ),
+                //     //
+                //     //
+                //     //         child: Padding(
+                //     //           padding: EdgeInsets.all(10.0),
+                //     //           child: Icon(Icons.menu_open, color: Colors.amberAccent, size: 20.0,),
+                //     //         ),
+                //     //       ),
+                //     //
+                //     //     Text("Details", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
+                //     //   ],
+                //     // ),
+                //     Column(
+                //       children: [
+                //         GestureDetector(
+                //           onTap: (){
+                //             if(cancelBtn == true){
+                //               Navigator.pop(context);
+                //               print("back");
+                //             }else{
+                //               rideStreamSubscription.cancel();
+                //               showDialog(
+                //                   context: context,
+                //                   barrierDismissible: false,
+                //                   builder: (BuildContext context) => SuccessDialog()
+                //               );
+                //               // String codeSanner = await BarcodeScanner.scan();    //barcode scnner
+                //               // setState(() {
+                //               //   qrCodeResult = codeSanner;
+                //               // });
+                //               // temp(); //NEED TO FIX THE SUCCESS DIALOG NULL BUG
+                //             }
+                //
+                //
+                //           },
+                //           child: Container(
+                //             decoration: BoxDecoration(
+                //                 borderRadius: BorderRadius.circular(50),
+                //                 border: Border.all(color:cancelBtn == true? Colors.redAccent : Colors.lightBlueAccent)
+                //             ),
+                //             child: Padding(
+                //               padding: EdgeInsets.all(10.0),
+                //               child: Icon(cancelBtn == true?  Icons.cancel_outlined : Icons.flag_rounded,
+                //                 color:cancelBtn == true? Colors.redAccent : Colors.lightBlueAccent, size: 20.0,),
+                //             ),
+                //           ),
+                //         ),
+                //         Text(cancelBtn == true? "Cancel" : "Arrived", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
+                //       ],
+                //     ),
+                //     // Visibility(
+                //     //   visible: scanBtn,
+                //     //   child: Column(
+                //     //     children: [
+                //     //       GestureDetector(
+                //     //         onTap: (){
+                //     //           Navigator.pop(context);
+                //     //           print("scan");
+                //     //         },
+                //     //         child: Container(
+                //     //           decoration: BoxDecoration(
+                //     //               borderRadius: BorderRadius.circular(50),
+                //     //               border: Border.all(color: Colors.amberAccent)
+                //     //           ),
+                //     //           child: Padding(
+                //     //             padding: EdgeInsets.all(10.0),
+                //     //             child: Icon(Icons.qr_code_scanner_rounded, color: Colors.amberAccent, size: 20.0,),
+                //     //           ),
+                //     //         ),
+                //     //       ),
+                //     //       Text("Scan", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
+                //     //     ],
+                //     //   ),
+                //     // ),
+                //   ],
+                // ),NOTIFICATION BUTTONS DISABLED TEMPORARILY
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: alertCall,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 53,
+                        width: MediaQuery.of(context).size.width * .60,
+                        child: RaisedButton(
+
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0)),
+                          color: Colors.amber,
                           child: Container(
-
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(color: Colors.greenAccent)
-                            ),
-
                             child: Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child:  Icon(Icons.call, color: Colors.greenAccent, size: 20.0,
-
-                                  ),
-
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Text('See Destination', style: TextStyle(
+                                color: Colors.white,
 
 
+                              ),
+
+                              ),
                             ),
                           ),
-                        ),
-                        Text("Call Driver", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
-                      ],
-                    ),
-                    // Column(
-                    //   children: [
-                    //     Container(
-                    //        decoration: BoxDecoration(
-                    //        borderRadius: BorderRadius.circular(50),
-                    //         border: Border.all(color: Colors.amberAccent)
-                    //         ),
-                    //
-                    //
-                    //         child: Padding(
-                    //           padding: EdgeInsets.all(10.0),
-                    //           child: Icon(Icons.menu_open, color: Colors.amberAccent, size: 20.0,),
-                    //         ),
-                    //       ),
-                    //
-                    //     Text("Details", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
-                    //   ],
-                    // ),
-                    Column(
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-                            if(cancelBtn == true){
-                              Navigator.pop(context);
-                              print("back");
-                            }else{
-                              rideStreamSubscription.cancel();
-                              showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (BuildContext context) => SuccessDialog()
-                              );
-                              // String codeSanner = await BarcodeScanner.scan();    //barcode scnner
-                              // setState(() {
-                              //   qrCodeResult = codeSanner;
-                              // });
-                              // temp(); //NEED TO FIX THE SUCCESS DIALOG NULL BUG
-                            }
-
-
+                          onPressed: (){
+                            pazada();
+                            setState(() {
+                              loadingRider = 280;
+                              destinationContainer =0;
+                            });
                           },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(color:cancelBtn == true? Colors.redAccent : Colors.lightBlueAccent)
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: Icon(cancelBtn == true?  Icons.cancel_outlined : Icons.flag_rounded,
-                                color:cancelBtn == true? Colors.redAccent : Colors.lightBlueAccent, size: 20.0,),
-                            ),
-                          ),
                         ),
-                        Text(cancelBtn == true? "Cancel" : "Arrived", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
-                      ],
-                    ),
-                    // Visibility(
-                    //   visible: scanBtn,
-                    //   child: Column(
-                    //     children: [
-                    //       GestureDetector(
-                    //         onTap: (){
-                    //           Navigator.pop(context);
-                    //           print("scan");
-                    //         },
-                    //         child: Container(
-                    //           decoration: BoxDecoration(
-                    //               borderRadius: BorderRadius.circular(50),
-                    //               border: Border.all(color: Colors.amberAccent)
-                    //           ),
-                    //           child: Padding(
-                    //             padding: EdgeInsets.all(10.0),
-                    //             child: Icon(Icons.qr_code_scanner_rounded, color: Colors.amberAccent, size: 20.0,),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //       Text("Scan", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.black),),
-                    //     ],
-                    //   ),
-                    // ),
-                  ],
-                ),
+                      ),
+
+                    ] ),
 
               ],
             ),
@@ -263,5 +299,8 @@ void initState() {
 
 
     //}
+  }
+  void pazada (){
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
   }
 }

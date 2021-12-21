@@ -16,6 +16,7 @@ import 'package:pazada/main.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:pazada/models/nearbyAvalableDrivers.dart';
 import 'package:pazada/models/pazada_driver.dart';
+import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/shared/driverInfo.dart';
 import 'package:pazada/widgets/shared/noDriverAvailableDialog.dart';
 import 'package:pazada/widgets/shared/progressDialog.dart';
@@ -349,7 +350,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:[ Text("Total"),
-                          Text(((tripDirectionDetails != null)? '\PHP: ${AssistantMethod.calculateFares(tripDirectionDetails)}' : ''),style: TextStyle(fontFamily: "bolt",fontSize: 30,),
+                          Text(((tripDirectionDetails != null)? '\PHP ${AssistantMethod.calculateFares(tripDirectionDetails)}.00' : ''),style: TextStyle(fontFamily: "bolt",fontSize: 30,),
                           textAlign: TextAlign.right,
                         ),]
                       ),
@@ -358,7 +359,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              height: 55,
+                              height: 53,
                               width: MediaQuery.of(context).size.width * .92,
                               child: RaisedButton(
 
@@ -379,6 +380,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
                                 ),
                                 onPressed: ()async{
                                   searchingDriver();
+                                  //pazada();
                                   //driverInfo();
                                   availableDrivers = GeoFireAssistant.nearbyAvailableDriversList;
 
@@ -441,7 +443,8 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     var fare = AssistantMethod.calculateFares(tripDirectionDetails);
 
 
-
+    print(pickUp.latitude.toString());
+    print(pickUp.longitude.toString());
     Map pickUpCoordinates ={
       "latitude": pickUp.latitude.toString(),
       "longitude": pickUp.longitude.toString(),
@@ -751,7 +754,9 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     });
 
   }
-
+  void pazada (){
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
+  }
   void noDriverFound()
   {
     showDialog(

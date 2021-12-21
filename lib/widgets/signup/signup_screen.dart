@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:pazada/bottomBar/bottomAppBar.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
+import 'package:pazada/widgets/shared/TNC.dart';
 import 'package:pazada/widgets/shared/bottomNavigationBar.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -28,8 +30,9 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
+      body: ListView(
+        reverse: true,
+        shrinkWrap: true,
           children: [
             SizedBox(height: 50.0,),
             Center(
@@ -41,7 +44,7 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             ),
             SizedBox(height: 6.0),
-            Text('Create an Account', style: TextStyle(fontSize: 30,fontFamily: "bolt-bold"),),
+            Center(child: Text('Create an Account', style: TextStyle(fontSize: 30,fontFamily: "bolt-bold"),)),
             SizedBox(height: 10.0),
             Padding(
               padding: const EdgeInsets.all(10.0),
@@ -152,7 +155,13 @@ class _SignupScreenState extends State<SignupScreen> {
                 },
 
               ),
-                Text("I have read and accept the Terms & Condition")
+                Row(children: [Text("I have read and accept the "),
+                  GestureDetector(onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> TermsAndCondition()));
+                  },
+                      child: Text("Terms & Condition",style: TextStyle(color: Colors.lightBlueAccent),))
+
+                ])
             ]),
 
             Container(
@@ -196,8 +205,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 },
               ),
             ),
-            SizedBox(height: 70,),
-            Text('------------------------------------- or -------------------------------------'),
+            SizedBox(height: 10.0),
+            Center(child: Text('------------------------------------- or -------------------------------------')),
             SizedBox(height: 10.0),
             Container(
               width: MediaQuery.of(context).size.width * .96,
@@ -224,8 +233,8 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             )
 
-          ],
-        ),
+          ].reversed.toList(),
+
       ),
     );
   }
