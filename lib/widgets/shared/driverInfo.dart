@@ -6,13 +6,17 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/models/pazabuyMenus.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/pazakay/pazakay.dart';
 import 'package:pazada/widgets/shared/successDialog.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DriverInfo extends StatefulWidget {
+  PazabuyMenus model;
+  DriverInfo({this.model});
   static const String idScreen = "DriverInfo";
   @override
   State<DriverInfo> createState() => _DriverInfoState();
@@ -109,7 +113,9 @@ void initState() {
                           child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.vehicle_details : "0016", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                         ),
                       ],
+
                     ),
+
                   ],
                 ),
 
@@ -225,7 +231,12 @@ void initState() {
                 //     //   ),
                 //     // ),
                 //   ],
-                // ),NOTIFICATION BUTTONS DISABLED TEMPORARILY
+                // ),
+                // NOTIFICATION BUTTONS DISABLED TEMPORARILY
+                // widget.model.QRcode == null ?   Text(""):  QrImage(
+                //   //plce where the QR Image will be shown
+                //   data: widget.model.QRcode,
+                // ),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

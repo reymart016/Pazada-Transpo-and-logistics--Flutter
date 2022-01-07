@@ -2,13 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:pazada/Store/storehome.dart';
+
 import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/models/allUsers.dart';
+import 'package:pazada/models/pazabuyusers.dart';
 import 'package:pazada/user_dashboard/PazadaCard.dart';
 import 'package:pazada/user_dashboard/color.dart';
 import 'package:pazada/user_dashboard/layout.dart';
@@ -24,6 +25,8 @@ import 'package:provider/provider.dart';
 
 
 class IdleScreen extends StatefulWidget {
+  PazabuyUsers models;
+  IdleScreen({this.models});
   static const String idScreen = "idleScreen";
   @override
   _IdleScreenState createState() => _IdleScreenState();
@@ -36,6 +39,7 @@ class _IdleScreenState extends State<IdleScreen> {
 
   @override
   void initState() {
+
     // TODO: implement initState
     super.initState();
     Users currentUserInfo;
@@ -44,6 +48,7 @@ class _IdleScreenState extends State<IdleScreen> {
     AssistantMethod.getCurrentOnlineInformation();
     setState(() {
       username = username;
+
     });
    print("USERNAME::"+ username);
     getProfileDetails();
@@ -249,7 +254,7 @@ class _IdleScreenState extends State<IdleScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
   }
   void services2 (){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> StoreHome()));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazabuyScreen()));
   }
   void services3 (){
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazakayQuery()));
@@ -270,6 +275,7 @@ setState(() {
 });
  }
  void getProfileDetails()async{
+   //UserKart =  widget.models.userCart;
    currentfirebaseUser = await FirebaseAuth.instance.currentUser;
    DataSnapshot dataSnapshot = await usersRef.child(userId).once();
    print("=====1111111=============");

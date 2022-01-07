@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/models/nearbyAvalableDrivers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -34,6 +35,8 @@ String vehicle_model = "";
 String vehicle_plateNum = "";
 String vehicle_type = "";
 String vehicle_details = "";
+SharedPreferences sharedPreferences;
+int UserKart;
 
 StreamSubscription<Event> rideStreamSubscription;
 
@@ -55,3 +58,13 @@ double finalDestination = 0;
 double rideDetailsContainer = 0;
 double destinationContainer = 280;
 double loadingRider = 0;
+
+String userID = "";
+String userEmail = "";
+String userImageUrl = "";
+String getUserName = "";
+
+String adUserName = "";
+String adUserImageUrl = "";
+
+String completeAddress = "";

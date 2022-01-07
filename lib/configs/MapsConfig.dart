@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:pazada/models/allUsers.dart';
 import 'package:pazada/models/directionDetails.dart';
 
-String mapKey ="AIzaSyCVYzNleqRJb_49zxM1OfkJuGIa4T8oJFE";
+String mapKey ="AIzaSyDGPAKXDUaDv3iR2W6rxq31bR7cAd8I1As";
 
 User firebaseUser;
 User currentfirebaseUser;

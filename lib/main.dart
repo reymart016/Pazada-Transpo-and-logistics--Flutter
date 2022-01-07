@@ -5,6 +5,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pazada/Config/config.dart';
+import 'package:pazada/assistants/pazabuy/cart_item_counter.dart';
+
 import 'package:pazada/assistants/pazabuy/pazabuy.dart';
 import 'package:pazada/bottomBar/bottomAppBar.dart';
 import 'package:pazada/configs/MapsConfig.dart';
@@ -22,10 +24,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Counters/ItemQuantity.dart';
-import 'Counters/cartitemcounter.dart';
-import 'Counters/changeAddresss.dart';
-import 'Counters/totalMoney.dart';
+
 import 'assistants/assistantMethod.dart';
 import 'dataHandler/appData.dart';
 
@@ -50,9 +49,7 @@ class MyApp extends StatelessWidget {
       providers:[
         ChangeNotifierProvider(create: (context)=> AppData(),),
         ChangeNotifierProvider(create: (context) => CartItemCounter()),
-        ChangeNotifierProvider(create: (context) => ItemQuantity()),
-        ChangeNotifierProvider(create: (context) => AddressChanger()),
-        ChangeNotifierProvider(create: (context) => TotalAmount()),
+
       ],
 
       child: MaterialApp(

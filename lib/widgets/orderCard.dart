@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pazada/Orders/OrderDetailsPage.dart';
+//import 'package:pazada/Orders/OrderDetailsPage.dart';
 import 'package:pazada/models/products.dart';
 import 'package:flutter/material.dart';
-import '../Store/storehome.dart';
+//import '../Store/storehome.dart';
 
 int counter = 0;
 class OrderCard extends StatelessWidget
@@ -18,13 +18,13 @@ class OrderCard extends StatelessWidget
     return  InkWell(
       onTap: ()
       {
-        Route route;
-        if(counter == 0)
-        {
-          counter = counter + 1;
-          route = MaterialPageRoute(builder: (c) => OrderDetails(orderID: orderID));
-        }
-        Navigator.push(context, route);
+        // Route route;
+        // if(counter == 0)
+        // {
+        //   counter = counter + 1;
+        //   route = MaterialPageRoute(builder: (c) => OrderDetails(orderID: orderID));
+        // }
+        // Navigator.push(context, route);
       },
       child: Container(
         decoration: new BoxDecoration(
@@ -58,12 +58,12 @@ class OrderCard extends StatelessWidget
 Widget sourceOrderInfo(ProductModel model, BuildContext context,
     {Color background})
 {
-  width =  MediaQuery.of(context).size.width;
+  //width =  MediaQuery.of(context).size.width;
 
   return  Container(
     color: Colors.grey[100],
     height: 170.0,
-    width: width,
+    //width: width,
     child: Row(
       children: [
         Image.network(model.thumbnailUrl, width: 180.0,),

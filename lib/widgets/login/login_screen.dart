@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pazada/DialogBox/errorDialog.dart';
 import 'package:pazada/bottomBar/bottomAppBar.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/shared/loading.dart';
@@ -164,6 +167,9 @@ class _LoginScreenState extends State<LoginScreen> {
     )).user;
 
     if(firebaseUser != null){
+      readDataAndSetDataLocally(firebaseUser);
+      print(firebaseUser.uid);
+      getUserData(firebaseUser.uid);
       setState(() {
         loading = true;
       });
@@ -171,8 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
       usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap){
         if(snap.value != null){
           print('done');
-          Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
-          displayToastMessage("Mabuhay, your now part of Pazada", context);
+
         }
         else{
           setState(() {
@@ -192,6 +197,39 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
 
+  }
+  Future readDataAndSetDataLocally(User currentFirebaseUser)async{
+    await FirebaseFirestore.instance.collection('PazadaUsers').doc(currentFirebaseUser.uid).get().then((snapshot)async{
+      await sharedPreferences.setString("uid", currentFirebaseUser.uid);
+      await sharedPreferences.setString("sellerName", snapshot.data()["userName"]);
+      await sharedPreferences.setString("sellerEmail", snapshot.data()["userEmail"]);
+      List<String> userCartList = snapshot.data()["userCart"].cast<String>();//.cast<String>()
+      await sharedPreferences.setStringList("userCart", userCartList);
+    });
+  }
+  getUserData(String uid) async{
+    await FirebaseFirestore.instance.collection('PazadaUsers').doc(uid).get().then((results){
+      String status = results.data()['status'];
+      if(status == "approved"){
+        Navigator.pop(context);
+
+        Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
+        displayToastMessage("Mabuhay, your now part of Pazada", context);
+      }else{
+        _firebaseAuth.signOut();
+
+
+
+        showDialog(
+            context: context,
+            builder: (con){
+              return ErrorAlertDialog(
+                message: "This account has been blocked by admin. Please contact our helpline",
+              ) ;
+            });
+
+      }
+    });
   }
 }
 displayToastMessage(String Message, BuildContext context){

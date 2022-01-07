@@ -1,13 +1,21 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+//import 'package:image_picker/image_picker.dart';
+import 'package:pazada/DialogBox/errorDialog.dart';
 
 import 'package:pazada/bottomBar/bottomAppBar.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/shared/TNC.dart';
 import 'package:pazada/widgets/shared/bottomNavigationBar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupScreen extends StatefulWidget {
   static const String idScreen = "signup";
@@ -25,6 +33,10 @@ class _SignupScreenState extends State<SignupScreen> {
 
   TextEditingController passwordTextEditingController = new TextEditingController();
   bool isChecked = false;
+  String imageDownloadURLs = "";
+  bool uploading = false;
+  String uniqueID = DateTime.now().millisecondsSinceEpoch.toString();
+  File file;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +47,7 @@ class _SignupScreenState extends State<SignupScreen> {
         shrinkWrap: true,
           children: [
             SizedBox(height: 50.0,),
+
             Center(
               child: Image(image: AssetImage("images/pazada-logo.png",
               ),
@@ -45,7 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             SizedBox(height: 6.0),
             Center(child: Text('Create an Account', style: TextStyle(fontSize: 30,fontFamily: "bolt-bold"),)),
-            SizedBox(height: 10.0),
+            SizedBox(height: 6.0),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextField(
@@ -200,6 +213,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
                     }
                     else{
+                      //_register();
+                      //uploadNewProduct();
                       registerNewUser(context);
                     }
                 },
@@ -238,8 +253,125 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
-
+  // uploadImage(context){
+  //   return showDialog(context: context, builder: (con){
+  //     return SimpleDialog(
+  //       title: Text("Product Image", style: TextStyle(fontFamily: "bolt", fontSize:18, color: Colors.black),textAlign: TextAlign.center,),
+  //       children: [
+  //         SimpleDialogOption(
+  //           child: Text("Camera", style: TextStyle(fontFamily: "bolt", fontSize:18, color: Colors.black)),
+  //           onPressed: capturePhotoWithCamera,
+  //         ),
+  //         SimpleDialogOption(
+  //           child: Text("Gallery", style: TextStyle(fontFamily: "bolt", fontSize:18, color: Colors.black)),
+  //           onPressed: capturePhotoWithGallery,
+  //         ),
+  //         SimpleDialogOption(
+  //           child: Text("Cancel", style: TextStyle(fontFamily: "bolt", fontSize:18, color: Colors.redAccent),textAlign: TextAlign.end,),
+  //           onPressed: (){
+  //             Navigator.pop(context);
+  //           },
+  //         ),
+  //       ],
+  //     );
+  //   });
+  // }
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  User currentUser;
+  void _register() async{
+
+
+    await _firebaseAuth.createUserWithEmailAndPassword(
+        email: emailTextEditingController.text.trim(),
+        password: passwordTextEditingController.text.trim()
+    ).then((auth){
+      currentUser = auth.user;
+      userID = currentUser.uid;
+      userEmail = currentUser.email;
+      getUserName = nameTextEditingController.text.trim();
+
+      saveUserData();
+
+    }).catchError((error){
+      Navigator.pop(context);
+      showDialog(context: context, builder: (con){
+        return ErrorAlertDialog(
+          message: error.message.toString(),
+        );
+      });
+    });
+
+    if(currentUser != null){
+      Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
+    }
+
+  }
+  void saveUserData(){
+    Map userDatamap = {
+      "name" : nameTextEditingController.text,
+      "phone": phoneTextEditingController.text,
+      "email": emailTextEditingController.text,
+    };
+    usersRef.child(currentUser.uid).set(userDatamap);
+    displayToastMessage("Mabuhay, your now part of Pazada", context);
+
+    Map<String, dynamic> userData = {
+      'userName': nameTextEditingController.text.trim(),
+      'uId': currentUser.uid,
+      'userNumber': phoneTextEditingController.text.trim(),
+
+      'time': DateTime.now(),
+      'status': "approved",
+    };
+
+    FirebaseFirestore.instance.collection('PazadaUsers').doc(userID).set(userData);
+
+  }
+  /// IMAGE UPLOAD
+  // capturePhotoWithCamera()async{
+  //
+  //   Navigator.pop(context);
+  //   final imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
+  //   final imageTemporary = File(imageFile.path);
+  //
+  //   setState(() {
+  //     this.file = imageTemporary;
+  //   });
+  // }
+  // capturePhotoWithGallery()async{
+  //   Navigator.pop(context);
+  //   final imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   final imageTemporary = File(imageFile.path);
+  //
+  //   setState(() {
+  //     this.file = imageTemporary;
+  //   });
+  // }
+  // uploadNewProduct()async{
+  //
+  //
+  //   String imageDownloadURL = await uploadProductImage(file);
+  //   setState(() {
+  //     imageDownloadURLs = imageDownloadURL;
+  //     uploading = true;
+  //   });
+  //   registerNewUser(context);
+  //
+  //   print("=================================================");
+  //   print(imageDownloadURL);
+  //   print("=================================================");
+  // }
+  // Future <String>  uploadProductImage(file)async{
+  //
+  //   final Reference productImage = FirebaseStorage.instance.ref().child('Products'); // deprecated FirebaseReference
+  //   UploadTask uploadTask = productImage.child("product_$uniqueID.jpg").putFile(file);
+  //   TaskSnapshot taskSnapshot = await uploadTask.whenComplete((){
+  //
+  //   });
+  //   String downloadURL = await taskSnapshot.ref.getDownloadURL();
+  //   return downloadURL;
+  //
+  // }
 
   void registerNewUser(BuildContext context) async{
     final User firebaseUser = (await _firebaseAuth
@@ -259,12 +391,29 @@ class _SignupScreenState extends State<SignupScreen> {
       usersRef.child(firebaseUser.uid).set(userDatamap);
       displayToastMessage("Mabuhay, your now part of Pazada", context);
       Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
+      Map<String, dynamic> userData = {
+        'userName': nameTextEditingController.text.trim(),
+        'uId': firebaseUser.uid,
+        "email": emailTextEditingController.text.trim(),
+        'userNumber': phoneTextEditingController.text.trim(),
+        "thumbnailUrl": imageDownloadURLs,
+        'time': DateTime.now(),
+        'status': "approved",
+        "userCart": ['garbageValue'],
+      };
 
+      FirebaseFirestore.instance.collection('PazadaUsers').doc(firebaseUser.uid).set(userData);
+      sharedPreferences = await SharedPreferences.getInstance();
+      await sharedPreferences.setString("uId", firebaseUser.uid);
+      await sharedPreferences.setString("userName",  nameTextEditingController.text.trim());
+      await sharedPreferences.setString("userEmail",  nameTextEditingController.text.trim());
+      await sharedPreferences.setStringList("userCart",  ['garbageValue']);
     }
     else{
       displayToastMessage("User doesn't exist", context);
     }
   }
+
 }
 displayToastMessage(String Message, BuildContext context){
   Fluttertoast.showToast(msg: Message);

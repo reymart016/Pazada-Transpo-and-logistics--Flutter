@@ -9,7 +9,7 @@ class PazabuyApp
    static const String appName = 'Pazada';
 
    static SharedPreferences sharedPreferences;
-   static FirebaseUser user;
+   static User user;
    static FirebaseAuth auth;
    static FirebaseFirestore firestore ;
 

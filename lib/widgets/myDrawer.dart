@@ -1,10 +1,6 @@
 
 import 'package:pazada/Config/config.dart';
-import 'package:pazada/Address/addAddress.dart';
-import 'package:pazada/Store/Search.dart';
-import 'package:pazada/Store/cart.dart';
-import 'package:pazada/Orders/myOrders.dart';
-import 'package:pazada/Store/storehome.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -67,8 +63,8 @@ class MyDrawer extends StatelessWidget {
                   leading: Icon(Icons.home, color: Colors.white,),
                   title: Text("Home", style: TextStyle(color: Colors.white),),
                   onTap: (){
-                    Route route = MaterialPageRoute(builder: (c) => StoreHome());
-                    Navigator.pushReplacement(context, route);
+                    // Route route = MaterialPageRoute(builder: (c) => StoreHome());
+                    // Navigator.pushReplacement(context, route);
                   },
                 ),
                 Divider(height: 10.0, color: Colors.white, thickness: 6.0,),
@@ -87,8 +83,8 @@ class MyDrawer extends StatelessWidget {
                   leading: Icon(Icons.shopping_cart, color: Colors.white,),
                   title: Text("My Cart", style: TextStyle(color: Colors.white),),
                   onTap: (){
-                    Route route = MaterialPageRoute(builder: (c) => CartPage());
-                    Navigator.pushReplacement(context, route);
+                    // Route route = MaterialPageRoute(builder: (c) => CartPage());
+                    // Navigator.pushReplacement(context, route);
                   },
                 ),
                 Divider(height: 10.0, color: Colors.white, thickness: 6.0,),
@@ -97,8 +93,8 @@ class MyDrawer extends StatelessWidget {
                   leading: Icon(Icons.search, color: Colors.white,),
                   title: Text("Search", style: TextStyle(color: Colors.white),),
                   onTap: (){
-                    Route route = MaterialPageRoute(builder: (c) => SearchProduct());
-                    Navigator.pushReplacement(context, route);
+                    // Route route = MaterialPageRoute(builder: (c) => SearchProduct());
+                    // Navigator.pushReplacement(context, route);
                   },
                 ),
                 Divider(height: 10.0, color: Colors.white, thickness: 6.0,),

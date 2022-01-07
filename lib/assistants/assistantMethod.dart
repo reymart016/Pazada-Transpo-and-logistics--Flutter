@@ -2,11 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pazada/assistants/pazabuy/cart_item_counter.dart';
+
 import 'package:pazada/assistants/requestAssistants.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
@@ -206,6 +210,48 @@ class AssistantMethod{
       body: jsonEncode(sendNotificationMap),
     );
   }
+  static sendPazabuyNotificationToDriver(String token, context, String ride_request_id)async{
+    String url = 'https://fcm.googleapis.com/fcm/send';
+    var finalDestination;
+    var destinationA = Provider.of<AppData>(context, listen: false).destinationLocation;
+    var destinationB = Provider.of<AppData>(context, listen: false).destinationLocation2;
+    if(destinationA != null){
+      finalDestination = destinationA.placename;
+    }else{
+      finalDestination = destinationB.placename;
+
+    }
+
+    Map<String, String> headerMap = {
+      'Content-Type': 'application/json',
+      'Authorization': serverToken,
+    };
+
+    Map notificationMap = {
+      'body': 'Destination Address, ${finalDestination}',
+      'title': 'New Pazabuy Request Nearby',
+    };
+
+    Map dataMap = {
+      'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+      'id': '1',
+      'status': 'done',
+      'ride_request_id': ride_request_id,
+    };
+
+    Map sendNotificationMap = {
+      "notification": notificationMap,
+      "data": dataMap,
+      "priority": "high",
+      "to": token,
+    };
+    var res = await http.post(
+      Uri.parse(url),
+      headers: headerMap,
+      body: jsonEncode(sendNotificationMap),
+    );
+  }
+
 
   Future<String> getCurrentUID() async {
     return await _firebaseAuth.currentUser.uid;
@@ -224,3 +270,77 @@ class AssistantMethod{
 
 
 }
+
+addItemToCart(String foodItemId, BuildContext context, int itemCounter)
+{
+  List<String> tempList = sharedPreferences.getStringList("userCart");
+  tempList.add(foodItemId + ":$itemCounter"); //56557657:7
+
+  FirebaseFirestore.instance.collection("PazadaUsers")
+      .doc(firebaseUser.uid).update({
+    "userCart": tempList,
+  }).then((value)
+  {
+    Fluttertoast.showToast(msg: "Item Added successfully.");
+
+    sharedPreferences.setStringList("userCart", tempList);
+
+    //Provider.of<CartItemCounterrr>(context, listen: false).displayCartListItemNumber();
+  });
+}
+separateItemIDs()
+{
+  List<String> separateItemsIDsList=[], defaultItemList=[];
+  int i=0;
+
+  defaultItemList = sharedPreferences.getStringList("userCart");
+
+  for(i; i<defaultItemList.length; i++)
+  {
+    String item =  defaultItemList[i].toString();
+    var pos = item.lastIndexOf(":");
+    String getItemId = (pos != -1) ? item.substring(0, pos) : item;
+
+    print("\nThis is ItemId now = " + getItemId);
+
+    separateItemsIDsList.add(getItemId);
+  }
+  print("\nThis is Items List now = ");
+  print(separateItemsIDsList);
+
+  return separateItemsIDsList;
+}
+// clearCartNow(context)
+// {
+//   sharedPreferences.setStringList("userCart", ['garbageValue']);
+//   List<String> emptyList = sharedPreferences.getStringList("userCart");
+//
+//   FirebaseFirestore.instance.collection("PazadaUsers")
+//       .doc(currentfirebaseUser.uid)
+//       .update({"userCart": emptyList}).then((value)
+//   {
+//     sharedPreferences.setStringList("userCart", emptyList);
+//     Provider.of<CartItemCounter>(context, listen: false).displayCartListItemNumber();
+//
+//
+//   });
+// }
+// separateItemQuantities(){
+//   List<int> separateItemQuantityList=[];
+//   List<String> defaultItemList = [];
+//   int i = 1;
+//   defaultItemList = sharedPreferences.getStringList("userCart");
+// for(i; i<defaultItemList.length; i++)
+// {
+// String item =  defaultItemList[i].toString();
+// List<String>listItemCharacters = item.split(":").toList();
+// var quanNumber = int.parse(listItemCharacters[1].toString());
+// print("\nThis is Quantity NUmber = " + quanNumber.toString());
+//
+// separateItemQuantityList.add(quanNumber);
+// }
+// print("\nThis is Items List now = ");
+// print(separateItemQuantityList);
+//
+// return separateItemQuantityList;
+// }
