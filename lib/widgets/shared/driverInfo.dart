@@ -261,6 +261,7 @@ void initState() {
                             ),
                           ),
                           onPressed: (){
+                            rideStreamSubscription.cancel();
                             pazada();
                             setState(() {
                               loadingRider = 280;

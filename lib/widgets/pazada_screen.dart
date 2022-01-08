@@ -19,6 +19,7 @@ import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazada_screen/payment_panel.dart';
 import 'package:pazada/widgets/shared/divider.dart';
 import 'package:pazada/widgets/shared/driverInfo.dart';
+import 'package:pazada/widgets/shared/dropoffConfirmation.dart';
 import 'package:pazada/widgets/shared/loading.dart';
 import 'package:pazada/widgets/shared/navbar.dart';
 import 'package:pazada/widgets/shared/noDriverAvailableDialog.dart';
@@ -871,7 +872,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                                     showDialog(
                                         context: context,
                                         barrierDismissible: false,
-                                        builder: (BuildContext context) => SuccessDialog()
+                                        builder: (BuildContext context) => DropOffConfirmationDialog()
                                     );
                                     // String codeSanner = await BarcodeScanner.scan();    //barcode scnner
                                     // setState(() {
