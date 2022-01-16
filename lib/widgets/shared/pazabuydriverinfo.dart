@@ -1,3 +1,4 @@
+import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -9,15 +10,15 @@ import 'package:pazada/widgets/idle_screen/idle_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/shared/rateDriver.dart';
 import 'package:pazada/configs/MapsConfig.dart';
-import 'package:pazada/widgets/shared/successDialog.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
-class DropOffConfirmationDialog extends StatefulWidget {
+class PazabuyDriverInfo extends StatefulWidget {
   @override
-  State<DropOffConfirmationDialog> createState() => _DropOffConfirmationDialogState();
+  State<PazabuyDriverInfo> createState() => _PazabuyDriverInfoState();
 }
 
-class _DropOffConfirmationDialogState extends State<DropOffConfirmationDialog> with SingleTickerProviderStateMixin{
+class _PazabuyDriverInfoState extends State<PazabuyDriverInfo> with SingleTickerProviderStateMixin{
   AnimationController lottieController;
 
   @override
@@ -56,90 +57,74 @@ class _DropOffConfirmationDialogState extends State<DropOffConfirmationDialog> w
               children: [
                 SizedBox(height: 10,),
 
-                Text('Are you sure you want to end the trip?',textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold'),),
+                Text('Scan the QR to Pay', style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold'),),
 
                 SizedBox(height: 5,),
 
 
-                Center(
-                  child: Lottie.asset('assets/lotties/dropoffPin.json', height:200),
+                // Center(
+                //   child: Lottie.asset('assets/lotties/success1.json', height:200),
+                // ),
+                QrImage(data: qrData),
+                GestureDetector(
+                  onTap: (){
+                    LaunchApp.openApp(
+                      androidPackageName: 'com.globe.gcash.android',
+                      openStore: true,
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1.5,color: Colors.amber),
+                      ),
+                      child: Center(
+                        child: Text("Open GCash", style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold', color: Colors.blue),),
+                      ),
+                    ),
+                  ),
                 ),
-                // SizedBox(height: 10,),
-               Row(
-                 mainAxisAlignment: MainAxisAlignment.center,
-                 children: [
-                   Padding(
-                     padding: EdgeInsets.symmetric(horizontal: 14.0),
-                     child: RaisedButton(
+                SizedBox(height: 10,),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: RaisedButton(
+                    onPressed: ()
+                    {
+                      updateRideHistory();
 
-                       onPressed: ()
-                       {
-                         updateRideHistory();
+                      Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) => RateDriver()
+                      );
+                      setState(() {
 
-                         Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
-                         showDialog(
-                             context: context,
-                             barrierDismissible: false,
-                             builder: (BuildContext context) => SuccessDialog()
-                         );
-                         setState(() {
+                        loadingRider = 0;
+                        destinationContainer =280;
 
-                           loadingRider = 0;
-                           destinationContainer =280;
+                        qrCodeResult = "";
+                        num = "";
+                        cancelBtn = true;
+                        scanBtn = false;
+                      });
+                    },
+                    color: Theme.of(context).accentColor,
+                    child: Padding(
+                      padding: EdgeInsets.all(17.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Done", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),),
 
-                           qrCodeResult = "";
-                           num = "";
-                           cancelBtn = true;
-                           scanBtn = false;
-                         });
-                       },
-                       color: Theme.of(context).accentColor,
-                       child: Padding(
-                         padding: EdgeInsets.all(17.0),
-                         child: Row(
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           children: [
-                             Text("Yes", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
 
-                           ],
-                         ),
-                       ),
-                     ),
-                   ),
-                   Padding(
-                     padding: EdgeInsets.symmetric(horizontal: 14.0),
-                     child: RaisedButton(
-                       onPressed: ()
-                       {
-
-
-                         Navigator.pop(context);
-                         setState(() {
-
-                           loadingRider = 0;
-                           destinationContainer =280;
-
-                           qrCodeResult = "";
-                           num = "";
-                           cancelBtn = true;
-                           scanBtn = false;
-                         });
-                       },
-                       color: Colors.red,
-                       child: Padding(
-                         padding: EdgeInsets.all(17.0),
-                         child: Row(
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           children: [
-                             Text("No ", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),),
-
-                           ],
-                         ),
-                       ),
-                     ),
-                   ),
-                 ],
-               )
 
               ],
             ),

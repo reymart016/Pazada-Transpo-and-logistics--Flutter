@@ -38,7 +38,7 @@ class _MenuscreenState extends State<Menuscreen> {
         title: Text(
           "Pazabuy",
           //sharedPreferences!.getString("name")!,
-          style: const TextStyle(fontSize: 40, fontFamily: "Signatra", color: Colors.white),
+          style: const TextStyle(fontSize: 25, fontFamily: "bolt-bold", color: Colors.white),
         ),//text
         centerTitle: true,
         automaticallyImplyLeading: true,

@@ -7,6 +7,7 @@ import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/main.dart';
+import 'package:pazada/travel_history/pazadaRideHistoryScreen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -214,72 +215,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(
                     height: 30,
                   ),
-                  Container(
-                    height: height * 0.5,
-                    width: width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: Colors.amber,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            'Ride History',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 27,
-                              fontFamily: 'bolt-bold',
+                  GestureDetector(
+                    onTap: showRideHistory,
+                    child: Container(
+                      height: height * 0.23,
+                      width: width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.amber,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Column(
+                          children: [
+
+
+                            SizedBox(
+                              height: 20,
                             ),
-                          ),
-                          Divider(
-                            thickness: 2.5,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: height * 0.08,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(20),
+
+                            Container(
+                              height: height * 0.175,
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Container(
+                            child: Padding(
+                            padding: EdgeInsets.all(8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  SvgPicture.asset('images/svg/angkaswdriver.svg', height: 90,),
+                                  Text("Travel History",style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'bolt',
+                                    fontSize: 20,
+                                  ),),
+
+                                ],
+                              ),
+                            )
+                      ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: height * 0.08,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: height * 0.08,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: height * 0.08,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   )
@@ -301,5 +281,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.pushNamedAndRemoveUntil(context, LoginScreen.idScreen, (route) => false);
     });
   }
-
+  void showRideHistory(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PazadaRideHistoryScreen()),
+    );
+  }
 }

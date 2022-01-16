@@ -21,6 +21,7 @@ import 'package:pazada/models/pazada_driver.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/shared/driverInfo.dart';
 import 'package:pazada/widgets/shared/noDriverAvailableDialog.dart';
+import 'package:pazada/widgets/shared/pazabuydriverinfo.dart';
 import 'package:pazada/widgets/shared/progressDialog.dart';
 import 'package:pazada/widgets/shared/searchingDriver.dart';
 import 'package:provider/provider.dart';
@@ -511,11 +512,15 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
 
         pazadaDriver.rideStatus = event.snapshot.value["status"];
         rideStatus = event.snapshot.value['status'].toString();
+        setState(() {
+          rideType = event.snapshot.value['Pazabuy'];// gagong code to
+        });
         //username = event.snapshot.value['driver_name'].toString();
         print("================================================");
         print("      NOT NULL             ");
         print(rideStatus);
         print(username);
+        print(rideType);
         print(":::::::::::::::::::::::::::::::::::::::::::::::::");
 
       }
@@ -524,6 +529,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
           username = event.snapshot.value["driver_name"].toString();
           driver_phone = event.snapshot.value["driver_phone"].toString();
           vehicle_details = event.snapshot.value["vehicle_details"].toString();
+          qrData = event.snapshot.value["QR"].toString();
           pazadaDriver.username = username;
           pazadaDriver.number = driver_phone;
           pazadaDriver.vehicle_details = vehicle_details;
@@ -564,11 +570,18 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
 
       if(rideStatus == 'accepted'){
         Navigator.pop(context);
-        driverInfo();
-        if(Provider.of<AppData>(context, listen: false).pazadaDriver.username != null
-            && Provider.of<AppData>(context, listen: false).pazadaDriver.number != null
-            && Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_details != null){
-
+        if(rideType == true){
+          setState(() {
+            pazabuyDriverInfo();
+            print(":::::::::::::::::::::::::::::::::::::::::::::::::");
+            print(":::::::::::::::::::::::::::::::::::::::::::::::::");
+            qrData = event.snapshot.value["QR"];
+            print(":::::::::::::::::::::::::::::::::::::::::::::::::");
+            print(":::::::::::::::::::::::::::::::::::::::::::::::::");
+          });
+          print(qrData);
+        }else{
+          driverInfo();
         }
 
 
@@ -580,6 +593,17 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
 
       }
     });
+
+  }
+  void pazabuyDriverInfo()async{
+
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => PazabuyDriverInfo()
+    );
+
+
 
   }
   Future <void> getPlaceDirection()async{
@@ -685,6 +709,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     DataSnapshot dataSnapshot = await usersRef.child("Ride_Request").child(rideRequestId).once();
     Map driverInformation = dataSnapshot.value;
     setState(() {
+      pazadaDriver.driverID = driverInformation['driver_id'];
       pazadaDriver.username = driverInformation['driver_name'];
       pazadaDriver.vehicle_details = driverInformation['vehicle_details'];
       pazadaDriver.vehicle_plateNum = driverInformation['vehicle_plateNum'].toString();
@@ -696,6 +721,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     print(Provider.of<AppData>(context, listen: false).pazadaDriver.username);
     print(Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_details);
     print(Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_plateNum);
+    print(Provider.of<AppData>(context, listen: false).pazadaDriver.driverID);
     print(":::::::::::::::::::::::::::::::::::::::::");
 
   }

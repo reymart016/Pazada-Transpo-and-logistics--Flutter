@@ -25,18 +25,29 @@ int counter = 30;
 int driveRequesttimeOut = 40;
 String driverID = "";
 String rideStatus ="";
+bool rideType = false;
+String qrData = "";
 String username ="";
 String userName="";
 String number = "";
 String driver_phone = "";
+String driver_name = "";
 String email = "";
 String vehicle_color = "";
+String itemCount = "12";
 String vehicle_model = "";
 String vehicle_plateNum = "";
 String vehicle_type = "";
 String vehicle_details = "";
 SharedPreferences sharedPreferences;
 int UserKart;
+String price = "";
+
+String pointA = "";
+String pointB = "";
+String randomID = "";
+String pazadaDriverID = "";
+String review = "";
 
 StreamSubscription<Event> rideStreamSubscription;
 

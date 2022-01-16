@@ -11,6 +11,7 @@ import 'package:pazada/assistants/geoFireAssistant.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/models/PazakayOrder.dart';
 import 'package:pazada/models/directionDetails.dart';
 import 'package:pazada/models/nearbyAvalableDrivers.dart';
 import 'package:pazada/models/pazada_driver.dart';
@@ -57,7 +58,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
   bool searching = false;
   lct.Location location;
   String coordinates = "";
-  TextEditingController destinationAddress = TextEditingController();
+  TextEditingController landmarkAddress = TextEditingController();
   TextEditingController contactNumber = TextEditingController();
 
   Position currentPosition,desPosition;
@@ -205,6 +206,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     requestPerms();
     super.initState();
     getPlaceDirection();
+    passDriverInfo();
 
   }
 
@@ -259,6 +261,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
               newGoogleMapController = controller;
               print("THIS TEXT IS WORKING::");
               locatePosition();
+              //storeUniqueID();
               setState(() {
                 bottomPaddingofMap = 320;
               });
@@ -462,7 +465,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                     SizedBox(height: 10,),
                     DividerWidget(),
                     TextField(
-                      controller: destinationAddress,
+                      controller: landmarkAddress,
                       keyboardType: TextInputType.streetAddress,
                       decoration: InputDecoration(
                         prefixIcon:Icon(Icons.work, color: Colors.grey,),
@@ -525,10 +528,15 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                             ),
                           ),
                           onPressed: ()async{
+
+                            PazakayOrder pazakayOrder = PazakayOrder();
+                            pazakayOrder.landmarkPickup = landmarkAddress.text;
+
+
                             print('PRESSED');
                             ////res = await Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentPanel())); temporary
                             Navigator.pop(context, "obtainDirection");
-                            if(destinationAddress.text.length <= 15 || contactNumber.text == null){
+                            if(landmarkAddress.text.length <= 15 || contactNumber.text == null){
                               displayToastMessage("address and contact number is not valid or too short", context);
                             }
                             else if(res == "obtainDirection"){
@@ -789,6 +797,10 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                                 padding: EdgeInsets.all(8.0),
                                 child: Text("Vehicle:", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                               ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text("Amount to Pay:", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                              ),
                             ],
                           ),
                           Column(
@@ -805,6 +817,10 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                               Padding(
                                 padding: EdgeInsets.all(8.0),
                                 child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.vehicle_details : "0016", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(price != null ? "Php "+price+ ".00" : "0", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                               ),
                             ],
                           ),
@@ -1128,17 +1144,20 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     DataSnapshot dataSnapshot = await usersRef.child("Ride_Request").child(rideRequestId).once();
     Map driverInformation = dataSnapshot.value;
     setState(() {
+      pazadaDriver.driverID = driverInformation['driver_id'];
       pazadaDriver.username = driverInformation['driver_name'];
       pazadaDriver.vehicle_details = driverInformation['vehicle_details'];
       pazadaDriver.vehicle_plateNum = driverInformation['vehicle_plateNum'].toString();
       username = Provider.of<AppData>(context, listen: false).pazadaDriver.username;
       vehicle_plateNum = Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_plateNum;
       vehicle_details = Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_details;
+      pazadaDriverID =  pazadaDriver.driverID;
     });
     print(":::::::::::::::::::::::::::::::::::::::::");
     print(Provider.of<AppData>(context, listen: false).pazadaDriver.username);
     print(Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_details);
     print(Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_plateNum);
+    print(Provider.of<AppData>(context, listen: false).pazadaDriver.driverID);
     print(":::::::::::::::::::::::::::::::::::::::::");
 
   }
@@ -1163,6 +1182,13 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     print(driver.toString());
     availableDrivers.removeAt(0);
     notifyDriver(driver);
+  }
+  void storeUniqueID()async{
+    DataSnapshot dataSnapshot = await usersRef.child("Ride_Request").child(rideRequestId).once();
+    Map driverInformation = dataSnapshot.value;
+    setState(() {
+      randomID = driverInformation['uniqueID'];
+    });
   }
 
   void notifyDriver(NearbyAvailableDrivers driver){

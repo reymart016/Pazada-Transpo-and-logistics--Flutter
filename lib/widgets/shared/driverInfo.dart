@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/main.dart';
 import 'package:pazada/models/pazabuyMenus.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/pazakay/pazakay.dart';
@@ -32,6 +34,7 @@ void initState() {
 
 
     if(Provider.of<AppData>(context, listen: false).pazadaDriver != null){
+
       rideStreamSubscription.pause();
       // setState(() {
       //   num = Provider.of<AppData>(context, listen: false).pazadaDriver.number;
@@ -95,6 +98,10 @@ void initState() {
                           padding: EdgeInsets.all(8.0),
                           child: Text("Vehicle:", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                         ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("Amount to Pay:", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                        ),
                       ],
                     ),
                     Column(
@@ -102,15 +109,19 @@ void initState() {
                       children: [
                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.username : 'Username', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.username : "Username", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                         ),
                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.number : 'Vehicle', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.number : "Vehicle", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                         ),
                         Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.vehicle_details : "0016", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(price != null ? "Php "+price+ ".00" : "0", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                         ),
                       ],
 
@@ -260,12 +271,16 @@ void initState() {
                               ),
                             ),
                           ),
-                          onPressed: (){
+                          onPressed: ()async{
                             rideStreamSubscription.cancel();
+                            //storeUniqueID();
+                            print(randomID);
                             pazada();
                             setState(() {
                               loadingRider = 280;
                               destinationContainer =0;
+                              driver_name = Provider.of<AppData>(context, listen: false).pazadaDriver.username.toString();
+                             driver_phone = Provider.of<AppData>(context, listen: false).pazadaDriver.number.toString();
                             });
                           },
                         ),
@@ -314,5 +329,17 @@ void initState() {
   }
   void pazada (){
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
+  }
+  void storeUniqueID()async{
+    DataSnapshot dataSnapshot = await usersRef.child("Ride_Request").child(rideRequestId).once();
+    Map driverInformation = dataSnapshot.value;
+
+    setState(() {
+      randomID = driverInformation['uniqueID'];
+    });
+    print("======================================");
+    print(randomID);
+    print(driverID);
+    print("======================================");
   }
 }

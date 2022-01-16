@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pazada/models/PazabuyOrder.dart';
+import 'package:pazada/models/PazakayOrder.dart';
 import 'package:pazada/models/address.dart';
 import 'package:pazada/models/allUsers.dart';
 import 'package:pazada/models/pazada_driver.dart';
@@ -14,6 +15,7 @@ class AppData extends ChangeNotifier{
       PazShipOrder pazShipOrder;
       PazabuyOrder pazabuyOrder;
       PazadaDriver pazadaDriver;
+      PazakayOrder pazakayOrder;
       void updatePickUpLocationAddress(Address pickUpAddress){
         pickUpLocation = pickUpAddress;
         notifyListeners();
@@ -40,6 +42,11 @@ class AppData extends ChangeNotifier{
       }
       void updatepazadaDriver(PazadaDriver _pazadaDriver){
         pazadaDriver = _pazadaDriver;
+        notifyListeners();
+      }
+
+      void updatePazakayOrder(PazakayOrder _pazakayOrder){
+        pazakayOrder = _pazakayOrder;
         notifyListeners();
       }
 

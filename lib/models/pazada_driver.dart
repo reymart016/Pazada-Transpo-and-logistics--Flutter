@@ -1,5 +1,5 @@
 class PazadaDriver{
-
+  String driverID;
   String rideStatus;
   String username;
   String number;
@@ -11,7 +11,8 @@ class PazadaDriver{
   String vehicle_details;
 
   PazadaDriver(
-      {this.rideStatus,
+      {this.driverID,
+        this.rideStatus,
       this.username,
       this.number,
       this.email,
