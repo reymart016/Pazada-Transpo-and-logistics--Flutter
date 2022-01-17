@@ -48,6 +48,8 @@ String pointB = "";
 String randomID = "";
 String pazadaDriverID = "";
 String review = "";
+String sellerUID = "";
+String staticLocation = "";
 
 StreamSubscription<Event> rideStreamSubscription;
 

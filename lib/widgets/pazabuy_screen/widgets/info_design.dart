@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/models/pazadaSellers.dart';
 import 'package:pazada/widgets/pazabuy_screen/menu_screen.dart';
 
@@ -17,6 +18,9 @@ class _InfoDesignWidgetState extends State<InfoDesignWidget> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
+        setState(() {
+          staticLocation = widget.model.location;
+        });
         print(":::::::");
             print(widget.model.uId);
         print(":::::::");

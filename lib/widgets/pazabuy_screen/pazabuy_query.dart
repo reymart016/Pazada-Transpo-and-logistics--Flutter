@@ -406,7 +406,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
       "thumbnailUrl": widget.model.thumbnailUrl,
       "PazShip": false,
       "Pazabuy": true,
-
+      "fares": "49.00",
     };
 
     rideRequestRef.set(pazShipBooking);
@@ -425,8 +425,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
   }
 
 
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  Future<void> saveManualMapLocation()async{
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;  Future<void> saveManualMapLocation()async{
     String userId = firebaseUser.uid;
     var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
     Map manualMapBooking = {

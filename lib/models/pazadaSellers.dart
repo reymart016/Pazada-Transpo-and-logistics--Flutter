@@ -11,6 +11,7 @@ class PazadaSellers{
   Timestamp publishedDate;
   String thumbnailUrl;
   String status;
+  String location;
 
   PazadaSellers(
       {
@@ -19,7 +20,9 @@ class PazadaSellers{
         this.userNumber,
         this.publishedDate,
         this.thumbnailUrl,
-        this.status});
+        this.status,
+        this.location
+      });
 
   PazadaSellers.fromJson(Map<String, dynamic> json){
 
@@ -30,6 +33,7 @@ class PazadaSellers{
     publishedDate = json["publishedDate"];
     thumbnailUrl = json["thumbnailUrl"];
     status = json["status"];
+    location = json["location"];
 
   }
   Map<String, dynamic> toJson(){
@@ -41,6 +45,7 @@ class PazadaSellers{
     data["publishedDate"] = publishedDate;
     data["thumbnailUrl"] = thumbnailUrl;
     data["status"] = status;
+    data["location"] = location;
 
     return data;
   }

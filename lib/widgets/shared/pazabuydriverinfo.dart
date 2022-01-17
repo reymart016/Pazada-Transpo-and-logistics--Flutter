@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +93,33 @@ class _PazabuyDriverInfoState extends State<PazabuyDriverInfo> with SingleTicker
                   child: RaisedButton(
                     onPressed: ()
                     {
+                      Map<String, dynamic> historyData = {
+                        'ratings': starCounter.toStringAsFixed(2),
+                        "created_at": DateTime.now(),
+                        "passenger_name": usersCurrentInfo.name,
+                        "passenger_phone": usersCurrentInfo.phone,
+                        "pickup_address": pointA,
+                        "destination_address": pointB,
+
+                      };
+                      FirebaseFirestore.instance.collection('PazadaSellers').doc(sellerUID).collection("History")
+                          .doc(randomID).set(historyData).then((value) {
+                        final productsRef = FirebaseFirestore.instance.collection("PazadaSellerHistory"); //SAVE AS MAIN COLLECTION
+                        productsRef.doc(randomID).set({
+                          'pazadaHistoryID': randomID,
+                          'ratings': starCounter.toStringAsFixed(2),
+                          "created_at": DateTime.now(),
+                          "passenger_name": usersCurrentInfo.name,
+                          "passenger_phone": usersCurrentInfo.phone,
+                          "pickup_address": pointA,
+                          "destination_address": pointB,
+                          "review": review,
+                          "price": price,
+                          "driver_name": driver_name,
+                          "driver_phone": driver_phone,
+
+                        });
+                      });
                       updateRideHistory();
 
                       Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);

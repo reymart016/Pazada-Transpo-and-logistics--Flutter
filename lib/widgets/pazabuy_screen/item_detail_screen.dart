@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pazada/assistants/pazabuy/cart_item_counter.dart';
 
 import 'package:pazada/models/pazabuyProduct.dart';
-import 'package:number_inc_dec/number_inc_dec.dart';
+//import 'package:number_inc_dec/number_inc_dec.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/widgets/pazabuy_screen/pazabuy_query.dart';
 import 'package:pazada/widgets/shared/under_construction.dart';
@@ -81,16 +81,16 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.network(widget.model.thumbnailUrl.toString()),
-          SizedBox(height: 10,),
-          NumberInputPrefabbed.roundedButtons(
-            controller: counterTextEditingController,
-            incDecBgColor: Colors.amber,
-            min: 1,
-            max: 9,
-            initialValue: 1,
-            buttonArrangement: ButtonArrangement.incRightDecLeft,
-
-          ),
+          // SizedBox(height: 10,),
+          // NumberInputPrefabbed.roundedButtons(
+          //   controller: counterTextEditingController,
+          //   incDecBgColor: Colors.amber,
+          //   min: 1,
+          //   max: 9,
+          //   initialValue: 1,
+          //   buttonArrangement: ButtonArrangement.incRightDecLeft,
+          //
+          // ),
 
           Padding(
             padding: const EdgeInsets.all(8.0),

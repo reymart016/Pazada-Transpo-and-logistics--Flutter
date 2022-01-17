@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 
 import 'package:pazada/models/pazabuyProduct.dart';
 import 'package:pazada/widgets/pazabuy_screen/item_detail_screen.dart';
@@ -21,6 +22,9 @@ class _ItemDesignWidgetState extends State<ItemDesignWidget> {
             onTap:()
             {
                 Navigator.push(context, MaterialPageRoute(builder: (c)=> ItemDetailScreen(model: widget.model)));
+                setState(() {
+                  sellerUID = widget.model.sellerUID;
+                });
             },
             splashColor: Colors.amber,
             child: Padding(

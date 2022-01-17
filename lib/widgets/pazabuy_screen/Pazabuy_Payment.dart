@@ -269,8 +269,8 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
                                                 : "Add Home", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis,
                                             ),
                                             SizedBox(height: 10,),
-                                            Text(Provider.of<AppData>(context).destinationLocation!= null
-                                                ? Provider.of<AppData>(context).destinationLocation.placename
+                                            Text(staticLocation != null
+                                                ? staticLocation
                                                 : "Destination", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis
                                             ),
                                             SizedBox(height: 10,),
@@ -357,7 +357,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children:[ Text("Total"),
-                                Text(((tripDirectionDetails != null)? '\PHP ${AssistantMethod.calculateFares(tripDirectionDetails)}.00' : ''),style: TextStyle(fontFamily: "bolt",fontSize: 30,),
+                                Text('\PHP 49.00',style: TextStyle(fontFamily: "bolt",fontSize: 30,),
                                   textAlign: TextAlign.right,
                                 ),]
                           ),
@@ -482,7 +482,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       "driver_id": "waiting",
       "payment_method": "cash",
       "pickup": pickUpCoordinates,
-      "fares": fare,
+      "fares": "49.00",
       "destination": destinationCoordinates,
       "created_at": DateTime.now().toString(),
       "passenger_name": usersCurrentInfo.name,
