@@ -59,19 +59,19 @@ class _PazadaUserHistoryDetailsState extends State<PazadaUserHistoryDetails> wit
                 SizedBox(height: 5,),
 
 
-                Text("Passenger name: "+
+                Text("Driver name: "+
                     widget.models.driver_name,
                   style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 12,
                       fontFamily: "bolt"
                   ),//TextStyle
                 ),
                 SizedBox(height: 5,),
                 Text("Phone number: "+
-                    widget.models.driver_name,
+                    widget.models.driver_phone,
                   style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 12,
                       fontFamily: "bolt"
                   ),//TextStyle
@@ -80,7 +80,7 @@ class _PazadaUserHistoryDetailsState extends State<PazadaUserHistoryDetails> wit
                 Text("Pickup: "+
                     widget.models.pickup_address,
                   style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 12,
                       fontFamily: "bolt"
                   ),//TextStyle
@@ -89,16 +89,16 @@ class _PazadaUserHistoryDetailsState extends State<PazadaUserHistoryDetails> wit
                 Text("Destination: "+
                     widget.models.destination_address,
                   style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 12,
                       fontFamily: "bolt"
                   ),//TextStyle
                 ),
                 SizedBox(height: 5,),
-                Text("Amount: "+
-                    widget.models.price,
+                Text(
+                    widget.models.service_type=="Pazabuy" ? "Amount: Php "+ widget.models.grand_total :"Amount: Php "+ widget.models.price ,
                   style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 12,
                       fontFamily: "bolt"
                   ),//TextStyle
@@ -107,7 +107,7 @@ class _PazadaUserHistoryDetailsState extends State<PazadaUserHistoryDetails> wit
                 Text("Date & Time: "+
                     widget.models.created_at.toDate().toString(),
                   style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 12,
                       fontFamily: "bolt"
                   ),//TextStyle
@@ -116,12 +116,11 @@ class _PazadaUserHistoryDetailsState extends State<PazadaUserHistoryDetails> wit
                 Text("Ride ID: "+
                     widget.models.pazadaHistoryID,
                   style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontSize: 12,
                       fontFamily: "bolt"
                   ),//TextStyle
                 ),
-
                 SizedBox(height: 10,),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),

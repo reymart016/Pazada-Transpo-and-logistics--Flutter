@@ -20,9 +20,13 @@ class _InfoDesignWidgetState extends State<InfoDesignWidget> {
       onTap: (){
         setState(() {
           staticLocation = widget.model.location;
+          sellerid = widget.model.uId;
+          sellername = widget.model.userName;
+          sellerphone = widget.model.userNumber;
         });
         print(":::::::");
             print(widget.model.uId);
+
         print(":::::::");
         Navigator.push(context, MaterialPageRoute(builder: (c) => Menuscreen(model: widget.model)));
       },

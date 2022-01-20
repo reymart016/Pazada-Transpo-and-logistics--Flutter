@@ -55,7 +55,7 @@ class _SuccessDialogState extends State<SuccessDialog> with SingleTickerProvider
               children: [
                 SizedBox(height: 10,),
 
-                Text('Success', style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold'),),
+                Text('Transaction Complete', style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold'),),
 
                 SizedBox(height: 5,),
 

@@ -9,18 +9,17 @@ import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/widgets/idle_screen/idle_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
-import 'package:pazada/widgets/shared/completionQR.dart';
 import 'package:pazada/widgets/shared/rateDriver.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class PazabuyDriverInfo extends StatefulWidget {
+class CompletionQR extends StatefulWidget {
   @override
-  State<PazabuyDriverInfo> createState() => _PazabuyDriverInfoState();
+  State<CompletionQR> createState() => _CompletionQRState();
 }
 
-class _PazabuyDriverInfoState extends State<PazabuyDriverInfo> with SingleTickerProviderStateMixin{
+class _CompletionQRState extends State<CompletionQR> with SingleTickerProviderStateMixin{
   AnimationController lottieController;
 
   @override
@@ -67,7 +66,7 @@ class _PazabuyDriverInfoState extends State<PazabuyDriverInfo> with SingleTicker
                 // Center(
                 //   child: Lottie.asset('assets/lotties/success1.json', height:200),
                 // ),
-                QrImage(data: qrData),
+                QrImage(data: qrData2),
                 GestureDetector(
                   onTap: (){
                     LaunchApp.openApp(
@@ -94,6 +93,10 @@ class _PazabuyDriverInfoState extends State<PazabuyDriverInfo> with SingleTicker
                   child: RaisedButton(
                     onPressed: ()
                     {
+                      print("++++++++++++++++++++");
+                      print(sellerUID);
+                      print(randomID);
+                      print("++++++++++++++++++++");
                       // Map<String, dynamic> historyData = {
                       //   'ratings': starCounter.toStringAsFixed(2),
                       //   "created_at": DateTime.now(),
@@ -101,6 +104,8 @@ class _PazabuyDriverInfoState extends State<PazabuyDriverInfo> with SingleTicker
                       //   "passenger_phone": usersCurrentInfo.phone,
                       //   "pickup_address": pointA,
                       //   "destination_address": pointB,
+                      //   "driver_name": driver_name,
+                      //   "driver_phone": driver_phone,
                       //
                       // };
                       // FirebaseFirestore.instance.collection('PazadaSellers').doc(sellerUID).collection("History")
@@ -127,14 +132,13 @@ class _PazabuyDriverInfoState extends State<PazabuyDriverInfo> with SingleTicker
                       showDialog(
                           context: context,
                           barrierDismissible: false,
-                          builder: (BuildContext context) => CompletionQR()
+                          builder: (BuildContext context) => RateDriver()
                       );
                       setState(() {
 
                         loadingRider = 0;
                         destinationContainer =280;
-                        driver_name = Provider.of<AppData>(context, listen: false).pazadaDriver.username.toString();
-                        driver_phone = Provider.of<AppData>(context, listen: false).pazadaDriver.number.toString();
+
                         qrCodeResult = "";
                         num = "";
                         cancelBtn = true;

@@ -146,8 +146,26 @@ class _RateDriverState extends State<RateDriver> with SingleTickerProviderStateM
                           "passenger_phone": usersCurrentInfo.phone,
                           "pickup_address": pointA,
                           "destination_address": pointB,
+                          "review": review,
+                          "price": price,
+                          "driver_name": driver_name,
+                          "driver_phone": driver_phone,
 
                         };
+                        // FirebaseFirestore.instance.collection('PazadaSellers').doc(sellerid).collection("History")
+                        //     .doc(randomID).update(historyData).then((value) {
+                        //   final productsReff = FirebaseFirestore.instance.collection("PazadaSellerHistory"); //SAVE AS MAIN COLLECTION
+                        //   productsReff.doc(randomID).update({
+                        //     'pazadaHistoryID': randomID,
+                        //     'ratings': starCounter.toStringAsFixed(2),
+                        //     "created_at": DateTime.now(),
+                        //
+                        //     "review": review,
+                        //
+                        //
+                        //
+                        //   });
+                        // });
                         FirebaseFirestore.instance.collection('PazadaDrivers').doc(driverID).collection("History")
                             .doc(randomID).update(historyData).then((value) {
                           final productsRef = FirebaseFirestore.instance.collection("PazadaDriverHistory"); //SAVE AS MAIN COLLECTION
@@ -163,6 +181,20 @@ class _RateDriverState extends State<RateDriver> with SingleTickerProviderStateM
                             "price": price,
                             "driver_name": driver_name,
                             "driver_phone": driver_phone,
+
+
+
+                          });
+                        }).then((value){
+                          final productsRef = FirebaseFirestore.instance.collection("PazadaSellerHistory"); //SAVE AS MAIN COLLECTION
+                          productsRef.doc(randomID).update({
+                            'pazadaHistoryID': randomID,
+                            'ratings': starCounter.toStringAsFixed(2),
+                            "created_at": DateTime.now(),
+
+                            "review": review,
+
+
 
                           });
                         });

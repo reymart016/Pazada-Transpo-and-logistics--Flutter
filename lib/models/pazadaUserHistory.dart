@@ -10,6 +10,7 @@ class PazadaUserHistoryModel{
   String pickup_address;
   Timestamp created_at;
   String destination_address;
+  String grand_total;
 
   String price;
 
@@ -22,6 +23,7 @@ class PazadaUserHistoryModel{
         this.pickup_address,
         this.created_at,
         this.destination_address,
+        this.grand_total,
 
         this.price
       });
@@ -37,6 +39,7 @@ class PazadaUserHistoryModel{
     created_at = json["created_at"];
     destination_address = json["destination_address"];
     price = json["price"];
+    grand_total = json["Grand_Total"];
 
 
   }
@@ -51,6 +54,7 @@ class PazadaUserHistoryModel{
     data["created_at"] = created_at;
     data["destination_address"] = destination_address;
     data["price"] = price;
+    data["Grand_Total"] = grand_total;
 
 
     return data;

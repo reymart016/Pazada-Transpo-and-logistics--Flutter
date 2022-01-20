@@ -18,6 +18,22 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+
+  verifyEmail()async{
+    if(user != null && !user.emailVerified){
+      await user.sendEmailVerification();
+      print('Verification Email has been sent');
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Verification Email has been sent", style:
+          TextStyle(fontSize: 18.0, color: Colors.amber, fontFamily: 'bolt-bold')
+            ,)
+
+      ));
+    }
+  }
+
+
   void initState() {
     // TODO: implement initState
     AssistantMethod.getCurrentOnlineInformation();
@@ -184,15 +200,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                             ),
-                            Positioned(
-                              top: 110,
-                              right: 20,
-                              child: Icon(
-                                Icons.edit,
-                                color: Colors.grey[700],
-                                size: 30,
-                              ),
+                          user.emailVerified ?  Positioned(
+                            top: 110,
+                            right: 20,
+                            child: Icon(
+                              Icons.verified,
+                              color: Colors.blue,
+                              size: 40,
                             ),
+                          ):
+                          Positioned(
+                            top: 110,
+                            right: 20,
+                            child: TextButton(
+                              onPressed:()async{
+                               await verifyEmail();
+                                print("pressed");
+                              },
+                              child: Text("Verify Email",style: TextStyle(
+                                color: Colors.blue,
+                                fontFamily: 'bolt-bold',
+                                fontSize: 20,
+                              ),),
+                            ),
+                          )
+                            ,
                             Positioned(
                               top: 0,
                               left: 0,

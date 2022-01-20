@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/models/nearbyAvalableDrivers.dart';
@@ -27,6 +28,7 @@ String driverID = "";
 String rideStatus ="";
 bool rideType = false;
 String qrData = "";
+String qrData2 = "";
 String username ="";
 String userName="";
 String number = "";
@@ -79,5 +81,10 @@ String getUserName = "";
 
 String adUserName = "";
 String adUserImageUrl = "";
+int quantity = 1;
+String sellername = "";
+String sellerid = "";
+String sellerphone ="";
 
 String completeAddress = "";
+User user = FirebaseAuth.instance.currentUser;

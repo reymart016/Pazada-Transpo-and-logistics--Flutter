@@ -146,7 +146,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
 
                   Center(
                     child: Container(
-                      height: MediaQuery.of(context).size.height/3.0,
+                      height: MediaQuery.of(context).size.height/4.7,
                       alignment: Alignment.center,
 
                       width: MediaQuery.of(context).size.width * .96,
@@ -222,39 +222,41 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
                               ],
                             ),
                           ),
-                          DividerWidget(),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal:14.0,vertical: 10),
-                            child: Row(
-                              children: [
-                                Icon(Icons.location_on,color: Colors.red,),
-                                SizedBox(width: 5,),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: pazakay,
-                                    child: Container(
-
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal:30, vertical: 25),
-                                        child: Text(Provider.of<AppData>(context).destinationLocation!= null
-                                            ? Provider.of<AppData>(context).destinationLocation.placename
-                                            : "Destination", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                    onTap: (){
-                                      _requestPermission();
-                                    },
-                                    child: Icon(Icons.my_location_outlined)
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 80,),
+                          // DividerWidget(),
+                          //
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(horizontal:14.0,vertical: 10),
+                          //   child: Row(
+                          //     children: [
+                          //       Icon(Icons.location_on,color: Colors.red,),
+                          //       SizedBox(width: 5,),
+                          //       Expanded(
+                          //         child: GestureDetector(
+                          //           //onTap: pazakay,
+                          //           child: Container(
+                          //
+                          //             child: Padding(
+                          //               padding: const EdgeInsets.symmetric(horizontal:30, vertical: 25),
+                          //               child: Text(mapbook == true && Provider.of<AppData>(context).destinationLocation2!= null
+                          //                   ?  Provider.of<AppData>(context).destinationLocation2.placename
+                          //                   : autoLoc ==true && Provider.of<AppData>(context).pickUpLocation!= null
+                          //                   ? Provider.of<AppData>(context).pickUpLocation.placename
+                          //                   : "Add Home", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       GestureDetector(
+                          //           onTap: (){
+                          //             _requestPermission();
+                          //           },
+                          //           child: Icon(Icons.my_location_outlined)
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          SizedBox(height: 50,),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Image.network(widget.model.thumbnailUrl.toString()),
@@ -406,7 +408,8 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
       "thumbnailUrl": widget.model.thumbnailUrl,
       "PazShip": false,
       "Pazabuy": true,
-      "fares": "49.00",
+      "fares": 49,
+
     };
 
     rideRequestRef.set(pazShipBooking);
@@ -447,7 +450,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
   }
   Future <void> getPlaceDirection()async{
     var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
-    var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
+    var finalPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
     var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
     var destinationLatLng = LatLng(finalPos.latitude, finalPos.longitude);
 

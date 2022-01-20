@@ -247,9 +247,9 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
                                           SizedBox(height: 10,),
                                           Text('Destination:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
                                           SizedBox(height: 10,),
-                                          Text('Distance:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                          Text('            ', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
                                           SizedBox(height: 10,),
-                                          Text('Succeeding Kilometer:', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
+                                          Text('            ', style: TextStyle(fontFamily: "bolt",fontSize: 11),),
                                           // SizedBox(height: 10,),
                                           // Visibility(visible: isvisible,
                                           //     child: Text('PazShip Item:', style: TextStyle(fontFamily: "bolt",fontSize: 11),)),
@@ -269,19 +269,21 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
                                                 : "Add Home", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis,
                                             ),
                                             SizedBox(height: 10,),
-                                            Text(staticLocation != null
-                                                ? staticLocation
-                                                : "Destination", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis
+                                            Text(Provider.of<AppData>(context).destinationLocation2!= null && mapbook == true
+                                                ?  Provider.of<AppData>(context).destinationLocation2.placename
+                                                : Provider.of<AppData>(context).pickUpLocation!= null && autoLoc == true
+                                                ? Provider.of<AppData>(context).pickUpLocation.placename
+                                                : "Add Home", style: TextStyle(fontSize: 11, fontFamily: "bolt"),maxLines: 1,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis,
                                             ),
                                             SizedBox(height: 10,),
-                                            Text(((tripDirectionDetails != null)? tripDirectionDetails.distanceText : ''),style: TextStyle(fontFamily: "bolt",fontSize: 11),
-                                            ),
+                                            Text('           '
+                                              , style: TextStyle(fontFamily: "bolt",fontSize: 11),),
                                             SizedBox(height: 10,),
 
                                             // Text(Provider.of<AppData>(context, listen: false).pazShipOrder.key != null ?
                                             // Provider.of<AppData>(context,listen: false).pazShipOrder.key : ''
                                             //   , style: TextStyle(fontFamily: "bolt",fontSize: 11),),
-                                            Text(''
+                                            Text('          '
                                               , style: TextStyle(fontFamily: "bolt",fontSize: 11),),
                                             // SizedBox(height: 10,),
                                             // Visibility(visible: isvisible,
@@ -433,6 +435,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
   void saveRideRequest()async{
     print("SAVEEEEEEEEEEEEEEEEEEEEEEEE");
     var pickUp;
+    var dropOff;
 
     if(Provider.of<AppData>(context, listen: false).pazabuyOrder.key!=null && Provider.of<AppData>(context, listen: false).pazabuyOrder.stats == false) {
       rideRequestRef =
@@ -446,12 +449,18 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     //await searchNearestDriver();
     if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
       pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+   dropOff = Provider.of<AppData>(context, listen: false).pickUpLocation;
     }else{
       pickUp = Provider.of<AppData>(context, listen: false).destinationLocation2;
+    dropOff = Provider.of<AppData>(context, listen: false).destinationLocation2;
     }
 
-    var dropOff = Provider.of<AppData>(context, listen: false).destinationLocation;
+    //var dropOff = Provider.of<AppData>(context, listen: false).destinationLocation;
     var fare = AssistantMethod.calculateFares(tripDirectionDetails);
+    setState(() {
+      pointA = pickUp.placename;
+      pointB = dropOff.placename;
+    });
 
 
     print(pickUp.latitude.toString());
@@ -477,19 +486,24 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       "destination_address": dropOff.placename,
     };
 
-    rideRequestRef.update({
+    rideRequestRef.update({//dito nagkakapasahan ng data sa pazaqbuy
       "UID": currentfirebaseUser.uid,
       "driver_id": "waiting",
       "payment_method": "cash",
       "pickup": pickUpCoordinates,
-      "fares": "49.00",
+      "fares": 49.00,
       "destination": destinationCoordinates,
       "created_at": DateTime.now().toString(),
       "passenger_name": usersCurrentInfo.name,
       "passenger_phone": usersCurrentInfo.phone,
       "pickup_address": pickUp.placename,
       "destination_address": dropOff.placename,
-      "menuID": widget.model.menuID
+      "sellerUID": sellerid,
+      "seller_name": sellername,
+      "seller_number": sellerphone,
+      "quantity": quantity,
+
+
 
 
     });
@@ -509,6 +523,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       }
       if(event.snapshot.value["status"] != null){
         passDriverInfo();
+        randomID = event.snapshot.value["uniqueID"];
 
         pazadaDriver.rideStatus = event.snapshot.value["status"];
         rideStatus = event.snapshot.value['status'].toString();
@@ -576,6 +591,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
             print(":::::::::::::::::::::::::::::::::::::::::::::::::");
             print(":::::::::::::::::::::::::::::::::::::::::::::::::");
             qrData = event.snapshot.value["QR"];
+            qrData2 =  event.snapshot.value["uniqueID"];
             print(":::::::::::::::::::::::::::::::::::::::::::::::::");
             print(":::::::::::::::::::::::::::::::::::::::::::::::::");
           });
@@ -611,18 +627,21 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     var pickUp;
 
     var pickupLatLng;
+    var finalPos;
     //var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
-    var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
+    // var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
     //var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
-    var destinationLatLng = LatLng(finalPos.latitude, finalPos.longitude);
+
     if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
       pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+      finalPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
       pickupLatLng = LatLng(pickUp.latitude, pickUp.longitude);
     }else{
       pickUp = Provider.of<AppData>(context, listen: false).destinationLocation2;
+      finalPos = Provider.of<AppData>(context, listen: false).destinationLocation2;
       pickupLatLng = LatLng(pickUp.latitude, pickUp.longitude);
     }
-
+    var destinationLatLng = LatLng(finalPos.latitude, finalPos.longitude);
     //showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
 
     print(pickupLatLng);
@@ -713,6 +732,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       pazadaDriver.username = driverInformation['driver_name'];
       pazadaDriver.vehicle_details = driverInformation['vehicle_details'];
       pazadaDriver.vehicle_plateNum = driverInformation['vehicle_plateNum'].toString();
+      pazadaDriverID =  pazadaDriver.driverID;
       username = Provider.of<AppData>(context, listen: false).pazadaDriver.username;
       vehicle_plateNum = Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_plateNum;
       vehicle_details = Provider.of<AppData>(context, listen: false).pazadaDriver.vehicle_details;

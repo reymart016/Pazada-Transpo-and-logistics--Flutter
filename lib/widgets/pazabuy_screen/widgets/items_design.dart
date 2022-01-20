@@ -58,13 +58,13 @@ class _ItemDesignWidgetState extends State<ItemDesignWidget> {
                                 style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12,
-                                ),//TextStyle
-                            ),//Text
+                                ),
+                            ),
                             Divider(
                                 height: 4,
                                 thickness: 3,
                                 color: Colors.grey[300],
-                            ),//Divider
+                            ),
                         ],
                     ),//column
                 ),//container

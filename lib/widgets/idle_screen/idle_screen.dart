@@ -228,7 +228,16 @@ class _IdleScreenState extends State<IdleScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: services2,
+                  onTap: (){
+                    if(user.emailVerified){
+                      services2();
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Verify your account to unlock Pazabuy.", style:
+                        TextStyle(fontSize: 18.0, color: Colors.amber, fontFamily: 'bolt-bold')
+                        ,)));
+                    }
+                  },
                   child: PazadaCard(
                     color: pazabuy,
                     label: "Pazabuy",
@@ -236,7 +245,16 @@ class _IdleScreenState extends State<IdleScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: pazshipQuery,
+                  onTap: (){
+                    if(user.emailVerified){
+                      pazshipQuery();
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Verify your account to unlock PazShip.", style:
+                        TextStyle(fontSize: 18.0, color: Colors.amber, fontFamily: 'bolt-bold')
+                        ,)));
+                    }
+                  },
                   child: PazadaCard(
                     color: pazship,
                     label: "PazShip",
