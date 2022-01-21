@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
+
 import 'package:pazada/configs/Universal_Variable.dart';
 
 class CartItemCounter extends ChangeNotifier
 {
-    int cartListItemCounter = sharedPreferences.getStringList("userCarts").length-1;
+    int cartListItemCounter = sharedPreferences.getStringList("userCart").length - 1;
     int get count => cartListItemCounter;
 
-    Future<void> displayCartListItemNumber() async
+    Future<void> displayCartListItemsNumber() async
     {
-        cartListItemCounter = sharedPreferences.getStringList("userCarts").length -1;
+        cartListItemCounter = sharedPreferences.getStringList("userCart").length - 1;
 
         await Future.delayed(const Duration(milliseconds: 100), () {
-             notifyListeners();
-        }); //Future.delayed
+            notifyListeners();
+        });
     }
-}  
+}

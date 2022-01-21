@@ -198,13 +198,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
   }
-  Future readDataAndSetDataLocally(User currentFirebaseUser)async{
-    await FirebaseFirestore.instance.collection('PazadaUsers').doc(currentFirebaseUser.uid).get().then((snapshot)async{
-      await sharedPreferences.setString("uid", currentFirebaseUser.uid);
-      await sharedPreferences.setString("sellerName", snapshot.data()["userName"]);
-      await sharedPreferences.setString("sellerEmail", snapshot.data()["userEmail"]);
-      List<String> userCartList = snapshot.data()["userCart"].cast<String>();//.cast<String>()
+  Future readDataAndSetDataLocally(User firebaseUser)async{
+    await FirebaseFirestore.instance.collection('PazadaUsers').doc(firebaseUser.uid).get().then((snapshot)async{
+    if(snapshot.exists){
+      List<String> userCartList = snapshot.data()["userCart"].cast<String>();
       await sharedPreferences.setStringList("userCart", userCartList);
+      await sharedPreferences.setString("uId", firebaseUser.uid);
+      await sharedPreferences.setString("userName", snapshot.data()["userName"]);
+      await sharedPreferences.setString("email", snapshot.data()["email"]);
+
+      print("+++======================+++");
+      print(sharedPreferences.getStringList("userCart"));
+      print("+++======================+++");
+    }else {
+      print("+++======================+++");
+      print(firebaseUser.uid);
+      print("+++======================+++");
+      _firebaseAuth.signOut();
+      Navigator.pushNamedAndRemoveUntil(
+          context, LoginScreen.idScreen, (route) => false);
+    }
     });
   }
   getUserData(String uid) async{

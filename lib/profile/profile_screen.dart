@@ -9,6 +9,7 @@ import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/main.dart';
 import 'package:pazada/travel_history/pazadaRideHistoryScreen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
+import 'package:pazada/widgets/shared/progressDialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -76,7 +77,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       //   color: Colors.black54,
                       // ),
                       GestureDetector(
-                        onTap: _signOut,
+                        onTap: (){
+                          showDialog(context: context,barrierDismissible: false, builder: (BuildContext context)=> ProgressDialog(message: "Logging Out...."));
+                          _signOut();
+                          },
                         child: Icon(
                           AntDesign.logout,
                           color: Colors.black54,
@@ -304,12 +308,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
   Future signOut()async{
+    Navigator.pop(context);
     auth.signOut().then((c){
       Navigator.pushNamedAndRemoveUntil(context, LoginScreen.idScreen, (route) => false);
     });
   }
   _signOut() async {
+
     await _firebaseAuth.signOut().then((c){
+
       Navigator.pushNamedAndRemoveUntil(context, LoginScreen.idScreen, (route) => false);
     });
   }

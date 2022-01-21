@@ -88,3 +88,4 @@ String sellerphone ="";
 
 String completeAddress = "";
 User user = FirebaseAuth.instance.currentUser;
+bool isVerified = false;

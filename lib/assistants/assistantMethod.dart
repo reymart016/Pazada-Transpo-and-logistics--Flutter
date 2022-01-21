@@ -285,7 +285,7 @@ addItemToCart(String foodItemId, BuildContext context, int itemCounter)
 
     sharedPreferences.setStringList("userCart", tempList);
 
-    //Provider.of<CartItemCounterrr>(context, listen: false).displayCartListItemNumber();
+    Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
   });
 }
 separateItemIDs()
@@ -310,37 +310,37 @@ separateItemIDs()
 
   return separateItemsIDsList;
 }
-// clearCartNow(context)
-// {
-//   sharedPreferences.setStringList("userCart", ['garbageValue']);
-//   List<String> emptyList = sharedPreferences.getStringList("userCart");
-//
-//   FirebaseFirestore.instance.collection("PazadaUsers")
-//       .doc(currentfirebaseUser.uid)
-//       .update({"userCart": emptyList}).then((value)
-//   {
-//     sharedPreferences.setStringList("userCart", emptyList);
-//     Provider.of<CartItemCounter>(context, listen: false).displayCartListItemNumber();
-//
-//
-//   });
-// }
-// separateItemQuantities(){
-//   List<int> separateItemQuantityList=[];
-//   List<String> defaultItemList = [];
-//   int i = 1;
-//   defaultItemList = sharedPreferences.getStringList("userCart");
-// for(i; i<defaultItemList.length; i++)
-// {
-// String item =  defaultItemList[i].toString();
-// List<String>listItemCharacters = item.split(":").toList();
-// var quanNumber = int.parse(listItemCharacters[1].toString());
-// print("\nThis is Quantity NUmber = " + quanNumber.toString());
-//
-// separateItemQuantityList.add(quanNumber);
-// }
-// print("\nThis is Items List now = ");
-// print(separateItemQuantityList);
-//
-// return separateItemQuantityList;
-// }
+clearCartNow(context)
+{
+  sharedPreferences.setStringList("userCart", ['garbageValue']);
+  List<String> emptyList = sharedPreferences.getStringList("userCart");
+
+  FirebaseFirestore.instance.collection("PazadaUsers")
+      .doc(currentfirebaseUser.uid)
+      .update({"userCart": emptyList}).then((value)
+  {
+    sharedPreferences.setStringList("userCart", emptyList);
+    Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+
+
+  });
+}
+separateItemQuantities(){
+  List<int> separateItemQuantityList=[];
+  List<String> defaultItemList = [];
+  int i = 1;
+  defaultItemList = sharedPreferences.getStringList("userCart");
+for(i; i<defaultItemList.length; i++)
+{
+String item =  defaultItemList[i].toString();
+List<String>listItemCharacters = item.split(":").toList();
+var quanNumber = int.parse(listItemCharacters[1].toString());
+print("\nThis is Quantity NUmber = " + quanNumber.toString());
+
+separateItemQuantityList.add(quanNumber);
+}
+print("\nThis is Items List now = ");
+print(separateItemQuantityList);
+
+return separateItemQuantityList;
+}

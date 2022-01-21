@@ -8,8 +8,10 @@ import 'package:pazada/Config/config.dart';
 import 'package:pazada/assistants/pazabuy/cart_item_counter.dart';
 
 import 'package:pazada/assistants/pazabuy/pazabuy.dart';
+import 'package:pazada/assistants/total_amount.dart';
 import 'package:pazada/bottomBar/bottomAppBar.dart';
 import 'package:pazada/configs/MapsConfig.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/widgets/idle_screen/idle_screen.dart';
 import 'package:pazada/widgets/login/login_screen.dart';
 import 'package:pazada/widgets/pazabuy_screen/pazabuy_screen.dart';
@@ -32,9 +34,9 @@ void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   AssistantMethod.getCurrentOnlineInformation();
   await Firebase.initializeApp();
-  PazabuyApp.sharedPreferences = await  SharedPreferences.getInstance();
+  sharedPreferences = await  SharedPreferences.getInstance();
   PazabuyApp.firestore = FirebaseFirestore.instance;
-  runApp(MyApp());
+  runApp(const MyApp());
 }
   DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("PazadaUsers");
   DatabaseReference driversRef = FirebaseDatabase.instance.reference().child("PazadaDrivers");
@@ -42,14 +44,15 @@ void main()async {
   //DatabaseReference rideRequestRef = FirebaseDatabase.instance.reference().child("PazadaDrivers").child(currentfirebaseUser.uid).child("newRide");
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers:[
-        ChangeNotifierProvider(create: (context)=> AppData(),),
-        ChangeNotifierProvider(create: (context) => CartItemCounter()),
-
+        ChangeNotifierProvider(create: (c)=> AppData(),),
+        ChangeNotifierProvider(create: (c) => CartItemCounter()),
+        ChangeNotifierProvider(create: (c)=> TotalAmount()),
       ],
 
       child: MaterialApp(

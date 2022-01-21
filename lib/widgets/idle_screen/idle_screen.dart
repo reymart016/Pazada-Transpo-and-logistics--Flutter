@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -35,10 +37,16 @@ class IdleScreen extends StatefulWidget {
 class _IdleScreenState extends State<IdleScreen> {
  AssistantMethod assistantMethod = AssistantMethod();
  DatabaseReference usersReff = FirebaseDatabase.instance.reference().child("PazadaUsers");
-
+ final auth = FirebaseAuth.instance;
+Timer timer;
 
   @override
   void initState() {
+
+   timer = Timer.periodic(Duration(seconds: 1), (timer){
+     checkEmailVerified();
+     print(timer);
+    });
 
     // TODO: implement initState
     super.initState();
@@ -52,6 +60,22 @@ class _IdleScreenState extends State<IdleScreen> {
     });
    print("USERNAME::"+ username);
     getProfileDetails();
+  }
+  Future<void> checkEmailVerified()async{
+    user = auth.currentUser;
+    await user.reload();
+    if(user.emailVerified){
+      setState(() {
+        isVerified = true;
+        timer.cancel();
+      });
+    }
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    timer.cancel();
   }
   @override
   Widget build(BuildContext context) {

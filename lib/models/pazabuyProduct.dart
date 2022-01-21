@@ -13,7 +13,7 @@ class PazabuyProducts{
   Timestamp publishedDate;
   String thumbnailUrl;
   String status;
-  String price;
+  int price;
 
 
   PazabuyProducts(
@@ -38,7 +38,7 @@ class PazabuyProducts{
     productDetails = json["productDetails"];
     publishedDate = json["publishedDate"];
     thumbnailUrl = json["thumbnailUrl"];
-    price = json["price"];
+    price = int.parse(json["price"]);
     status = json["status"];
 
   }

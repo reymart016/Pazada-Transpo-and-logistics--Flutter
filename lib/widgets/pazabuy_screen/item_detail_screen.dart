@@ -8,6 +8,7 @@ import 'package:pazada/models/pazabuyProduct.dart';
 import 'package:number_inc_dec/number_inc_dec.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/widgets/pazabuy_screen/pazabuy_query.dart';
+import 'package:pazada/widgets/shared/app_bar.dart';
 import 'package:pazada/widgets/shared/under_construction.dart';
 import 'package:provider/provider.dart';
 
@@ -27,62 +28,13 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.amber,
-        title: Text(
-          "Pazabuy",
-          style: TextStyle(fontSize: 25.0, color: Colors.white, fontFamily: "bolt-bold"),
-        ),
-        centerTitle: true,
-        actions: [
-          // Stack(
-          //   children: [
-          //     IconButton(
-          //       icon: Icon(Icons.shopping_cart, color: Colors.white,),
-          //       onPressed: ()
-          //       {
-          //         Route route = MaterialPageRoute(builder: (c) => UnderConstruction());
-          //        Navigator.pushReplacement(context, route);
-          //       },
-          //     ),
-          //     Positioned(
-          //       child: Stack(
-          //         children: [
-          //           Icon(
-          //             Icons.circle,
-          //             size: 20.0,
-          //             color: Colors.green,
-          //           ),
-          //           Positioned(
-          //             top: 3.0,
-          //             bottom: 4.0,
-          //             left: 5.0,
-          //             child:
-          //
-          //             Center(
-          //               child:  Consumer<CartItemCounter>(
-          //                 builder: (context, counter, c){
-          //                   return Text(counter.count.toString(),
-          //                   style: TextStyle(fontFamily: 'bolt', fontSize: 12, color: Colors.white),
-          //                   );
-          //                 },
-          //               ),
-          //             )
-          //
-          //
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ],
-          // ),
-        ],
-      ),
+      appBar: MyAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 15,),
-         Center(child:  Image.network(widget.model.thumbnailUrl.toString()),),
+         Center(child:  Container(height: 300,
+             child: Image.network(widget.model.thumbnailUrl.toString())),),
           SizedBox(height: 30,),
 
           Container(
@@ -164,7 +116,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                     padding: const EdgeInsets.all(8.0),
 
                     child: Text(
-                      "Php " + widget.model.price,
+                      "Php " + widget.model.price.toString(),
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),//text
                   ),//padding
@@ -187,6 +139,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             child: Center(
               child: Container(width: 200,height: 50,
                 child: NumberInputPrefabbed.roundedEdgeButtons(
+                  incIcon: Icons.add,
+                  decIcon: Icons.minimize_outlined,
+
                   controller: counterTextEditingController,
                   incDecBgColor: Colors.amber,
                   min: 1,
@@ -205,7 +160,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 onTap: ()
                 {
                   quantity = int.parse(counterTextEditingController.text);
-                  services3();
+                  //services3();
                   readDatabase();
                   int itemCounter = int.parse(counterTextEditingController.text);
 
@@ -235,7 +190,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                   height: 50,
                   child: Center(
                     child: Text(
-                      "Buy Now",
+                      "Add to Cart",
                       style: TextStyle(color: Colors.white, fontSize: 15),
                     ),//text
                   ),//Center
@@ -248,9 +203,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
       ),//Column
     );
   }
-  void services3 (){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazabuyQuery(model: widget.model,)));
-  }
+
   void readDatabase(){
     FirebaseFirestore.instance.collection("PazadaUsers")
         .where("userCart")

@@ -257,10 +257,10 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
                           //   ),
                           // ),
                           SizedBox(height: 50,),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.network(widget.model.thumbnailUrl.toString()),
-                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.all(8.0),
+                          //   child: Image.network(widget.model.thumbnailUrl.toString()),
+                          // ),
 
                           // Row(
                           //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -396,7 +396,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
   void savePazabuyBooking(){
     PazabuyOrder pazabuyOrder = new PazabuyOrder();
     pazabuyOrder.itemName = widget.model.productName;
-    pazabuyOrder.itemValue = widget.model.price;
+    pazabuyOrder.itemValue = widget.model.price.toString();
     pazabuyOrder.itemValue = widget.model.thumbnailUrl;
     pazabuyOrder.stats = false;
     Provider.of<AppData>(context, listen: false).updatePazabuyOrder(pazabuyOrder);
