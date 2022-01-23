@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pazada/assistants/pazabuy/cart_item_counter.dart';
 import 'package:pazada/configs/Universal_Variable.dart';
+import 'package:pazada/dataHandler/appData.dart';
+import 'package:pazada/models/PazabuyOrder.dart';
 
 import 'package:pazada/models/pazabuyProduct.dart';
 import 'package:number_inc_dec/number_inc_dec.dart';
@@ -32,11 +34,30 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           SizedBox(height: 15,),
          Center(child:  Container(height: 300,
              child: Image.network(widget.model.thumbnailUrl.toString())),),
-          SizedBox(height: 30,),
 
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(
+              child: Container(width: 300,height: 50,
+                child: NumberInputPrefabbed.roundedEdgeButtons(
+                  incIcon: Icons.add,
+                  decIcon: Icons.minimize_outlined,
+                  enableMinMaxClamping: false,
+                  controller: counterTextEditingController,
+                  incDecBgColor: Colors.amber,
+                  min: 1,
+                  max: 9,
+                  initialValue: 1,
+                  buttonArrangement: ButtonArrangement.incRightDecLeft,
+
+                ),
+              ),
+            ),
+          ),
           Container(
             height: MediaQuery.of(context).size.height/6,
             decoration: BoxDecoration(
@@ -57,6 +78,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
 
                 Column( crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     SizedBox(height: 15,),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -134,31 +156,14 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             ],),
           ),
           SizedBox(height: 15,),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(
-              child: Container(width: 200,height: 50,
-                child: NumberInputPrefabbed.roundedEdgeButtons(
-                  incIcon: Icons.add,
-                  decIcon: Icons.minimize_outlined,
 
-                  controller: counterTextEditingController,
-                  incDecBgColor: Colors.amber,
-                  min: 1,
-                  max: 9,
-                  initialValue: 1,
-                  buttonArrangement: ButtonArrangement.incRightDecLeft,
-
-                ),
-              ),
-            ),
-          ),
          SizedBox(height: 50,),
 
           Center(
               child: InkWell(
                 onTap: ()
                 {
+                  savePazabuyBooking();
                   quantity = int.parse(counterTextEditingController.text);
                   //services3();
                   readDatabase();
@@ -168,7 +173,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                   //
                   print("napindot");
                   separateItemsIDsList.contains(widget.model.productID)
-                  ? Fluttertoast.showToast(msg: "Item is already in the cart.")
+                  ? Fluttertoast.showToast(msg: "${widget.model.productName.toString()} is already in the cart.")
                   :
                   addItemToCart(widget.model.productID, context, itemCounter);
 
@@ -202,6 +207,17 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         ],
       ),//Column
     );
+  }
+  void savePazabuyBooking(){
+    PazabuyOrder pazabuyOrder = new PazabuyOrder();
+    pazabuyOrder.sellerName = widget.model.sellerName;
+    pazabuyOrder.itemValue = widget.model.price.toString();
+    pazabuyOrder.thumbnailUrl = widget.model.thumbnailUrl;
+    pazabuyOrder.stats = false;
+    Provider.of<AppData>(context, listen: false).updatePazabuyOrder(pazabuyOrder);
+
+
+
   }
 
   void readDatabase(){

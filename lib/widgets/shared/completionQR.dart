@@ -140,7 +140,7 @@ class _CompletionQRState extends State<CompletionQR> with SingleTickerProviderSt
                         destinationContainer =280;
 
                         qrCodeResult = "";
-                        num = "";
+                        numm = "";
                         cancelBtn = true;
                         scanBtn = false;
                       });

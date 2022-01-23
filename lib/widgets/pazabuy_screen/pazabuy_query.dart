@@ -7,6 +7,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/configs/MapsConfig.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/PazabuyOrder.dart';
 import 'package:pazada/models/pazabuyProduct.dart';
@@ -29,6 +30,7 @@ import 'package:location/location.dart' as lct;
 
 class PazabuyQuery extends StatefulWidget {
   PazabuyProducts model;
+
   PazabuyQuery({this.model});
   @override
   _PazabuyQueryState createState() => _PazabuyQueryState();
@@ -59,11 +61,13 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
   TextEditingController itemValueTextEditingController = new TextEditingController();
   DatabaseReference rideRequestRef;
   String key = "";
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    print("++");
+    print(total);
   }
 
 
@@ -146,7 +150,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
 
                   Center(
                     child: Container(
-                      height: MediaQuery.of(context).size.height/4.7,
+                      height: MediaQuery.of(context).size.height/5.2,
                       alignment: Alignment.center,
 
                       width: MediaQuery.of(context).size.width * .96,
@@ -176,8 +180,9 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal:14.0, vertical:10),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children:[
-                                Icon(Icons.circle,color: Colors.amber,),
+                                Icon(Icons.location_on,color: Colors.amber,),
                                 SizedBox(width: 5,),
                                 Expanded(
 
@@ -185,7 +190,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
 
 
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
+                                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                                       child: GestureDetector(
                                         onTap: (){
                                           pazakay2();
@@ -256,7 +261,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
                           //     ],
                           //   ),
                           // ),
-                          SizedBox(height: 50,),
+
                           // Padding(
                           //   padding: const EdgeInsets.all(8.0),
                           //   child: Image.network(widget.model.thumbnailUrl.toString()),
@@ -345,6 +350,8 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
                   children: [
 
                     FlatButton(onPressed: ()async{
+
+                      print(average);
                       await getPlaceDirection();
                       savePazabuyBooking();
                       //Navigator.pop(context, "obtainDirection");
@@ -380,7 +387,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
   }
   void pazakayPayment (){
 
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazabuyPayments(model: widget.model,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> PazabuyPayments(model: widget.model)));
   }
   void getPosition (){
 
@@ -395,24 +402,25 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
 
   void savePazabuyBooking(){
     PazabuyOrder pazabuyOrder = new PazabuyOrder();
-    pazabuyOrder.itemName = widget.model.productName;
-    pazabuyOrder.itemValue = widget.model.price.toString();
-    pazabuyOrder.itemValue = widget.model.thumbnailUrl;
+    // pazabuyOrder.itemName = widget.model.productName;
+    // pazabuyOrder.itemValue = widget.model.price.toString();
+    // pazabuyOrder.itemValue = widget.model.thumbnailUrl;
     pazabuyOrder.stats = false;
     Provider.of<AppData>(context, listen: false).updatePazabuyOrder(pazabuyOrder);
 
-    rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
+    rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").child(rideKey);
     Map pazShipBooking = {
-      "item_name": widget.model.productName,
-      "item_value": widget.model.price,
-      "thumbnailUrl": widget.model.thumbnailUrl,
-      "PazShip": false,
-      "Pazabuy": true,
-      "fares": 49,
+      // "item_name": widget.model.sellerName,
+      // "item_value": widget.model.price,
+      // "thumbnailUrl": widget.model.thumbnailUrl,
+
+      "Grand_Total": total.toString(),
 
     };
 
-    rideRequestRef.set(pazShipBooking);
+    rideRequestRef.update({
+      "Grand_Total": total.toString(),
+    });
     pazabuyOrder.key = rideRequestRef.key;
     print("???????????????" + pazabuyOrder.key);
     Provider.of<AppData>(context, listen: false).updatePazabuyOrder(pazabuyOrder);

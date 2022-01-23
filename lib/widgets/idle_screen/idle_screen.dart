@@ -53,6 +53,7 @@ Timer timer;
     Users currentUserInfo;
     //retrieveUserData();
     print(userId);
+
     AssistantMethod.getCurrentOnlineInformation();
     setState(() {
       username = username;

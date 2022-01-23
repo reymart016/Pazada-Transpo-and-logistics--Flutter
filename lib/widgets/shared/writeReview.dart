@@ -165,7 +165,7 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> with SingleTicker
                               destinationContainer =280;
 
                               qrCodeResult = "";
-                              num = "";
+                              numm = "";
                               cancelBtn = true;
                               scanBtn = false;
                             });

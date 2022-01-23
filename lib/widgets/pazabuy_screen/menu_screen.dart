@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pazada/assistants/assistantMethod.dart';
 import 'package:pazada/models/pazabuyMenus.dart';
 import 'package:pazada/models/pazadaSellers.dart';
+import 'package:pazada/widgets/pazabuy_screen/pazabuy_screen.dart';
 import 'package:pazada/widgets/pazabuy_screen/widgets/menus_design.dart';
 import 'package:pazada/widgets/shared/loading.dart';
 import 'package:pazada/widgets/shared/text_widget_header.dart';
@@ -21,11 +24,20 @@ class _MenuscreenState extends State<Menuscreen> {
     return Scaffold(
 
       appBar: AppBar(
+        leading: GestureDetector(
+            onTap: (){
+              clearCartNow(context);
+              Fluttertoast.showToast(msg: "Cart has been cleared.");
+              Navigator.push(context, MaterialPageRoute(builder: (c)=>  PazabuyScreen()));
+            },
+            child: Icon(Icons.keyboard_arrow_left, color: Colors.white,)
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.amberAccent,
+
+                Colors.amber,
                 Colors.amber,
               ],
               begin: FractionalOffset(0.0, 0.0),

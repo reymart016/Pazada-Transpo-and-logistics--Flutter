@@ -136,7 +136,7 @@ class _PazabuyDriverInfoState extends State<PazabuyDriverInfo> with SingleTicker
                         driver_name = Provider.of<AppData>(context, listen: false).pazadaDriver.username.toString();
                         driver_phone = Provider.of<AppData>(context, listen: false).pazadaDriver.number.toString();
                         qrCodeResult = "";
-                        num = "";
+                        numm = "";
                         cancelBtn = true;
                         scanBtn = false;
                       });

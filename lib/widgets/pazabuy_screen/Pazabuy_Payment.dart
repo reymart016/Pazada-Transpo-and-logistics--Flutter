@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/assistants/assistantMethod.dart';
@@ -29,7 +31,8 @@ import 'package:logger/logger.dart';
 
 class PazabuyPayments extends StatefulWidget {
   PazabuyProducts model;
-  PazabuyPayments({this.model});
+  final double totalAmount;
+  PazabuyPayments({this.model, this.totalAmount});
 
 
   static const String idScreen = "PazakayPayment";
@@ -47,7 +50,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
   Set<Polyline> polylineSet = {};
   Set<Marker> markersSet = {};
   Set<Circle> circleSet = {};
-
+  String orderId = DateTime.now().millisecondsSinceEpoch.toString();
   DirectionDetails tripDirectionDetails;
 
 
@@ -75,7 +78,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     currentPosition = position;
     LatLng latLngPosition = LatLng(position.latitude, position.longitude);
     CameraPosition cameraPosition = new CameraPosition(target: latLngPosition, zoom: 16);
-    newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    //newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
     print("POSITION::$currentPosition");
     String address = await AssistantMethod.searchCoordinatesAddress(position, context);
@@ -359,7 +362,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children:[ Text("Total"),
-                                Text('\PHP 49.00',style: TextStyle(fontFamily: "bolt",fontSize: 30,),
+                                Text("Php "+total.toStringAsFixed(2),style: TextStyle(fontFamily: "bolt",fontSize: 30,),
                                   textAlign: TextAlign.right,
                                 ),]
                           ),
@@ -437,17 +440,16 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     var pickUp;
     var dropOff;
 
-    if(Provider.of<AppData>(context, listen: false).pazabuyOrder.key!=null && Provider.of<AppData>(context, listen: false).pazabuyOrder.stats == false) {
-      rideRequestRef =
-          FirebaseDatabase.instance.reference().child("Ride_Request").child(
-              Provider
-                  .of<AppData>(context, listen: false)
-                  .pazabuyOrder.key);
-    }else{
-      rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
-    }
+    // if(Provider.of<AppData>(context, listen: false).pazabuyOrder.key!=null && Provider.of<AppData>(context, listen: false).pazabuyOrder.stats == false) {
+
+      print(Provider
+          .of<AppData>(context, listen: false)
+          .pazabuyOrder.key);
+      print(Provider.of<AppData>(context, listen: false).pazabuyOrder.stats);
+   // }
     //await searchNearestDriver();
-    if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
+    if(Provider.of<AppData>
+      (context, listen: false).pickUpLocation!=null && autoLoc == true){
       pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
    dropOff = Provider.of<AppData>(context, listen: false).pickUpLocation;
     }else{
@@ -485,8 +487,9 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       "pickup_address": pickUp.placename,
       "destination_address": dropOff.placename,
     };
-
-    rideRequestRef.update({//dito nagkakapasahan ng data sa pazaqbuy
+    rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").child(
+            Provider.of<AppData>(context, listen: false).pazabuyOrder.key);
+   await  rideRequestRef.update({//dito nagkakapasahan ng data sa pazaqbuy
       "UID": currentfirebaseUser.uid,
       "driver_id": "waiting",
       "payment_method": "cash",
@@ -502,11 +505,52 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       "seller_name": sellername,
       "seller_number": sellerphone,
       "quantity": quantity,
-
+      "orderId": orderId,
 
 
 
     });
+    Map<String, dynamic> historyData = {
+      "address": pickUp.placename,
+      "totalAmount": total,
+      "orderBy": sharedPreferences.getString("uId"),
+      "productIDs": sharedPreferences.getStringList("userCart"),
+      "paymentDetails": "Cash on Delivery",
+      "orderTime": orderId,
+      "isSuccess": true,
+      "sellerUID": sellerid,
+      "riderUID": "",
+      "status": "normal",
+      "orderId": orderId,
+    };
+    FirebaseFirestore.instance.collection('PazadaUsers').doc(currentfirebaseUser.uid).collection("PazabuyOrders")
+        .doc(orderId).set(historyData).then((value){
+      final productsRef = FirebaseFirestore.instance.collection("PazabuyOrders"); //SAVE AS MAIN COLLECTION
+      productsRef.doc(orderId).set({
+        "address": pickUp.placename,
+        "totalAmount": total,
+        "orderBy": sharedPreferences.getString("uId"),
+        "productIDs": sharedPreferences.getStringList("userCart"),
+        "paymentDetails": "Cash on Delivery",
+        "orderTime": orderId,
+        "isSuccess": true,
+        "sellerUID": sellerid,
+        "riderUID": "",
+        "status": "normal",
+        "orderId": orderId,
+
+
+
+      }).whenComplete((){
+        clearCartNow(context);
+        setState(() {
+          orderId="";
+          //Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+          Fluttertoast.showToast(msg: "Congratulations, Order has been placed successfully.");
+        });
+      });
+    });
+
 
 
 
@@ -676,22 +720,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       );
       polylineSet.add(polyline);
     });
-    // LatLngBounds latLngBounds;
-    // if(pickupLatLng.latitude > destinationLatLng.latitude && pickupLatLng.longitude > destinationLatLng.longitude){
-    //   latLngBounds = LatLngBounds(southwest: destinationLatLng, northeast: pickupLatLng);
-    //
-    // }
-    // else if(pickupLatLng.longitude > destinationLatLng.longitude){
-    //   latLngBounds = LatLngBounds(southwest: LatLng(pickupLatLng.latitude, destinationLatLng.longitude), northeast: LatLng(destinationLatLng.latitude, pickupLatLng.longitude));
-    //
-    // }
-    // else if(pickupLatLng.latitude > destinationLatLng.latitude){
-    //   latLngBounds = LatLngBounds(southwest: LatLng(destinationLatLng.latitude, pickupLatLng.longitude), northeast: LatLng(pickupLatLng.latitude, destinationLatLng.longitude));
-    //
-    // }else{
-    //   latLngBounds = LatLngBounds(southwest: pickupLatLng, northeast: destinationLatLng);
-    // }
-    // newGoogleMapController.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
+
 
     Marker pickupMarker = Marker(
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
@@ -903,6 +932,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     });
 
   }
+
   void updateAvailableDriversOnMap(){
     setState(() {
       markersSet.clear();
@@ -932,6 +962,91 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       }
       );
     }
+  }
+
+
+  addOrderDetails()
+  {
+    var pickUp;
+    var dropOff;
+
+    if(Provider.of<AppData>(context, listen: false).pazabuyOrder.key!=null && Provider.of<AppData>(context, listen: false).pazabuyOrder.stats == false) {
+      rideRequestRef =
+          FirebaseDatabase.instance.reference().child("Ride_Request").child(
+              Provider
+                  .of<AppData>(context, listen: false)
+                  .pazabuyOrder.key);
+    }else{
+      rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
+    }
+    //await searchNearestDriver();
+    if(Provider.of<AppData>(context, listen: false).pickUpLocation!=null && autoLoc == true){
+      pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+      dropOff = Provider.of<AppData>(context, listen: false).pickUpLocation;
+    }else{
+      pickUp = Provider.of<AppData>(context, listen: false).destinationLocation2;
+      dropOff = Provider.of<AppData>(context, listen: false).destinationLocation2;
+    }
+
+    //var dropOff = Provider.of<AppData>(context, listen: false).destinationLocation;
+    var fare = AssistantMethod.calculateFares(tripDirectionDetails);
+    setState(() {
+      pointA = pickUp.placename;
+      pointB = dropOff.placename;
+    });
+    writeOrderDetailsForUser({
+      "address": pickUp.placename,
+      "totalAmount": widget.totalAmount,
+      "orderBy": sharedPreferences.getString("uId"),
+      "productIDs": sharedPreferences.getStringList("userCart"),
+      "paymentDetails": "Cash on Delivery",
+      "orderTime": orderId,
+      "isSuccess": true,
+      "sellerUID": widget.model.sellerUID,
+      "riderUID": "",
+      "status": "normal",
+      "orderId": orderId,
+    });
+
+    writeOrderDetailsForSeller({
+
+      "address": pickUp.placename,
+      "totalAmount": widget.totalAmount,
+      "orderBy": sharedPreferences.getString("uid"),
+      "productIDs": sharedPreferences.getStringList("userCart"),
+      "paymentDetails": "Cash on Delivery",
+      "orderTime": orderId,
+      "isSuccess": true,
+      "sellerUID": widget.model.sellerUID,
+      "riderUID": "",
+      "status": "normal",
+      "orderId": orderId,
+    }).whenComplete((){
+      clearCartNow(context);
+      setState(() {
+        orderId="";
+        //Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+        Fluttertoast.showToast(msg: "Congratulations, Order has been placed successfully.");
+      });
+    });
+  }
+
+  Future writeOrderDetailsForUser(Map<String, dynamic> data) async
+  {
+    await FirebaseFirestore.instance
+        .collection("PazadaUsers")
+        .doc(sharedPreferences.getString("uId"))
+        .collection("PazabuyOrders")
+        .doc(orderId)
+        .set(data);
+  }
+
+  Future writeOrderDetailsForSeller(Map<String, dynamic> data) async
+  {
+    await FirebaseFirestore.instance
+        .collection("PazabuyOrders")
+        .doc(orderId)
+        .set(data);
   }
 
 

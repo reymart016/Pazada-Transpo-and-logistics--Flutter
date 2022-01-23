@@ -18,7 +18,7 @@ DatabaseReference pazShipRef = FirebaseDatabase.instance.reference().child("PazS
 DatabaseReference rideRequestRef;
 String keyy= "";
 String qrCodeResult = "";
-String num = "";
+String numm = "";
 bool cancelBtn = true;
 bool scanBtn = false;
 int counter = 30;
@@ -88,4 +88,10 @@ String sellerphone ="";
 
 String completeAddress = "";
 User user = FirebaseAuth.instance.currentUser;
+
+double average = 0;
+double total = 0;
+double tempPrice = 49;
+String rideKey = "";
+
 bool isVerified = false;

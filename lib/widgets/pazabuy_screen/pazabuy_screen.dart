@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pazada/Config/config.dart';
+import 'package:pazada/assistants/assistantMethod.dart';
 
 import 'package:pazada/configs/MapsConfig.dart';
 import 'package:pazada/models/pazadaSellers.dart';
@@ -21,6 +22,12 @@ class PazabuyScreen extends StatefulWidget {
 }
 
 class _PazabuyScreenState extends State<PazabuyScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    clearCartNow(context);
+  }
 
   final items = [
     "slider/0.jpg","slider/1.jpg","slider/2.jpg","slider/3.jpg","slider/0.jpg","slider/4.jpg",
@@ -30,11 +37,19 @@ class _PazabuyScreenState extends State<PazabuyScreen> {
     "slider/23.jpg","slider/24.jpg","slider/25.jpg","slider/26.jpg","slider/27.jpg",
   ];
   double width;
+
+
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
+        leading: GestureDetector(
+            onTap: (){
+              Navigator.pop(context);
+            },
+            child: Icon(Icons.keyboard_arrow_left, color: Colors.white,)
+        ),
         title: Text(
           "Pazabuy",
           style: TextStyle(fontSize: 25.0, color: Colors.white, fontFamily: "bolt-bold"),

@@ -298,7 +298,7 @@ void initState() {
     );
   }
   alertCall(){
-    launch("tel://$num");
+    launch("tel://$numm");
   }
   void temp(){
     if(qrCodeResult != null){

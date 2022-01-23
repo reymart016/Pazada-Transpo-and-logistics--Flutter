@@ -88,7 +88,7 @@ class _DropOffConfirmationDialogState extends State<DropOffConfirmationDialog> w
                            destinationContainer =280;
 
                            qrCodeResult = "";
-                           num = "";
+                           numm = "";
                            cancelBtn = true;
                            scanBtn = false;
                          });
@@ -120,7 +120,7 @@ class _DropOffConfirmationDialogState extends State<DropOffConfirmationDialog> w
                            destinationContainer =280;
 
                            qrCodeResult = "";
-                           num = "";
+                           numm = "";
                            cancelBtn = true;
                            scanBtn = false;
                          });

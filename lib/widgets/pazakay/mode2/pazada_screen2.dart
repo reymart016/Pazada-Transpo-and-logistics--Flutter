@@ -149,7 +149,7 @@ class _PazadaScreen2State extends State<PazadaScreen2> with TickerProviderStateM
   static const LatLng _center = const LatLng(37.42796133580664, -122.085749655962);
 
   static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
+    target: LatLng(15.988647703340895, 120.57377904653549),
     zoom: 14.4746,
   );
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;

@@ -25,93 +25,103 @@ class _CartItemDesignState extends State<CartItemDesign> {
     return InkWell(
       splashColor: Colors.cyan,
       child: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.only(top: .5, left: 8, right: 8, bottom: 10),
         child: Container(
-          height: 100,
+          height: 120,
           width: MediaQuery.of(context).size.width,
-          child: Row(
+          child: Column(
+
             children: [
+              Row(
+              children: [
 
-              //image
-              Image.network(widget.model.thumbnailUrl, width: 140, height: 120,),
 
-              const SizedBox(width: 6,),
+                //image
+                Image.network(widget.model.thumbnailUrl, width: 140, height: 100,),
 
-              //title
-              //quantity number
-              //price
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  //title
-                  Text(
-                    widget.model.productName,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontFamily: "bolt-bold",
+                const SizedBox(width: 6,),
+
+                //title
+                //quantity number
+                //price
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+                    //title
+                    Text(
+                      widget.model.productName,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: "bolt-bold",
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 1,
-                  ),
+                    // const SizedBox(
+                    //   height: 1,
+                    // ),
 
-                  //quantity number // x 7
-                  Row(
-                    children: [
-                      const Text(
-                        "x ",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 25,
-                          fontFamily: "bolt",
-                        ),
-                      ),
-                      Text(
-                        widget.quanNumber.toString(),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 25,
-                          fontFamily: "bolt",
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  //price
-                  Row(
-                    children: [
-                      const Text(
-                        "Price: ",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey,
-                          fontFamily: "bolt",
-                        ),
-                      ),
-                      const Text(
-                        "Php ",
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 16.0,
-                          fontFamily: "bolt",
-                        ),
-                      ),
-                      Text(
-                          widget.model.price.toString(),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.blue,
+                    //quantity number // x 7
+                    Row(
+                      children: [
+                        const Text(
+                          "x ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 25,
                             fontFamily: "bolt",
-                          )
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                          ),
+                        ),
+                        Text(
+                          widget.quanNumber.toString(),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 25,
+                            fontFamily: "bolt",
+                          ),
+                        ),
+                      ],
+                    ),
 
-            ],
+                    //price
+                    Row(
+                      children: [
+                        const Text(
+                          "Price: ",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey,
+                            fontFamily: "bolt",
+                          ),
+                        ),
+                        const Text(
+                          "Php ",
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16.0,
+                            fontFamily: "bolt",
+                          ),
+                        ),
+                        Text(
+                            widget.model.price.toString(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.blue,
+                              fontFamily: "bolt",
+                            )
+                        ),
+                      ],
+                    ),
+
+                  ],
+                ),
+
+
+              ],
+            ),
+
+              Divider(thickness: 1,color: Colors.grey,),
+        ]
           ),
         ),
       ),

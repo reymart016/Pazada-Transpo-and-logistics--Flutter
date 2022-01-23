@@ -958,7 +958,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     );
   }
   alertCall(){
-    launch("tel://$num");
+    launch("tel://$numm");
   }
   Future <void> getPlaceDirection()async{
 

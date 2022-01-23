@@ -909,7 +909,7 @@ class _PazakayState extends State<Pazakay> with TickerProviderStateMixin {
     );
   }
   alertCall(){
-    launch("tel://$num");
+    launch("tel://$numm");
   }
   Future <void> getPlaceDirection()async{
     searchingDriver();

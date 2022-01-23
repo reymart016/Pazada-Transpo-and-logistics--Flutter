@@ -83,7 +83,7 @@ class _SuccessDialogState extends State<SuccessDialog> with SingleTickerProvider
                           destinationContainer =280;
 
                         qrCodeResult = "";
-                        num = "";
+                        numm = "";
                         cancelBtn = true;
                         scanBtn = false;
                       });
