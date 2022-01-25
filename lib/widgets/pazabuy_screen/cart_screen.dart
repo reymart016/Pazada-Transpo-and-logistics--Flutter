@@ -307,8 +307,7 @@ class _CartScreenState extends State<CartScreen>
     rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
     Map pazShipBooking = {
       "seller_name":Provider.of<AppData>(context, listen: false).pazabuyOrder.sellerName,
-      "item_value": Provider.of<AppData>(context, listen: false).pazabuyOrder.itemValue.toString(),
-      "thumbnailUrl": Provider.of<AppData>(context, listen: false).pazabuyOrder.thumbnailUrl,
+
       "PazShip": false,
       "Pazabuy": true,
       "fares": 49,

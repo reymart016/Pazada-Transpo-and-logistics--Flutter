@@ -208,12 +208,29 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     getPlaceDirection();
     passDriverInfo();
 
+
+
   }
 
 
 
 //Permiso
   requestPerms() async {
+    rideStreamSubscriptionB = rideRequestRef.onValue.listen((event) {// event you can add after accepting the ride request on driver side
+      if(event.snapshot.value == null){
+        return;
+      }
+      if(event.snapshot.value["status"] !=null){
+        setState(() {
+          enabled = true;
+        });
+
+      }else{
+        setState(() {
+          enabled = false;
+        });
+      }
+    });
     Map<Permission, PermissionStatus> statuses =
     await [Permission.locationAlways].request();
 
@@ -770,11 +787,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(child: Text("Pazakay Ride In Progress", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),)),
-
-
-
-
+                      Center(child: Text(ispazShip == true ? "PazShip Ride In Progress" : "Pazakay Ride In Progress", style: TextStyle(fontSize: 20, fontFamily: "bolt-bold"),)),
 
                       SizedBox(height: 10,),
 
@@ -885,11 +898,17 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                                     print("back");
                                   }else{
                                     rideStreamSubscription.cancel();
-                                    showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (BuildContext context) => DropOffConfirmationDialog()
-                                    );
+                                    // if(enabled != true){
+                                    //   Fluttertoast.showToast(msg: "Request Driver to end the trip");
+                                    // }else {
+                                    //   rideStreamSubscriptionB.cancel();
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) =>
+                                              DropOffConfirmationDialog()
+                                      );
+                                    //}
                                     // String codeSanner = await BarcodeScanner.scan();    //barcode scnner
                                     // setState(() {
                                     //   qrCodeResult = codeSanner;
@@ -961,6 +980,7 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
     launch("tel://$numm");
   }
   Future <void> getPlaceDirection()async{
+
 
     var pickUp;
 

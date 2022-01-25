@@ -7,6 +7,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pazada/configs/MapsConfig.dart';
+import 'package:pazada/configs/Universal_Variable.dart';
 import 'package:pazada/dataHandler/appData.dart';
 import 'package:pazada/models/pazship_order.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
@@ -387,7 +388,9 @@ class _PazShipQueryState extends State<PazShipQuery> {
     pazShipOrder.itemValue = itemValueTextEditingController.text;
     pazShipOrder.stats = true;
     Provider.of<AppData>(context, listen: false).updatePazShip(pazShipOrder);
-
+    setState(() {
+      ispazShip = true;
+    });
     rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").push();
     Map pazShipBooking = {
         "item_name": itemNameTextEditingController.text,

@@ -44,6 +44,7 @@ String vehicle_details = "";
 SharedPreferences sharedPreferences;
 int UserKart;
 String price = "";
+String item_value ="";
 
 String pointA = "";
 String pointB = "";
@@ -54,6 +55,8 @@ String sellerUID = "";
 String staticLocation = "";
 
 StreamSubscription<Event> rideStreamSubscription;
+StreamSubscription<Event> rideStreamSubscriptionB;
+bool enabled = false;
 
 double starCounter = 0.0;
 String rateTitle = " ";
@@ -95,3 +98,4 @@ double tempPrice = 49;
 String rideKey = "";
 
 bool isVerified = false;
+bool ispazShip = false;

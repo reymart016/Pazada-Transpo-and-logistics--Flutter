@@ -490,7 +490,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     rideRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request").child(
             Provider.of<AppData>(context, listen: false).pazabuyOrder.key);
    await  rideRequestRef.update({//dito nagkakapasahan ng data sa pazaqbuy
-      "UID": currentfirebaseUser.uid,
+      "passengerID": currentfirebaseUser.uid,
       "driver_id": "waiting",
       "payment_method": "cash",
       "pickup": pickUpCoordinates,
@@ -506,6 +506,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       "seller_number": sellerphone,
       "quantity": quantity,
       "orderId": orderId,
+      "item_value": item_value,
 
 
 
@@ -550,6 +551,13 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
         });
       });
     });
+    Map<String, dynamic> userData = {
+
+
+      "userAddress": pickUp.placename,
+    };
+
+    FirebaseFirestore.instance.collection('PazadaUsers').doc(firebaseUser.uid).update(userData);
 
 
 
@@ -785,7 +793,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       noDriverFound();
       Navigator.pop(context);
       cancelRideRequest();
-      rideRequestRef.remove();
+      //rideRequestRef.remove();
       return;
 
     }
@@ -874,7 +882,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     Navigator.pop(context);
   }
   void cancelRideRequest(){
-    rideRequestRef.remove();
+    //rideRequestRef.remove();
     setState(() {
       state = "normal";
     });

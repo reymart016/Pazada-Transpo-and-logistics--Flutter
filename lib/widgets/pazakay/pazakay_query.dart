@@ -298,7 +298,7 @@ class _PazakayQueryState extends State<PazakayQuery> {
 
                     FlatButton(onPressed: ()async{
                       await getPlaceDirection();
-
+                      setStat();
                       //Navigator.pop(context, "obtainDirection");
                       pazakayPayment();
                       savePazshipBooking();
@@ -351,6 +351,9 @@ class _PazakayQueryState extends State<PazakayQuery> {
     PazShipOrder pazShipOrder = new PazShipOrder();
     pazShipOrder.stats = false;
     Provider.of<AppData>(context, listen: false).updatePazShip(pazShipOrder);
+    setState(() {
+      ispazShip = false;
+    });
   }
 
 

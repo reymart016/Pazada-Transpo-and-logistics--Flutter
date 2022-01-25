@@ -209,6 +209,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     );
   }
   void savePazabuyBooking(){
+    setState(() {
+      item_value = widget.model.price.toString();
+    });
     PazabuyOrder pazabuyOrder = new PazabuyOrder();
     pazabuyOrder.sellerName = widget.model.sellerName;
     pazabuyOrder.itemValue = widget.model.price.toString();

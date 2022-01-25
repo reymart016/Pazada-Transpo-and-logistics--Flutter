@@ -403,7 +403,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
   void savePazabuyBooking(){
     PazabuyOrder pazabuyOrder = new PazabuyOrder();
     // pazabuyOrder.itemName = widget.model.productName;
-    // pazabuyOrder.itemValue = widget.model.price.toString();
+    //pazabuyOrder.itemValue = widget.model.price.toString();
     // pazabuyOrder.itemValue = widget.model.thumbnailUrl;
     pazabuyOrder.stats = false;
     Provider.of<AppData>(context, listen: false).updatePazabuyOrder(pazabuyOrder);
@@ -420,6 +420,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
 
     rideRequestRef.update({
       "Grand_Total": total.toString(),
+
     });
     pazabuyOrder.key = rideRequestRef.key;
     print("???????????????" + pazabuyOrder.key);

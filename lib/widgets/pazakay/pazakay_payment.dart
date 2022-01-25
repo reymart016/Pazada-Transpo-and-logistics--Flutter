@@ -481,7 +481,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
       "destination_address": dropOff.placename,
     };
 
-    rideRequestRef.update({
+    await rideRequestRef.update({
       "UID": currentfirebaseUser.uid,
       "driver_id": "waiting",
       "payment_method": "cash",
@@ -496,8 +496,10 @@ class _PazakayPaymentState extends State<PazakayPayment> {
 
     });
 
-
-
+      print("+++++++++++++++");
+    print(usersCurrentInfo.name);
+      print(usersCurrentInfo.phone);
+    print("+++++++++++++++");
     setState(() {
       rideRequestId = rideRequestRef.key;
 
