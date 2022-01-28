@@ -129,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       height: 80,
                                     ),
                                     Text(
-                                      usersCurrentInfo.name,
+                                      username,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'bolt-bold',

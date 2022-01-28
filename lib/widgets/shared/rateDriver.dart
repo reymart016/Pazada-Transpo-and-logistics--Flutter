@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_restart/flutter_restart.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pazada/bottomBar/bottomAppBar.dart';
@@ -11,6 +12,7 @@ import 'package:pazada/widgets/idle_screen/idle_screen.dart';
 import 'package:pazada/widgets/pazada_screen.dart';
 import 'package:pazada/widgets/shared/writeReview.dart';
 import 'package:provider/provider.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class RateDriver extends StatefulWidget {
@@ -211,9 +213,12 @@ class _RateDriverState extends State<RateDriver> with SingleTickerProviderStateM
                             driverRatingRef.set(starCounter.toStringAsFixed(2));
                           }
 
+                        }).whenComplete(()async {
+                          Restart.restartApp();
+                          await restartApp();
                         });
 
-                        Navigator.pop(context);
+                        // Navigator.pop(context);
 
                       },
                       color: Theme.of(context).accentColor,
@@ -238,5 +243,8 @@ class _RateDriverState extends State<RateDriver> with SingleTickerProviderStateM
         ),
 
     );
+  }
+  void restartApp()async{
+    FlutterRestart.restartApp();
   }
 }

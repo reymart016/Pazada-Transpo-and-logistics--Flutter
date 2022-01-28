@@ -30,6 +30,7 @@ bool rideType = false;
 String qrData = "";
 String qrData2 = "";
 String username ="";
+String profileName = "";
 String userName="";
 String number = "";
 String driver_phone = "";

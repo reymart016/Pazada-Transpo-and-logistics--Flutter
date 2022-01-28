@@ -893,22 +893,14 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                             children: [
                               GestureDetector(
                                 onTap: (){
+                                  rideChecker(rideRequestId);
                                   if(cancelBtn == true){
                                     Navigator.pop(context);
                                     print("back");
                                   }else{
+
                                     rideStreamSubscription.cancel();
-                                    // if(enabled != true){
-                                    //   Fluttertoast.showToast(msg: "Request Driver to end the trip");
-                                    // }else {
-                                    //   rideStreamSubscriptionB.cancel();
-                                      showDialog(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder: (BuildContext context) =>
-                                              DropOffConfirmationDialog()
-                                      );
-                                    //}
+
                                     // String codeSanner = await BarcodeScanner.scan();    //barcode scnner
                                     // setState(() {
                                     //   qrCodeResult = codeSanner;
@@ -978,6 +970,37 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
   }
   alertCall(){
     launch("tel://$numm");
+  }
+
+
+  void rideChecker(String rideRequestID){
+
+    print("weeewooweewoo");
+    newRequestRef.child(rideRequestID).child("status").once().then((DataSnapshot dataSnapshot) {
+      if(dataSnapshot.value == "ended"){
+        print(dataSnapshot.value);
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) =>
+                DropOffConfirmationDialog()
+        );
+        setState(() {
+          enabled  = true;
+        });
+      }else{
+        Fluttertoast.showToast(msg: "Request Driver to end the trip");
+        setState(() {
+          enabled  = false;
+        });
+      }
+    });
+    if(enabled != true){
+
+    }else {
+      //   rideStreamSubscriptionB.cancel();
+
+    }
   }
   Future <void> getPlaceDirection()async{
 
