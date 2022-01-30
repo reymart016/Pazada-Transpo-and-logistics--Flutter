@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pazada/configs/MapsConfig.dart';
@@ -22,6 +23,7 @@ class PazadaRideHistoryScreen extends StatefulWidget
 }
 
 class _PazadaRideHistoryScreenState extends State<PazadaRideHistoryScreen> {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +58,7 @@ class _PazadaRideHistoryScreenState extends State<PazadaRideHistoryScreen> {
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection("PazadaUsers")
-                .doc(currentfirebaseUser.uid)
+                .doc(_firebaseAuth.currentUser.uid)
                 .collection("History")
                 .orderBy("created_at", descending: true)
                 .snapshots(),

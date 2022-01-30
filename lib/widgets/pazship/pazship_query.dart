@@ -191,9 +191,9 @@ class _PazShipQueryState extends State<PazShipQuery> {
                                           });
                                         },
                                         child: Text(mapbook == true && Provider.of<AppData>(context).destinationLocation2!= null
-                                            ?  Provider.of<AppData>(context).destinationLocation2.placename
+                                            ?  Provider.of<AppData>(context).destinationLocation2.placename.toString()
                                             : autoLoc ==true && Provider.of<AppData>(context).pickUpLocation!= null
-                                            ? Provider.of<AppData>(context).pickUpLocation.placename
+                                            ? Provider.of<AppData>(context).pickUpLocation.placename.toString()
                                             : "Add Home", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left, overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
@@ -234,7 +234,7 @@ class _PazShipQueryState extends State<PazShipQuery> {
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(horizontal:30, vertical: 25),
                                         child: Text(Provider.of<AppData>(context).destinationLocation!= null
-                                            ? Provider.of<AppData>(context).destinationLocation.placename
+                                            ? Provider.of<AppData>(context).destinationLocation.placename.toString()
                                             : "Destination", style: TextStyle(fontSize: 15, fontFamily: "bolt"),maxLines: 2,textAlign: TextAlign.left,
                                         ),
                                       ),

@@ -82,7 +82,7 @@ class _PazadaUserDesignWidgetState extends State<PazadaUserDesignWidget> {
                       ),
                       Column(
                         children: [
-                          Text(widget.model.service_type=="Pazabuy" ? "Php "+ widget.model.grand_total :"Php "+ widget.model.price ,
+                          Text(widget.model.service_type == "Pazabuy" ? "Php "+ widget.model.grand_total.toString() :"Php "+ widget.model.price.toString() ,
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,

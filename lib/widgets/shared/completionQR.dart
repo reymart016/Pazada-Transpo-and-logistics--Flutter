@@ -55,10 +55,12 @@ class _CompletionQRState extends State<CompletionQR> with SingleTickerProviderSt
           padding:  EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Column(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 10,),
 
-                Text('Scan the QR to Pay', style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold'),),
+                Center(child: Text('Let Driver scan the QR to Complete the Transaction', style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold'),)),
 
                 SizedBox(height: 5,),
 
@@ -67,26 +69,29 @@ class _CompletionQRState extends State<CompletionQR> with SingleTickerProviderSt
                 //   child: Lottie.asset('assets/lotties/success1.json', height:200),
                 // ),
                 QrImage(data: qrData2),
-                GestureDetector(
-                  onTap: (){
-                    LaunchApp.openApp(
-                      androidPackageName: 'com.globe.gcash.android',
-                      openStore: true,
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 1.5,color: Colors.amber),
-                      ),
-                      child: Center(
-                        child: Text("Open GCash", style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold', color: Colors.blue),),
-                      ),
-                    ),
-                  ),
-                ),
+                SizedBox(height: 10,),
+
+                Center(child: Text('Note: take a Screenshot', style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold', color: Colors.red),)),
+                // GestureDetector(
+                //   onTap: (){
+                //     LaunchApp.openApp(
+                //       androidPackageName: 'com.globe.gcash.android',
+                //       openStore: true,
+                //     );
+                //   },
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(12.0),
+                //     child: Container(
+                //       height: 50,
+                //       decoration: BoxDecoration(
+                //         border: Border.all(width: 1.5,color: Colors.amber),
+                //       ),
+                //       child: Center(
+                //         child: Text("Open GCash", style: TextStyle(fontSize: 22.0, fontFamily: 'Bolt-Bold', color: Colors.blue),),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(height: 10,),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),

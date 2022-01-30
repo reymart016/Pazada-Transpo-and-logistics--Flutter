@@ -821,15 +821,15 @@ class _PazadaScreenState extends State<PazadaScreen> with TickerProviderStateMix
                             children: [
                               Padding(
                                 padding: EdgeInsets.all(8.0),
-                                child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.username : 'Username', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                                child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.username.toString() : 'Username', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(8.0),
-                                child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.number : 'Vehicle', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                                child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.number.toString() : 'Vehicle', textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(8.0),
-                                child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.vehicle_details : "0016", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                                child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.vehicle_details.toString() : "0016", textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(8.0),

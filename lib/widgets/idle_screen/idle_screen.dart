@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -56,10 +57,10 @@ Timer timer;
 
     AssistantMethod.getCurrentOnlineInformation();
     setState(() {
-      username = username;
+      //username = username;
 
     });
-   print("USERNAME::"+ username);
+
     getProfileDetails();
   }
   Future<void> checkEmailVerified()async{
@@ -154,7 +155,7 @@ Timer timer;
                                 children: [
 
                                   Text("Total Trips",style: TextStyle(fontSize: 20, fontFamily: "bolt-bold", color: Colors.black) ,maxLines: 3,textAlign: TextAlign.center,  ),
-                                  Text(rideHistoryTotal.toString(),style: TextStyle(fontSize: 20, fontFamily: "bolt-bold", color: Colors.black) ,maxLines: 3,textAlign: TextAlign.center,  ),
+                                  Text(size.toString(),style: TextStyle(fontSize: 20, fontFamily: "bolt-bold", color: Colors.black) ,maxLines: 3,textAlign: TextAlign.center,  ),
                                 ],
                               ),
                          ] ),
@@ -332,6 +333,16 @@ setState(() {
 
    });
    print(userName +" "+ number +" "+ email);
+   print("USERNAME::"+ username);
+   CollectionReference countRef = FirebaseFirestore.instance.collection("PazadaUsers").doc(userId).collection("History");
+   await countRef.get().then((value) {
+     setState(() {
+       size = value.docs.length;
+     });
+   });
+   print("???????????"+size.toString());
+
+   // get the length of the database
  }
 }
 class SimpleCustomAlert extends StatelessWidget {

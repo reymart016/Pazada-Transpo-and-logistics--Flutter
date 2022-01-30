@@ -460,12 +460,12 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
   Future <void> getPlaceDirection()async{
     var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
     var finalPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
-    var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
+    //var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
     var destinationLatLng = LatLng(finalPos.latitude, finalPos.longitude);
 
     //showDialog(context: context, builder: (BuildContext context)=> ProgressDialog(message: "Please wait...."));
 
-    var details = await AssistantMethod.obtainPlaceDirectionDetails(pickupLatLng, destinationLatLng);
+    var details = await AssistantMethod.obtainPlaceDirectionDetails(destinationLatLng, destinationLatLng);
     setState(() {
       tripDirectionDetails = details;
     });
@@ -496,27 +496,11 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
       );
       polylineSet.add(polyline);
     });
-    // LatLngBounds latLngBounds;
-    // if(pickupLatLng.latitude > destinationLatLng.latitude && pickupLatLng.longitude > destinationLatLng.longitude){
-    //   latLngBounds = LatLngBounds(southwest: destinationLatLng, northeast: pickupLatLng);
-    //
-    // }
-    // else if(pickupLatLng.longitude > destinationLatLng.longitude){
-    //   latLngBounds = LatLngBounds(southwest: LatLng(pickupLatLng.latitude, destinationLatLng.longitude), northeast: LatLng(destinationLatLng.latitude, pickupLatLng.longitude));
-    //
-    // }
-    // else if(pickupLatLng.latitude > destinationLatLng.latitude){
-    //   latLngBounds = LatLngBounds(southwest: LatLng(destinationLatLng.latitude, pickupLatLng.longitude), northeast: LatLng(pickupLatLng.latitude, destinationLatLng.longitude));
-    //
-    // }else{
-    //   latLngBounds = LatLngBounds(southwest: pickupLatLng, northeast: destinationLatLng);
-    // }
-    // newGoogleMapController.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
 
     Marker pickupMarker = Marker(
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
       infoWindow: InfoWindow(title: initialPos.placename, snippet: "Your Location!"),
-      position: pickupLatLng,
+      position: destinationLatLng,
       markerId: MarkerId("pickupID"),
 
     );
@@ -525,7 +509,7 @@ class _PazabuyQueryState extends State<PazabuyQuery> {
     });
     Circle pickupCircle = Circle(
         fillColor: Colors.amber,
-        center: pickupLatLng,
+        center: destinationLatLng,
         radius:12,
         strokeColor: Colors.amber,
         strokeWidth: 4,

@@ -96,7 +96,7 @@ class _PazadaUserHistoryDetailsState extends State<PazadaUserHistoryDetails> wit
                 ),
                 SizedBox(height: 5,),
                 Text(
-                    widget.models.service_type=="Pazabuy" ? "Amount: Php "+ widget.models.grand_total :"Amount: Php "+ widget.models.price ,
+                    widget.models.service_type=="Pazabuy" ? "Amount: Php "+ widget.models.grand_total.toString() :"Amount: Php "+ widget.models.price.toString() ,
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 12,

@@ -321,7 +321,7 @@ class _SignupScreenState extends State<SignupScreen> {
       'userNumber': phoneTextEditingController.text.trim(),
 
       'time': DateTime.now(),
-      'status': "approved",
+      'Activated': true,
     };
 
     FirebaseFirestore.instance.collection('PazadaUsers').doc(userID).set(userData);
@@ -398,7 +398,7 @@ class _SignupScreenState extends State<SignupScreen> {
         'userNumber': phoneTextEditingController.text.trim(),
         "thumbnailUrl": imageDownloadURLs,
         'time': DateTime.now(),
-        'status': "approved",
+        'Activated': true,
         "userCart": ['garbageValue'],
       };
 

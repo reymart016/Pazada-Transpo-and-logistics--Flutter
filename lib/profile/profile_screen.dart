@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 
+
   verifyEmail()async{
     if(user != null && !user.emailVerified){
       await user.sendEmailVerification();
@@ -38,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     // TODO: implement initState
     AssistantMethod.getCurrentOnlineInformation();
-    //getProfileDetails();
+    getProfileDetails();
     super.initState();
   }
   @override
@@ -129,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       height: 80,
                                     ),
                                     Text(
-                                      username,
+                                      usernamee,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'bolt-bold',
@@ -146,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         Column(
                                           children: [
                                             Text(
-                                              'Total Rides',
+                                              'Total Trips',
                                               style: TextStyle(
                                                 color: Colors.grey[700],
                                                 fontFamily: 'bolt',
@@ -154,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                             ),
                                             Text(
-                                              '10',
+                                              size.toString(),
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontFamily: 'bolt',
@@ -306,6 +308,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
         )
       ],
     );
+  }
+  void getProfileDetails()async{
+    print("=====CALLED=============");
+    print(sharedPreferences.getString("uid"));
+    DataSnapshot dataSnapshot = await usersRef.child(_firebaseAuth.currentUser.uid).once();
+
+
+    Map pazadaProfile = dataSnapshot.value;
+    setState(() {
+      usernamee = pazadaProfile['name'];
+      number = pazadaProfile['phone'];
+      email = pazadaProfile['email'];
+      userName = usernamee;
+
+    });
+    print("||||||||||||||||"+usernamee);
+    // get the length of the database
+    CollectionReference countRef = FirebaseFirestore.instance.collection("PazadaSellers").doc(sharedPreferences.getString("uid")).collection("History");
+    await countRef.get().then((value) {
+      setState(() {
+        size = value.docs.length;
+      });
+    });
+    print("???????????"+size.toString());
+
+    // get the length of the database
   }
   Future signOut()async{
     Navigator.pop(context);

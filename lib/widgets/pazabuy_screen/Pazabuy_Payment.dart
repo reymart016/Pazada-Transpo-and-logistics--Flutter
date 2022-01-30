@@ -513,7 +513,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
     });
     Map<String, dynamic> historyData = {
       "address": pickUp.placename,
-      "totalAmount": total,
+      "Grand_Total": total,
       "orderBy": sharedPreferences.getString("uId"),
       "productIDs": sharedPreferences.getStringList("userCart"),
       "paymentDetails": "Cash on Delivery",
@@ -529,7 +529,7 @@ class _PazabuyPaymentsState extends State<PazabuyPayments> {
       final productsRef = FirebaseFirestore.instance.collection("PazabuyOrders"); //SAVE AS MAIN COLLECTION
       productsRef.doc(orderId).set({
         "address": pickUp.placename,
-        "totalAmount": total,
+        "Grand_Total": total,
         "orderBy": sharedPreferences.getString("uId"),
         "productIDs": sharedPreferences.getStringList("userCart"),
         "paymentDetails": "Cash on Delivery",

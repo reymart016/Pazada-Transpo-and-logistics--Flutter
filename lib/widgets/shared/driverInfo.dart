@@ -113,15 +113,15 @@ void initState() {
                       children: [
                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.username : name, textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.username.toString() : name, textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                         ),
                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.number : phone, textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.number.toString() : phone, textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                         ),
                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.vehicle_details : trike, textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
+                          child: Text(Provider.of<AppData>(context).pazadaDriver != null ? Provider.of<AppData>(context).pazadaDriver.vehicle_details.toString() : trike, textAlign: TextAlign.center,style: TextStyle(fontFamily: 'bolt'),),
                         ),
                         Padding(
                           padding: EdgeInsets.all(8.0),

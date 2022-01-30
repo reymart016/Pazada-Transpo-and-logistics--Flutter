@@ -171,6 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print(firebaseUser.uid);
       getUserData(firebaseUser.uid);
       setState(() {
+        uid = firebaseUser.uid;
         loading = true;
       });
 
@@ -222,8 +223,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
   getUserData(String uid) async{
     await FirebaseFirestore.instance.collection('PazadaUsers').doc(uid).get().then((results){
-      String status = results.data()['status'];
-      if(status == "approved"){
+      bool status = results.data()['Activated'];
+      if(status == true){
         Navigator.pop(context);
 
         Navigator.pushNamedAndRemoveUntil(context, BottomBar.idScreen, (route) => false);
