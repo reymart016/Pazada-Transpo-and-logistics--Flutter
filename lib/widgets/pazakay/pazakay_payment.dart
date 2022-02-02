@@ -482,7 +482,7 @@ class _PazakayPaymentState extends State<PazakayPayment> {
     };
 
     await rideRequestRef.update({
-      "UID": currentfirebaseUser.uid,
+      "passengerID": currentfirebaseUser.uid,
       "driver_id": "waiting",
       "payment_method": "cash",
       "pickup": pickUpCoordinates,
