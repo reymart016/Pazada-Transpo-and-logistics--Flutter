@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:pazada/configs/MapsConfig.dart';
@@ -33,9 +34,13 @@ String username ="";
 int size = 0;
 String usernamee = "";
 String uid = "";
+int fareMatrixValue = 0;
+int fareValue = 0;
+DocumentSnapshot snapshot;
+var faretotal;
 String profileName = "";
 String userName="";
-String number = "";
+int number = 0;
 String driver_phone = "";
 String driver_name = "";
 String email = "";

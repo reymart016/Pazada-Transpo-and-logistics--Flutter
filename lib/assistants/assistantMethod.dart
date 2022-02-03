@@ -86,12 +86,18 @@ class AssistantMethod{
     return directionDetails;
   }
   static int calculateFares(DirectionDetails directionDetails){
-    double timeTraveledFare = (directionDetails.durationValue / 60)* 0.20;
-    double distanceTraveledFare = (directionDetails.distanceValue / 1000)* 0.20;
-    double totalFareAmount = timeTraveledFare + distanceTraveledFare;
-    double localFare = totalFareAmount *  50;
-    return localFare.truncate();
 
+
+    double timeTraveledFare = (directionDetails.durationValue / 60) * 0.10;
+    print("_____________________");
+    print("tite" + directionDetails.durationValue.toString());
+
+    print("_____________________");
+    double distanceTraveledFare = (directionDetails.distanceValue / 1000) * 0.20;
+    double totalFareAmount = timeTraveledFare + distanceTraveledFare;
+    double localFare = totalFareAmount * fareValue;
+
+    return localFare.truncate();
   }
 
   static void getCurrentOnlineInformation()async{

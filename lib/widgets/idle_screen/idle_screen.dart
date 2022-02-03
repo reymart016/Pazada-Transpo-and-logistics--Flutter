@@ -332,7 +332,7 @@ setState(() {
      userName = username;
 
    });
-   print(userName +" "+ number +" "+ email);
+   print(userName +" "+ number.toString() +" "+ email);
    print("USERNAME::"+ username);
    CollectionReference countRef = FirebaseFirestore.instance.collection("PazadaUsers").doc(userId).collection("History");
    await countRef.get().then((value) {
@@ -343,6 +343,8 @@ setState(() {
    print("???????????"+size.toString());
 
    // get the length of the database
+
+
  }
 }
 class SimpleCustomAlert extends StatelessWidget {

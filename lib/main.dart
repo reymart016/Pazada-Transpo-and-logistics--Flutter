@@ -41,6 +41,7 @@ void main()async {
   DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("PazadaUsers");
   DatabaseReference driversRef = FirebaseDatabase.instance.reference().child("PazadaDrivers");
   DatabaseReference newRequestRef = FirebaseDatabase.instance.reference().child("Ride_Request");
+  DatabaseReference fareMatrix = FirebaseDatabase.instance.reference().child("FareMatrix");
   //DatabaseReference rideRequestRef = FirebaseDatabase.instance.reference().child("PazadaDrivers").child(currentfirebaseUser.uid).child("newRide");
 
 class MyApp extends StatelessWidget {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -436,6 +437,26 @@ class _PazShipQueryState extends State<PazShipQuery> {
     Navigator.push(context, MaterialPageRoute(builder: (context)=> PazadaScreen()));
   }
   Future <void> getPlaceDirection()async{
+    //Get the fare Matrix
+    DataSnapshot dataSnapshots = await fareMatrix.once();
+    Map pazadaFare = dataSnapshots.value;
+    setState(() {
+      fareMatrixValue = pazadaFare['fare'];
+    });
+    print("+_+_+_+_+_+_+");
+    print(fareMatrixValue.toString());
+    //Get the fare Matrix
+
+    // FIRESTORE FARE MATRIX
+    final data =  await FirebaseFirestore.instance.collection("FareData").doc('fare').get(); //get the data
+    snapshot = data;
+    setState(() {
+      fareValue = snapshot.data()['pamasahe'];
+    });
+    int val = snapshot.data()['pamasahe'];
+    print("+_+_+_+_+_+_+");
+    print(snapshot.data()['pamasahe'].toString());
+    //Get the fare Matrix
     var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
     var finalPos = Provider.of<AppData>(context, listen: false).destinationLocation;
     var pickupLatLng = LatLng(initialPos.latitude, initialPos.longitude);
