@@ -448,9 +448,12 @@ class _PazakayQueryState extends State<PazakayQuery> {
     snapshot = data;
     setState(() {
       fareValue = snapshot.data()['pamasahe'];
+      kmData = snapshot.data()['per_km'];
+      fareKM = kmData;
     });
     int val = snapshot.data()['pamasahe'];
     print("+_+_+_+_+_+_+");
+    print(fareKM);
     print(snapshot.data()['pamasahe'].toString());
     //Get the fare Matrix
     var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;

@@ -87,15 +87,32 @@ class AssistantMethod{
   }
   static int calculateFares(DirectionDetails directionDetails){
 
-
+    double distanceTraveledFare;
+    double distanceTemp;
+    double distanceTemp2;
     double timeTraveledFare = (directionDetails.durationValue / 60) * 0.10;
     print("_____________________");
     print("tite" + directionDetails.durationValue.toString());
 
     print("_____________________");
-    double distanceTraveledFare = (directionDetails.distanceValue / 1000) * 0.20;
+    double distanceTraveledValue = (directionDetails.distanceValue / 1000);
+    if(distanceTraveledValue<= 4){
+      distanceTraveledFare = double.parse(fareValue.toString());
+    }else{
+      distanceTemp = (directionDetails.distanceValue / 1000) * 10;
+      distanceTemp2 = (distanceTraveledValue - 4) * fareKM;
+      print("perKM" + fareKM.toString());
+      distanceTraveledFare = double.parse(fareValue.toString()) + distanceTemp2;
+
+    }
+
+    print("_____________________");
+    print("layo" + directionDetails.distanceValue.toString());
+
+    print("_____________________");
     double totalFareAmount = timeTraveledFare + distanceTraveledFare;
-    double localFare = totalFareAmount * fareValue;
+    //double localFare = totalFareAmount * fareValue;
+    double localFare = distanceTraveledFare;
 
     return localFare.truncate();
   }

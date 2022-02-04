@@ -99,6 +99,7 @@ class _PazadaUserHistoryDetailsState extends State<PazadaUserHistoryDetails> wit
                     widget.models.service_type=="Pazabuy" ? "Amount: Php "+ widget.models.grand_total.toString() :"Amount: Php "+ widget.models.price.toString() ,
                   style: TextStyle(
                       color: Colors.black,
+
                       fontSize: 12,
                       fontFamily: "bolt"
                   ),//TextStyle

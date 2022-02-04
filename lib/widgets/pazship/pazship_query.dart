@@ -438,13 +438,15 @@ class _PazShipQueryState extends State<PazShipQuery> {
   }
   Future <void> getPlaceDirection()async{
     //Get the fare Matrix
-    DataSnapshot dataSnapshots = await fareMatrix.once();
-    Map pazadaFare = dataSnapshots.value;
-    setState(() {
-      fareMatrixValue = pazadaFare['fare'];
-    });
-    print("+_+_+_+_+_+_+");
-    print(fareMatrixValue.toString());
+    // DataSnapshot dataSnapshots = await fareMatrix.once();
+    // Map pazadaFare = dataSnapshots.value;
+    // setState(() {
+    //   fareMatrixValue = pazadaFare['fare'];
+    //   kmData = snapshot.data()['per_km'];
+    //   fareKM = kmData / 50;
+    // });
+    // print("+_+_+_+_+_+_+");
+    // print(fareMatrixValue.toString());
     //Get the fare Matrix
 
     // FIRESTORE FARE MATRIX

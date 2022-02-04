@@ -36,6 +36,8 @@ String usernamee = "";
 String uid = "";
 int fareMatrixValue = 0;
 int fareValue = 0;
+int fareKM = 0;
+int kmData = 0;
 DocumentSnapshot snapshot;
 var faretotal;
 String profileName = "";
